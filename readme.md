@@ -30,10 +30,7 @@ db.heroes.all name: 'Zeratul' do |hero|
   hero                                              # => {name: 'Zeratul'}
 end    
 
-# each
-db.heroes.each name: 'Zeratul' do |hero|
-  hero                                              # => {name: 'Zeratul'}
-end
+# each: db.each(&block) is the same as db.all(&block)
 ```
 
 # Object Model (work in progress)
@@ -64,3 +61,6 @@ require 'mongo_db/driver'
 # License
 
 Copyright (c) Alexey Petrushin, http://petrush.in, released under the MIT license.
+
+[mongo_mapper_ext]: https://github.com/alexeypetrushin/mongo_mapper_ext
+[mongoid_misc]: https://github.com/alexeypetrushin/mongoid_misc

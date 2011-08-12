@@ -25,9 +25,6 @@ describe "Example" do
       hero                                              # => {name: 'Zeratul'}
     end    
     
-    # each
-    db.heroes.each name: 'Zeratul' do |hero|
-      hero                                              # => {name: 'Zeratul'}
-    end
+    # each: db.each(&block) is the same as db.all(&block)
   end
 end

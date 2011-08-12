@@ -24,10 +24,8 @@ describe "Querying" do
     tassadar[:stats][:attack] = 20
     db.heroes.save tassadar    
     
-    # querying first & all (there's also :each, the same as :all)
-    db.heroes.first name: 'Zeratul'                     # => {name: 'Zeratul'}
-    
-    db.heroes.select{|h| h.name == 10}.first
+    # querying first & all, there's also :each, the same as :all
+    db.heroes.first name: 'Zeratul'                     # => {name: 'Zeratul'}    
 
     db.heroes.all name: 'Zeratul'                       # => [{name: 'Zeratul'}]
     db.heroes.all name: 'Zeratul' do |hero|
@@ -36,6 +34,6 @@ describe "Querying" do
     
     # let's do some magic
     # don't worry, it's contained and guarded
-    
+    # db.heroes.select{|h| h.name == 10}.first
   end
 end

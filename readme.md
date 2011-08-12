@@ -1,4 +1,4 @@
-# Enchancements for MongoDB Driver and ODM
+# Mode Driven Development & driver enchancements for MongoDB
 
 Mongo Model designed after the excellent "Domain-Driven Design" book by Eric Evans.
 

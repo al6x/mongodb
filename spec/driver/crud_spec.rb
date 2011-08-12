@@ -1,7 +1,7 @@
-require 'spec_helper'
+require 'driver/spec_helper'
 
 describe "Hash CRUD" do
-  with_mongo_model
+  with_mongo
   
   describe 'simple' do
     before do
@@ -15,7 +15,8 @@ describe "Hash CRUD" do
       db.heroes.first.should == nil
   
       # create
-      db.heroes.save(@zeratul)
+      db.heroes.save(@zeratul).should be_mongo_id
+      @zeratul[:_id].should be_mongo_id
     
       # read
       db.heroes.all.should == [@zeratul]
@@ -24,12 +25,12 @@ describe "Hash CRUD" do
     
       # update
       @zeratul[:info] = 'Killer of Cerebrates'
-      db.heroes.save({name: 'Zeratul'}, @zeratul)
+      db.heroes.save @zeratul
       db.heroes.count.should == 1
-      db.heroes.first(name: 'Zeratul').info.should == 'Killer of Cerebrates'
-    
+      db.heroes.first(name: 'Zeratul')[:info].should == 'Killer of Cerebrates'
+          
       # destroy
-      db.heroes.destroy name: 'Zeratul'
+      db.heroes.destroy @zeratul
       db.heroes.count.should == 0
     end
   end
@@ -47,7 +48,7 @@ describe "Hash CRUD" do
     
     it 'crud' do
       # create
-      db.players.save(@player)
+      db.players.save(@player).should be_mongo_id
 
       # read
       db.players.count.should == 1
@@ -55,14 +56,14 @@ describe "Hash CRUD" do
 
       # update
       @player[:missions].first[:stats][:units] = 9
-      @player.missions << {name: 'Desperate Alliance', stats: {buildings: 11, units: 40}},
-      db.players.save({name: 'Alex'}, @player)
+      @player[:missions].push name: 'Desperate Alliance', stats: {buildings: 11, units: 40}
+      db.players.save(@player).should_not be_nil
       db.players.count.should == 1
       db.players.first.should == @player
       db.players.first.object_id.should_not == @player.object_id
 
       # destroy
-      db.players.destroy name: 'Alex'
+      db.players.destroy @player
       db.players.count.should == 0
     end
   end  

@@ -22,16 +22,10 @@ db = connection.db 'default_test'
 db.some_collection
 
 # create
-zeratul = {
-  name: 'Zeratul',
-  stats: {attack: 85, life: 300, shield: 100}
-}
+zeratul = {name: 'Zeratul', stats: {attack: 85, life: 300, shield: 100}}
 db.heroes.save zeratul
 
-tassadar = {
-  name: 'Tassadar',
-  stats: {attack: 0, life: 80, shield: 300}
-}    
+tassadar = {name: 'Tassadar', stats: {attack: 0, life: 80, shield: 300}}    
 db.heroes.save tassadar
 
 # udate (we made error - mistakenly set Tassadar's attack as zero, let's fix it)

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Object" do
+describe "Hash CRUD" do
   with_mongo_model
   
   describe 'simple' do

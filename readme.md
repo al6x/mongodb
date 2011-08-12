@@ -1,4 +1,6 @@
-# Ruby ODM for MongoDB
+# Enchancements for MongoDB Driver and ODM
+
+Mongo Model designed after the excellent "Domain-Driven Design" book by Eric Evans.
 
 Not finished, in development, first release will be about 11/8/25.
 

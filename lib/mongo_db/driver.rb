@@ -7,7 +7,10 @@ class Mongo::Ext; end
 
 # mongo extensions
 Mongo.class_eval do
-  def self.defaults; @defaults ||= {} end
+  class << self
+    def defaults; @defaults ||= {} end
+    attr_writer :defaults
+  end
 end
 
 %w(

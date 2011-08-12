@@ -4,6 +4,8 @@ describe "Example" do
   with_mongo
   
   it "database & collection" do
+    require 'mongo_db/driver'
+    
     # collection shortcuts
     db.some_collection
     

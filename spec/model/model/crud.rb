@@ -8,7 +8,7 @@ describe "Model CRUD" do
     before do
       class Person
         inherit Mongo::Model
-        collection{db.heroes}
+        collection{db.units}
         
         def initialize name, info; @name, @info = name, info end
         attr_accessor :name, :info

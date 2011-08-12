@@ -19,8 +19,8 @@ describe "Collection" do
   describe "symbolize" do
     it 'should always return symbolized hashes' do
       zeratul = {name: 'Zeratul'}
-      db.heroes.save(zeratul).should be_mongo_id
-      r = db.heroes.first(name: 'Zeratul')
+      db.units.save(zeratul).should be_mongo_id
+      r = db.units.first(name: 'Zeratul')
       r[:_id].should be_mongo_id
       r['_id'].should be_nil
       r[:name].should == 'Zeratul'
@@ -33,8 +33,8 @@ describe "Collection" do
         Mongo.defaults[:symbolize] = false
       
         zeratul = {name: 'Zeratul'}
-        db.heroes.save(zeratul).should be_mongo_id
-        r = db.heroes.first(name: 'Zeratul')
+        db.units.save(zeratul).should be_mongo_id
+        r = db.units.first(name: 'Zeratul')
         r[:_id].should be_nil
         r['_id'].should be_mongo_id
         r[:name].should be_nil
@@ -46,24 +46,24 @@ describe "Collection" do
   end
   
   it "first" do
-    db.heroes.first.should be_nil
+    db.units.first.should be_nil
     zeratul = {name: 'Zeratul'}
-    db.heroes.save(zeratul).should be_mongo_id
-    db.heroes.first(name: 'Zeratul')[:name].should == 'Zeratul'
+    db.units.save(zeratul).should be_mongo_id
+    db.units.first(name: 'Zeratul')[:name].should == 'Zeratul'
   end
   
   it 'all' do
-    db.heroes.all.should == []    
+    db.units.all.should == []    
     
     zeratul = {name: 'Zeratul'}
-    db.heroes.save(zeratul).should be_mongo_id
+    db.units.save(zeratul).should be_mongo_id
     
-    list = db.heroes.all(name: 'Zeratul')
+    list = db.units.all(name: 'Zeratul')
     list.size.should == 1
     list.first[:name].should == 'Zeratul'
     
     # with block
-    list = []; db.heroes.all{|o| list << o}
+    list = []; db.units.all{|o| list << o}
     list.size.should == 1
     list.first[:name].should == 'Zeratul'
   end

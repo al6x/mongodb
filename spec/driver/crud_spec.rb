@@ -10,28 +10,28 @@ describe "Hash CRUD" do
   
     it 'crud' do
       # read
-      db.heroes.count.should == 0
-      db.heroes.all.should == []
-      db.heroes.first.should == nil
+      db.units.count.should == 0
+      db.units.all.should == []
+      db.units.first.should == nil
   
       # create
-      db.heroes.save(@zeratul).should be_mongo_id
+      db.units.save(@zeratul).should be_mongo_id
       @zeratul[:_id].should be_mongo_id
     
       # read
-      db.heroes.all.should == [@zeratul]
-      db.heroes.count.should == 1
-      db.heroes.first.should == @zeratul
+      db.units.all.should == [@zeratul]
+      db.units.count.should == 1
+      db.units.first.should == @zeratul
     
       # update
       @zeratul[:info] = 'Killer of Cerebrates'
-      db.heroes.save @zeratul
-      db.heroes.count.should == 1
-      db.heroes.first(name: 'Zeratul')[:info].should == 'Killer of Cerebrates'
+      db.units.save @zeratul
+      db.units.count.should == 1
+      db.units.first(name: 'Zeratul')[:info].should == 'Killer of Cerebrates'
           
       # destroy
-      db.heroes.destroy @zeratul
-      db.heroes.count.should == 0
+      db.units.destroy @zeratul
+      db.units.count.should == 0
     end
   end
   

@@ -33,6 +33,9 @@ end
 # each: db.each(&block) is the same as db.all(&block)
 ```
 
+More docs - there's no need for more docs, the whole point of this extension is to be small, intuitive, 100% compatible with official driver (at least should be), and require no extra knowledge.
+So, please use standard Ruby driver documentation.
+
 # Object Model (work in progress)
 
 Model designed after the excellent "Domain-Driven Design" book by Eric Evans.

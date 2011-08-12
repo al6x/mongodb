@@ -21,19 +21,30 @@ db = connection.db 'default_test'
 # collection shortcuts
 db.some_collection
 
-# save & update
-zeratul = {name: 'Zeratul'}
+# create
+zeratul = {
+  name: 'Zeratul',
+  stats: {attack: 85, life: 300, shield: 100}
+}
 db.heroes.save zeratul
 
-# first & all    
-db.heroes.first name: 'Zeratul'                     # => {name: 'Zeratul'}
+tassadar = {
+  name: 'Tassadar',
+  stats: {attack: 0, life: 80, shield: 300}
+}    
+db.heroes.save tassadar
 
-db.heroes.all name: 'Zeratul'                       # => [{name: 'Zeratul'}]
+# udate (we made error - mistakenly set Tassadar's attack as zero, let's fix it)
+tassadar[:stats][:attack] = 20
+db.heroes.save tassadar
+
+# querying first & all, there's also :each, the same as :all
+db.heroes.first name: 'Zeratul'                     # => zeratul
+
+db.heroes.all name: 'Zeratul'                       # => [zeratul]
 db.heroes.all name: 'Zeratul' do |hero|
-  hero                                              # => {name: 'Zeratul'}
-end    
-
-# each: db.each(&block) is the same as db.all(&block)
+  hero                                              # => zeratul
+end
 ```
 
 More docs - there's no need for more docs, the whole point of this extension is to be small, intuitive, 100% compatible with official driver (at least should be), and require no extra knowledge.

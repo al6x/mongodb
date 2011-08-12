@@ -4,7 +4,7 @@ Object Model & Ruby driver enhancements for MongoDB
 
 - Makes alien API of mongo-ruby-driver friendly & handy.
 - No extra abstraction or complexities introduced, all things are exactly the same as in MongoDB.
-- Simple migrations support.
+- Simple migrations support (work in progress).
 
 Sample:
 

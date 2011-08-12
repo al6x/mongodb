@@ -49,9 +49,13 @@ Model designed after the excellent "Domain-Driven Design" book by Eric Evans.
 
 # Installation & Usage
 
+Installation:
+
 ``` bash
 gem install mongo_db
 ```
+
+Usage:
 
 ``` ruby
 require 'mongo_db/driver'

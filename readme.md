@@ -11,6 +11,10 @@ Sample:
 ``` ruby
 require 'mongo_db/driver'
 
+# connection & db
+connection = Mongo::Connection.new
+db = connection.db 'default_test'
+
 # collection shortcuts
 db.some_collection
 

@@ -1,6 +1,6 @@
-Model & Ruby driver enchancements for MongoDB
+Object Model & Ruby driver enhancements for MongoDB
 
-# MongoDB driver enchancements
+# MongoDB driver enhancements
 
 - Makes alien API of mongo-ruby-driver friendly & handy.
 - No extra abstraction or complexities introduced, all things are exactly the same as in MongoDB.
@@ -32,7 +32,7 @@ db.heroes.each name: 'Zeratul' do |hero|
 end
 ```
 
-# Model (work in progress)
+# Object Model (work in progress)
 
 Model designed after the excellent "Domain-Driven Design" book by Eric Evans.
 

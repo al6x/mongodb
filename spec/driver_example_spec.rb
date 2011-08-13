@@ -50,6 +50,6 @@ describe "Example" do
     db.units.all life: {_lt: 100}                      # => [tassadar]
     
     # it's also trivial to add support for {:life.lt => 100} notion, 
-    # but ti's ugly and I don't like it.
+    # but it's ugly and I don't like it.
   end
 end

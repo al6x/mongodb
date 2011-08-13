@@ -53,7 +53,7 @@ Mongo.defaults.merge! convert_underscore_to_dollar: true
 db.units.all life: {_lt: 100}                      # => [tassadar]
 
 # it's also trivial to add support for {:life.lt => 100} notion, 
-# but ti's ugly and I don't like it.
+# but it's ugly and I don't like it.
 ```
 
 More docs - there's no need for more docs, the whole point of this extension is to be small, intuitive, 100% compatible with official driver (at least should be), and require no extra knowledge.

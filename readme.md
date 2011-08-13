@@ -31,7 +31,6 @@ db.units.save tassadar
 
 # querying - first & all, there's also :each, the same as :all
 db.units.first name: 'Zeratul'                      # => zeratul
-
 db.units.all name: 'Zeratul'                        # => [zeratul]
 db.units.all name: 'Zeratul' do |hero|
   hero                                              # => zeratul

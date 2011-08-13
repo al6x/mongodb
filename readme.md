@@ -14,9 +14,6 @@ Note: By default it also adds a little magic and alters some default values of s
 ``` ruby
 require 'mongo_db/driver'
 
-# making defaults more usefull
-Mongo.defaults.merge! symbolize: true, multi: true, safe: true
-
 # connection & db
 connection = Mongo::Connection.new
 db = connection.db 'default_test'

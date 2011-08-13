@@ -10,9 +10,6 @@ describe "Example" do
   it "core" do    
     require 'mongo_db/driver'  
     
-    # making defaults more suitable
-    Mongo.defaults.merge! symbolize: true, multi: true, safe: true
-    
     # connection & db
     connection = Mongo::Connection.new
     db = connection.db 'default_test'

@@ -57,7 +57,7 @@ db.units.all life: {_lt: 100}                      # => [tassadar]
 # but the '=>' symbol looks ugly and I don't like it.
 ```
 
-More docs - there's no need for more docs, the whole point of this extension is to be small, intuitive, 100% compatible with official driver (at least should be), and require no extra knowledge.
+More docs - there's no need for more docs, the whole point of this extension is to be small, intuitive, 100% compatible with the official driver (at least should be), and require no extra knowledge.
 So, please use standard Ruby driver documentation.
 
 # Object Model (work in progress)

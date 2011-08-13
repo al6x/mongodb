@@ -14,6 +14,9 @@ Note: By default it also adds a little magic and alters some default values of s
 ``` ruby
 require 'mongo_db/driver'
 
+# changing some defaults
+Mongo.defaults.merge! symbolize: true, multi: true, safe: true
+
 # connection & db
 connection = Mongo::Connection.new
 db = connection.db 'default_test'
@@ -41,9 +44,19 @@ Optionall stuff:
 
 ``` ruby
 # simple finders (bang versions also availiable)
-db.units.by_name 'Zeratul'                          # => zeratul
-db.units.first_by_name 'Zeratul'                    # => zeratul
-db.units.all_by_name 'Zeratul'                      # => [zeratul]
+db.units.by_name 'Zeratul'                         # => zeratul
+db.units.first_by_name 'Zeratul'                   # => zeratul
+db.units.all_by_name 'Zeratul'                     # => [zeratul]
+
+# query sugar, use {life: {_lt: 100}} instead of {life: {:$lt => 100}}
+# it will affect olny small set of keywords (:_lt, :_inc),
+# other underscored keys will be intact.
+Mongo.defaults.merge! convert_underscore_to_dollar: true    
+db.units.all life: {_lt: 100}                      # => [tassadar]
+
+# it's also trivial to add support for {:life.lt => 100} notion, but
+# it uses ugly '=>' hash notation instead of ':' and it differs from
+# how it looks in native MongoDB JSON query.
 ```
 
 More docs - there's no need for more docs, the whole point of this extension is to be small, intuitive, 100% compatible with official driver (at least should be), and require no extra knowledge.

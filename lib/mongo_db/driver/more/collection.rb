@@ -12,6 +12,10 @@ module Mongo::Ext::Collection
   end
   alias_method :by_id!, :first_by_id!
   
+  def where &block
+    Mongo::Ext::Query.new self, &block
+  end
+  
   protected
     # 
     # first_by_field, all_by_field

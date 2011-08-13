@@ -10,6 +10,9 @@ describe "Example" do
   it "core" do    
     require 'mongo_db/driver'  
     
+    # changing some defaults
+    Mongo.defaults.merge! symbolize: true, multi: true, safe: true
+    
     # connection & db
     connection = Mongo::Connection.new
     db = connection.db 'default_test'
@@ -36,10 +39,20 @@ describe "Example" do
     end
   end
   
-  it "optional" do
+  it "optional" do        
     # simple finders (bang versions also availiable)
     db.units.by_name 'Zeratul'                         # => zeratul
     db.units.first_by_name 'Zeratul'                   # => zeratul
     db.units.all_by_name 'Zeratul'                     # => [zeratul]
+    
+    # query sugar, use {life: {_lt: 100}} instead of {life: {:$lt => 100}}
+    # it will affect olny small set of keywords (:_lt, :_inc),
+    # other underscored keys will be intact.
+    Mongo.defaults.merge! convert_underscore_to_dollar: true    
+    db.units.all life: {_lt: 100}                      # => [tassadar]
+    
+    # it's also trivial to add support for {:life.lt => 100} notion, but
+    # it uses ugly '=>' hash notation instead of ':' and it differs from
+    # how it looks in native MongoDB JSON query.
   end
 end

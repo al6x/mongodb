@@ -40,6 +40,7 @@ end
 Optionall stuff:
 
 - Adds very simple query enchancements
+- Ability to use plain Ruby objects the same way as Hashes (work in progress)
 
 ``` ruby
 require 'mongo_db/driver/more'

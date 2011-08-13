@@ -2,7 +2,7 @@ Object Model & Ruby driver enhancements for MongoDB.
 
 # MongoDB driver enhancements
 
-MongoDB itself is very powerful, flexible and simple tool, but it's Ruby driver hides it behind complicated API. 
+MongoDB itself is very powerful, flexible and simple tool, but it's Ruby driver hides it behind complicated API.
 This enhancements alter the Ruby-driver's API to be more simple and intuitive.
 
 - Makes API of mongo-ruby-driver friendly & handy.
@@ -50,10 +50,10 @@ db.units.first_by_name 'Zeratul'                   # => zeratul
 db.units.all_by_name 'Zeratul'                     # => [zeratul]
 
 # query sugar, use {life: {_lt: 100}} instead of {life: {:$lt => 100}}
-Mongo.defaults.merge! convert_underscore_to_dollar: true    
+Mongo.defaults.merge! convert_underscore_to_dollar: true
 db.units.all life: {_lt: 100}                      # => [tassadar]
 
-# it's also trivial to add support for {:life.lt => 100} notion, 
+# it's also trivial to add support for {:life.lt => 100} notion,
 # but the '=>' symbol looks ugly and I don't like it.
 ```
 

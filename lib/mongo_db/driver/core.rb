@@ -7,7 +7,7 @@ class Mongo::Ext; end
 
 %w(
   database
-  collection  
+  collection
   hash_helper
 ).each{|f| require "mongo_db/driver/core/#{f}"}
 
@@ -25,7 +25,7 @@ Mongo::DB.send :include, Mongo::Ext::DB
 # collection
 Mongo::Collection.class_eval do
   include Mongo::Ext::Collection
-  
+
   %w(insert update remove save).each do |method|
     alias_method "#{method}_without_ext", method
     alias_method method, "#{method}_with_ext"

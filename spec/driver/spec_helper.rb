@@ -11,9 +11,9 @@ require 'ruby_ext'
 require 'rspec_ext'
 require 'mongo_db/driver/spec'
 
-# 
+#
 # Handy spec helpers
-# 
+#
 rspec do
   def db
     mongo.db

@@ -2,35 +2,35 @@ require 'driver/spec_helper'
 
 describe "Example" do
   with_mongo
-  
+
   defaults = nil
   before(:all){defaults = Mongo.defaults.clone}
   after(:all){Mongo.defaults = defaults}
-  
-  it "core" do    
-    require 'mongo_db/driver/core'  
-    
+
+  it "core" do
+    require 'mongo_db/driver/core'
+
     # changing some defaults
     Mongo.defaults.merge! symbolize: true, multi: true, safe: true
-    
+
     # connection & db
     connection = Mongo::Connection.new
     db = connection.db 'default_test'
-    
+
     # collection shortcuts
     db.some_collection
-    
+
     # create
     zeratul =  {name: 'Zeratul',  stats: {attack: 85, life: 300, shield: 100}}
     tassadar = {name: 'Tassadar', stats: {attack: 0,  life: 80,  shield: 300}}
-    
+
     db.units.save zeratul
     db.units.save tassadar
-    
+
     # udate (we made error - mistakenly set Tassadar's attack as zero, let's fix it)
     tassadar[:stats][:attack] = 20
     db.units.save tassadar
-    
+
     # querying first & all, there's also :each, the same as :all
     db.units.first name: 'Zeratul'                     # => zeratul
     db.units.all name: 'Zeratul'                       # => [zeratul]
@@ -38,20 +38,20 @@ describe "Example" do
       hero                                             # => zeratul
     end
   end
-  
-  it "optional" do    
+
+  it "optional" do
     require 'mongo_db/driver/more'
-        
+
     # simple finders (bang versions also availiable)
     db.units.by_name 'Zeratul'                         # => zeratul
     db.units.first_by_name 'Zeratul'                   # => zeratul
     db.units.all_by_name 'Zeratul'                     # => [zeratul]
-    
+
     # query sugar, use {life: {_lt: 100}} instead of {life: {:$lt => 100}}
-    Mongo.defaults.merge! convert_underscore_to_dollar: true    
+    Mongo.defaults.merge! convert_underscore_to_dollar: true
     db.units.all life: {_lt: 100}                      # => [tassadar]
-    
-    # it's also trivial to add support for {:life.lt => 100} notion, 
+
+    # it's also trivial to add support for {:life.lt => 100} notion,
     # but the '=>' symbol looks ugly and I don't like it.
   end
 end

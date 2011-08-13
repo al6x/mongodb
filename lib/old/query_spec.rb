@@ -1,11 +1,11 @@
 require 'driver/spec_helper'
 
-describe "Query" do  
+describe "Query" do
   dsl_class = Mongo::Ext::Query::Dsl
   dsl_class.class_eval do
     public :statements
   end
-  
+
   it "operators" do
     value = :value
     dsl_class.new do |o|
@@ -14,7 +14,7 @@ describe "Query" do
       o.key <      value
       o.key <=     value
       o.key >      value
-      o.key >=     value      
+      o.key >=     value
       o.key.all    value
       o.key.exists true
       o.key.mod    value
@@ -38,9 +38,9 @@ describe "Query" do
       [:key, :type,   :value]
     ]
   end
-  
+
   it ":nor, :or, :and"
-  
+
   describe "statement" do
     def process_statement *args
       s = Mongo::Ext::Query::Dsl::Statement.new
@@ -49,12 +49,12 @@ describe "Query" do
       s.add_to result
       result
     end
-    
+
     it "basics", focus: true do
       p process_statement(:age, :$gt, 34)
     end
   end
-  
+
   # it "to_hash" do
   #   dsl.new do |o|
   #     # o.name == 'Jim'
@@ -64,7 +64,7 @@ describe "Query" do
   #     :$gt => {age:  34}
   #   }
   # end
-  # 
+  #
   # it do
   #   dsl.new do |unit|
   #     unit.name == 'Zeratul'

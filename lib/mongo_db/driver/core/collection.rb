@@ -1,26 +1,26 @@
 module Mongo::Ext::Collection
-  # 
+  #
   # CRUD
-  #   
+  #
   def save_with_ext doc, opts = {}
     save_without_ext doc, reverse_merge_defaults(opts, :safe)
   end
-  
+
   def insert_with_ext doc_or_docs, opts = {}
     insert_without_ext doc_or_docs, reverse_merge_defaults(opts, :safe)
   end
-  
+
   def update_with_ext selector, document, opts = {}
     selector = convert_underscore_to_dollar_in_selector selector
     document = convert_underscore_to_dollar_in_update document
-    
+
     # because :multi works only with $ operators, we need to check it
-    opts = if document.keys.any?{|k| k =~ /^\$/}      
+    opts = if document.keys.any?{|k| k =~ /^\$/}
       reverse_merge_defaults(opts, :safe, :multi)
     else
       reverse_merge_defaults(opts, :safe)
     end
-    
+
     update_without_ext selector, document, opts
   end
 
@@ -32,18 +32,18 @@ module Mongo::Ext::Collection
   def destroy *args
     remove *args
   end
-  
-  # 
+
+  #
   # Querying
-  # 
+  #
   def first spec_or_object_id = nil, opts = {}
     spec_or_object_id = convert_underscore_to_dollar_in_selector spec_or_object_id if spec_or_object_id.is_a? Hash
-        
+
     o = find_one spec_or_object_id, opts
     o = ::Mongo::Ext::HashHelper.symbolize o if Mongo.defaults[:symbolize]
     o
   end
-  
+
   def all *args, &block
     if block
       each *args, &block
@@ -53,10 +53,10 @@ module Mongo::Ext::Collection
       list
     end
   end
-  
+
   def each selector = {}, opts = {}, &block
     selector = convert_underscore_to_dollar_in_selector selector
-    
+
     cursor = nil
     begin
       cursor = find selector, reverse_merge_defaults(opts, :batch_size)
@@ -69,7 +69,7 @@ module Mongo::Ext::Collection
       cursor.close if cursor
     end
   end
-  
+
   protected
     def convert_underscore_to_dollar_in_selector selector
       if Mongo.defaults[:convert_underscore_to_dollar]
@@ -77,14 +77,14 @@ module Mongo::Ext::Collection
       end
       selector
     end
-    
+
     def convert_underscore_to_dollar_in_update update
       if Mongo.defaults[:convert_underscore_to_dollar]
         update = ::Mongo::Ext::HashHelper.convert_underscore_to_dollar_in_selector update
       end
       update
     end
-  
+
     def reverse_merge_defaults opts, *keys
       h = opts.clone
       keys.each do |k|

@@ -39,7 +39,7 @@ end
 
 Optionall stuff:
 
-- Adds very simple query enchancements
+- Simple query enchancements
 
 ``` ruby
 require 'mongo_db/driver/more'

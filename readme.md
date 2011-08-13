@@ -45,9 +45,9 @@ Optionall stuff:
 
 ``` ruby
 # simple finders (also bang versions availiable)
-db.units.by_name 'Zeratul'                         # => zeratul
-db.units.first_by_name 'Zeratul'                   # => zeratul
-db.units.all_by_name 'Zeratul'                     # => [zeratul]
+db.units.by_name 'Zeratul'                          # => zeratul
+db.units.first_by_name 'Zeratul'                    # => zeratul
+db.units.all_by_name 'Zeratul'                      # => [zeratul]
 ```
 
 Hmm, honestly I couldn't resist a temptation and added a little magic, but it's very simple, localized and optional (You can disable it). To require only core stuff

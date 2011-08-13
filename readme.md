@@ -40,7 +40,6 @@ end
 Optionall stuff:
 
 - Adds very simple query enchancements
-- Migrations (work in progress).
 
 ``` ruby
 require 'mongo_db/driver/more'

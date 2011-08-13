@@ -46,13 +46,10 @@ describe "Example" do
     db.units.all_by_name 'Zeratul'                     # => [zeratul]
     
     # query sugar, use {life: {_lt: 100}} instead of {life: {:$lt => 100}}
-    # it will affect olny small set of keywords (:_lt, :_inc),
-    # other underscored keys will be intact.
     Mongo.defaults.merge! convert_underscore_to_dollar: true    
     db.units.all life: {_lt: 100}                      # => [tassadar]
     
-    # it's also trivial to add support for {:life.lt => 100} notion, but
-    # it uses ugly '=>' hash notation instead of ':' and it differs from
-    # how it looks in native MongoDB JSON query.
+    # it's also trivial to add support for {:life.lt => 100} notion, 
+    # but ti's ugly and I don't like it.
   end
 end

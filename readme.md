@@ -50,8 +50,6 @@ db.units.first_by_name 'Zeratul'                    # => zeratul
 db.units.all_by_name 'Zeratul'                      # => [zeratul]
 ```
 
-Hmm, honestly I couldn't resist a temptation and added a little magic, but it's very simple, localized and optional (You can disable it). To require only core stuff
-
 More docs - there's no need for more docs, the whole point of this extension is to be small, intuitive, 100% compatible with official driver (at least should be), and require no extra knowledge.
 So, please use standard Ruby driver documentation.
 

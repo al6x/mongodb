@@ -40,7 +40,7 @@ end
 Optionall stuff:
 
 ``` ruby
-# simple finders (also bang versions availiable)
+# simple finders (bang versions also availiable)
 db.units.by_name 'Zeratul'                          # => zeratul
 db.units.first_by_name 'Zeratul'                    # => zeratul
 db.units.all_by_name 'Zeratul'                      # => [zeratul]

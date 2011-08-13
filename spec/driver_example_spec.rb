@@ -8,7 +8,7 @@ describe "Example" do
   after(:all){Mongo.defaults = defaults}
   
   it "core" do    
-    require 'mongo_db/core'  
+    require 'mongo_db/driver/core'  
     
     # changing some defaults
     Mongo.defaults.merge! symbolize: true, multi: true, safe: true
@@ -40,7 +40,7 @@ describe "Example" do
   end
   
   it "optional" do    
-    require 'mongo_db/more'
+    require 'mongo_db/driver/more'
         
     # simple finders (bang versions also availiable)
     db.units.by_name 'Zeratul'                         # => zeratul

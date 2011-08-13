@@ -8,7 +8,8 @@ This enhancements alter the Ruby-driver's API to be more simple and intuitive.
 - Makes alien API of mongo-ruby-driver friendly & handy.
 - No extra abstraction or complexities introduced, all things are exactly the same as in MongoDB.
 - Simple migrations support (work in progress).
-- Hmm, honestly I couldn't resist a temptation and added a little magic, but it's very simple, localized and optional (You can disable it).
+
+Note: By default it also adds a little magic and alters some default values of standard driver to be more useful, but You can omit it and require only the core stuff: use *requre 'mongo_db/driver/core'* instead of *requre 'mongo_db/driver'*
 
 ``` ruby
 require 'mongo_db/driver'
@@ -39,6 +40,17 @@ db.units.all name: 'Zeratul' do |hero|
   hero                                              # => zeratul
 end
 ```
+
+Optionall stuff:
+
+``` ruby
+# simple finders (also bang versions availiable)
+db.units.by_name 'Zeratul'                         # => zeratul
+db.units.first_by_name 'Zeratul'                   # => zeratul
+db.units.all_by_name 'Zeratul'                     # => [zeratul]
+```
+
+Hmm, honestly I couldn't resist a temptation and added a little magic, but it's very simple, localized and optional (You can disable it). To require only core stuff
 
 More docs - there's no need for more docs, the whole point of this extension is to be small, intuitive, 100% compatible with official driver (at least should be), and require no extra knowledge.
 So, please use standard Ruby driver documentation.

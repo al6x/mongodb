@@ -1,16 +1,16 @@
-Mongo::Collection.class_eval do
-  alias_method :save_with_ext, :save
-  def save doc, opts = {}
-    save_with_ext doc, reverse_merge_defaults(opts, :safe)
+module Mongo::Ext::Collection
+  # 
+  # CRUD
+  #   
+  def save_with_ext doc, opts = {}
+    save_without_ext doc, reverse_merge_defaults(opts, :safe)
   end
   
-  alias_method :insert_whth_ext, :insert
-  def insert doc_or_docs, opts = {}
-    insert_whth_ext doc_or_docs, reverse_merge_defaults(opts, :safe)
+  def insert_with_ext doc_or_docs, opts = {}
+    insert_without_ext doc_or_docs, reverse_merge_defaults(opts, :safe)
   end
   
-  alias_method :update_whth_ext, :update
-  def update selector, document, opts = {}
+  def update_with_ext selector, document, opts = {}
     # because :multi works only with $ operators, we need to check it
     opts = if document.keys.any?{|k| k =~ /^\$/}      
       reverse_merge_defaults(opts, :safe, :multi)
@@ -18,14 +18,20 @@ Mongo::Collection.class_eval do
       reverse_merge_defaults(opts, :safe)
     end
     
-    update_whth_ext selector, document, opts
+    update_without_ext selector, document, opts
+  end
+
+  def remove_with_ext selector = {}, opts = {}
+    remove_without_ext selector, reverse_merge_defaults(opts, :safe, :multi)
+  end
+
+  def destroy *args
+    remove *args
   end
   
-  alias_method :remove_with_ext, :remove
-  def remove selector = {}, opts = {}
-    remove_with_ext selector, reverse_merge_defaults(opts, :safe, :multi)
-  end
-  
+  # 
+  # Querying
+  # 
   def first *args
     o = find_one *args
     ::Mongo::Ext::HashHelper.unmarshal o
@@ -54,8 +60,6 @@ Mongo::Collection.class_eval do
       cursor.close if cursor
     end
   end
-  
-  alias_method :destroy, :remove
   
   protected
     def reverse_merge_defaults opts, *keys

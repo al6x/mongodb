@@ -1,13 +1,6 @@
 require 'mongo_db/driver'
 
-Mongo.defaults.merge! \
-  symbolize:   true,
-  batch_size:  50,
-  multi:       true,
-  safe:        true
-
 require 'ruby_ext'
-
 require 'rspec_ext'
 require 'mongo_db/driver/spec'
 

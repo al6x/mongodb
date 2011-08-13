@@ -7,8 +7,8 @@ describe "Example" do
   before(:all){defaults = Mongo.defaults.clone}
   after(:all){Mongo.defaults = defaults}
   
-  it "database & collection" do
-    require 'mongo_db/driver'
+  it "core" do    
+    require 'mongo_db/driver'  
     
     # making defaults more suitable
     Mongo.defaults.merge! symbolize: true, multi: true, safe: true
@@ -36,7 +36,14 @@ describe "Example" do
 
     db.units.all name: 'Zeratul'                       # => [zeratul]
     db.units.all name: 'Zeratul' do |hero|
-      hero                                              # => zeratul
+      hero                                             # => zeratul
     end
+  end
+  
+  it "optional" do
+    # simple finders (also bang versions availiable)
+    db.units.by_name 'Zeratul'                         # => zeratul
+    db.units.first_by_name 'Zeratul'                   # => zeratul
+    db.units.all_by_name 'Zeratul'                     # => [zeratul]
   end
 end

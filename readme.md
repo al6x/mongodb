@@ -7,7 +7,6 @@ This enhancements alter the Ruby-driver's API to be more simple and intuitive.
 
 - Makes API of mongo-ruby-driver friendly & handy.
 - No extra abstraction or complexities introduced, all things are exactly the same as in MongoDB.
-- Simple migrations support (work in progress).
 
 ``` ruby
 require 'mongo_db/driver/core'
@@ -39,6 +38,9 @@ end
 ```
 
 Optionall stuff:
+
+- Adds very simple query enchancements
+- Migrations (work in progress).
 
 ``` ruby
 require 'mongo_db/driver/more'

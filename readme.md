@@ -1,4 +1,4 @@
-Object Model & Ruby driver enhancements for MongoDB. 
+Object Model & Ruby driver enhancements for MongoDB.
 
 # MongoDB driver enhancements
 

@@ -4,7 +4,10 @@ require 'rspec'
 describe "Object example" do
   defaults = nil
   before(:all){defaults = Mongo.defaults.clone}
-  after(:all){Mongo.defaults = defaults}
+  after :all do
+    Mongo.defaults = defaults
+    Object.send :remove_const, :Unit if Object.const_defined? :Unit
+  end
 
   it do
     # let's define the game unit
@@ -15,6 +18,14 @@ describe "Object example" do
       def initialize name = nil, stats = {}
         @name, @stats = name, stats
       end
+
+      class Stats
+        attr_accessor :attack, :life, :shield
+
+        def initialize attack = nil, life = nil, shield = nil
+          @attack, @life, @shield = attack, life, shield
+        end
+      end
     end
 
     # connecting to MongoDB
@@ -24,14 +35,14 @@ describe "Object example" do
     db = connection.db 'default_test'
 
     # create
-    zeratul  = Unit.new 'Zeratul',  attack: 85, life: 300, shield: 100
-    tassadar = Unit.new 'Tassadar', attack: 0,  life: 80,  shield: 300
+    zeratul  = Unit.new('Zeratul',  Unit::Stats.new(85, 300, 100))
+    tassadar = Unit.new('Tassadar', Unit::Stats.new(0,  80,  300))
 
     db.units.save zeratul
     db.units.save tassadar
 
     # udate (we made error - mistakenly set Tassadar's attack as zero, let's fix it)
-    tassadar.stats[:attack] = 20
+    tassadar.stats.attack = 20
     db.units.save tassadar
 
     # querying first & all, there's also :each, the same as :all

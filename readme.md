@@ -65,7 +65,7 @@ So, please use standard Ruby driver documentation.
 
 # Persistence for pure Ruby objects
 
-Save any Ruby object to MongoDB, as if it's hash. Object can be any type, simple or composite with other objects / arrays / hashes inside.
+Save any Ruby object to MongoDB, as if it's a document. Objects can be any type, simple or composite with other objects / arrays / hashes inside.
 
 Note: the :initialize method should allow to create object without arguments.
 

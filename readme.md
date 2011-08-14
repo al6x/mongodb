@@ -7,8 +7,8 @@ Object Model & Ruby driver enhancements for MongoDB.
 
 # MongoDB driver enhancements
 
-MongoDB itself is very powerful, flexible and simple tool, but it's Ruby driver has a little complicated API.
-This enhancements alter this API to be more simple and intuitive.
+MongoDB itself is very powerful, flexible and simple tool, but the API of the Ruby driver is a little complicated.
+These enhancements alter the driver's API and made it more simple and intuitive.
 
 - Makes API of mongo-ruby-driver friendly & handy.
 - No extra abstraction or complexities introduced, all things are exactly the same as in MongoDB.

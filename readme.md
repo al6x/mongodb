@@ -12,7 +12,7 @@ This enhancements alter this API to be more simple and intuitive.
 
 - Makes API of mongo-ruby-driver friendly & handy.
 - No extra abstraction or complexities introduced, all things are exactly the same as in MongoDB.
-- 100% backward compatible with original driver API (if not - it's a bug, report it please)
+- 100% backward compatibility with original driver API (if not - it's a bug, report it please)
 
 ``` ruby
 require 'mongo_db/driver/core'

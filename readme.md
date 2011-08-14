@@ -60,7 +60,7 @@ Mongo.defaults.merge! convert_underscore_to_dollar: true
 db.units.all 'stats.life' => {_lt: 100}            # => [tassadar]
 ```
 
-More docs - there's no need for more docs, the whole point of this extension is to be small, intuitive, 100% compatible with the official driver (at least should be), and require no extra knowledge.
+More docs - there's no need for more docs, the whole point of this extension is to be small, intuitive, 100% compatible with the official driver, and require no extra knowledge.
 So, please use standard Ruby driver documentation.
 
 # Persistence for pure Ruby objects

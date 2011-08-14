@@ -24,7 +24,7 @@ describe "Object example" do
     db = connection.db 'default_test'
 
     # create
-    zeratul =  Unit.new 'Zeratul',  attack: 85, life: 300, shield: 100
+    zeratul  = Unit.new 'Zeratul',  attack: 85, life: 300, shield: 100
     tassadar = Unit.new 'Tassadar', attack: 0,  life: 80,  shield: 300
 
     db.units.save zeratul

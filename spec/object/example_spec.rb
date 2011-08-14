@@ -15,7 +15,7 @@ describe "Object example" do
       attr_reader :name, :stats
 
       # don't forget to allow creating object with no arguments
-      def initialize name = nil, stats = {}
+      def initialize name = nil, stats = nil
         @name, @stats = name, stats
       end
 

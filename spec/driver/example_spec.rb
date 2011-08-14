@@ -37,10 +37,10 @@ describe "Driver example" do
       unit                                             # => zeratul
     end
 
-    
-    # 
+
+    #
     # optional
-    # 
+    #
     require 'mongo_db/driver/more'
 
     # simple finders (bang versions also availiable)

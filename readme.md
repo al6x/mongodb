@@ -72,7 +72,7 @@ Note: the :initialize method should allow to create object without arguments.
 # let's define the game unit
 class Unit
   attr_reader :name, :stats
-  
+
   # don't forget to allow creating object with no arguments
   def initialize name = nil, stats = {}
     @name, @stats = name, stats

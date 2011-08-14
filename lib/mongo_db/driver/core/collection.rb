@@ -11,7 +11,7 @@ module Mongo::Ext::Collection
 
   def insert_with_ext args, opts = {}
     result = insert_without_ext args, reverse_merge_defaults(opts, :safe)
-    
+
     # fix for mongodriver, it will return single result if we supply [doc] as args
     (args.is_a?(Array) and !result.is_a?(Array)) ? [result] : result
   end
@@ -19,7 +19,7 @@ module Mongo::Ext::Collection
   def update_with_ext selector, doc, opts = {}
     selector = convert_underscore_to_dollar_in_selector selector
     doc      = convert_underscore_to_dollar_in_update doc
-    
+
     # because :multi works only with $ operators, we need to check if it's applicable
     opts = if doc.keys.any?{|k| k =~ /^\$/}
       reverse_merge_defaults(opts, :safe, :multi)
@@ -75,7 +75,7 @@ module Mongo::Ext::Collection
     end
     nil
   end
-  
+
   protected
     QUERY_KEYWORDS = [
       :_lt, :_lte, :_gt, :_gte,
@@ -87,7 +87,7 @@ module Mongo::Ext::Collection
     UPDATE_KEYWORDS = [
       :_inc, :_set, :_unset, :_push, :_pushAll, :_addToSet, :_pop, :_pull, :_pullAll, :_rename, :_bit
     ].to_set
-  
+
     def reverse_merge_defaults opts, *keys
       h = opts.clone
       keys.each do |k|
@@ -95,11 +95,11 @@ module Mongo::Ext::Collection
       end
       h
     end
-  
+
     # symbolizing hashes
     def symbolize_doc doc
       return doc unless Mongo.defaults[:symbolize]
-    
+
       Mongo::Ext::Collection.convert_doc doc do |k, v, result|
         k = k.to_sym if k.is_a? String
         result[k] = v
@@ -109,7 +109,7 @@ module Mongo::Ext::Collection
     # replaces :_lt to :$lt in query
     def convert_underscore_to_dollar_in_selector selector
       return selector unless Mongo.defaults[:convert_underscore_to_dollar]
-    
+
       Mongo::Ext::Collection.convert_doc selector do |k, v, result|
         k = "$#{k.to_s[1..-1]}".to_sym if QUERY_KEYWORDS.include?(k)
         result[k] = v
@@ -119,7 +119,7 @@ module Mongo::Ext::Collection
     # replaces :_set to :$set in query
     def convert_underscore_to_dollar_in_update update
       return update unless Mongo.defaults[:convert_underscore_to_dollar]
-    
+
       Mongo::Ext::Collection.convert_doc update do |k, v, result|
         k = "$#{k.to_s[1..-1]}".to_sym if UPDATE_KEYWORDS.include?(k)
         result[k] = v

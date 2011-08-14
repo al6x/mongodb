@@ -5,8 +5,8 @@ describe "Collection" do
     @helper = Object.new
     @helper.send :extend, Mongo::Ext::Collection
   end
-  
-  it "symbolize" do        
+
+  it "symbolize" do
     @helper.send(:symbolize_doc, {
       'a' => 1,
       'b' => {

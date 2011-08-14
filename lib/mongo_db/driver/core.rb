@@ -7,7 +7,7 @@ class Mongo::Ext; end
 
 %w(
   database
-  collection 
+  collection
 ).each{|f| require "mongo_db/driver/core/#{f}"}
 
 # defaults

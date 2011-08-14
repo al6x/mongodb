@@ -6,11 +6,11 @@ describe "Object example" do
   before(:all){defaults = Mongo.defaults.clone}
   after(:all){Mongo.defaults = defaults}
 
-  it do        
+  it do
     # let's define the game unit
     class Unit
       attr_reader :name, :stats
-      
+
       # don't forget to allow creating object with no arguments
       def initialize name = nil, stats = {}
         @name, @stats = name, stats
@@ -40,7 +40,7 @@ describe "Object example" do
     db.units.all name: 'Zeratul' do |unit|
       unit                                             # => zeratul
     end
-    
+
     # simple finders (bang versions also availiable)
     db.units.by_name 'Zeratul'                         # => zeratul
     db.units.first_by_name 'Zeratul'                   # => zeratul

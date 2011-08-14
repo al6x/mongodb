@@ -8,19 +8,19 @@ shared_examples_for 'object CRUD' do
     # create
     db.units.save(@zeratul).should be_true
     @zeratul.instance_variable_get(:@_id).should_not be_nil
-    
+
     # read
     db.units.count.should == 1
     db.units.all.should == [@zeratul]
     db.units.first.should == @zeratul
     db.units.first.object_id.should_not == @zeratul.object_id
-    
+
     # update
     @zeratul.info = 'Killer of Cerebrates'
     db.units.save(@zeratul).should be_true
     db.units.count.should == 1
     db.units.first(name: 'Zeratul').info.should == 'Killer of Cerebrates'
-    
+
     # destroy
     db.units.destroy(@zeratul).should be_true
     db.units.count.should == 0

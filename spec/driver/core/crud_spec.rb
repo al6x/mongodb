@@ -17,7 +17,7 @@ describe "Hash CRUD" do
       # create
       db.units.save(@zeratul).should be_mongo_id
       @zeratul[:_id].should be_mongo_id
-      
+
       # read
       db.units.all.should == [@zeratul]
       db.units.count.should == 1

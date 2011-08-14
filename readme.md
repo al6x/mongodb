@@ -43,9 +43,7 @@ db.units.all name: 'Zeratul' do |unit|
 end
 ```
 
-Optionall stuff:
-
-- Simple query enchancements
+Optionall stuff - simple query enchancements:
 
 ``` ruby
 require 'mongo_db/driver/more'

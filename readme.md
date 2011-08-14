@@ -134,7 +134,7 @@ Model designed after the excellent "Domain-Driven Design" book by Eric Evans.
 - Full support for embedded objects (and MDD composite pattern).
 - Doesn't try to mimic ActiveRecord, it's differrent and designed to get most of MongoDB.
 
-# Installation & Usage
+# Installation
 
 ``` bash
 gem install mongo_db

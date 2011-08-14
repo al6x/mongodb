@@ -1,4 +1,4 @@
-Object Model & Ruby driver enhancements for MongoDB. There are following parts:
+Object Model & Ruby driver enhancements for MongoDB.
 
 - Driver enchancements (done)
 - Persistence for pure Ruby objects (done)
@@ -7,8 +7,8 @@ Object Model & Ruby driver enhancements for MongoDB. There are following parts:
 
 # MongoDB driver enhancements
 
-MongoDB itself is very powerful, flexible and simple tool, but it's Ruby driver hides it behind complicated API.
-This enhancements alter the Ruby-driver's API to be more simple and intuitive.
+MongoDB itself is very powerful, flexible and simple tool, but it's Ruby driver has a little complicated API.
+This enhancements alter this API to be more simple and intuitive.
 
 - Makes API of mongo-ruby-driver friendly & handy.
 - No extra abstraction or complexities introduced, all things are exactly the same as in MongoDB.
@@ -64,9 +64,8 @@ So, please use standard Ruby driver documentation.
 
 # Persistence for pure Ruby objects
 
-Save any Ruby object to MongoDB, as if it's hash, it can be any type, simple or composite with other objects / arrays / hashes inside. 
-
-- The :initialize method should allow to create object without arguments.
+Save any Ruby object to MongoDB, as if it's hash. Object can be any type, simple or composite with other objects / arrays / hashes inside. 
+Note: the :initialize method should allow to create object without arguments.
 
 ``` ruby
 # let's define the game unit

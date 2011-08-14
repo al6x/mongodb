@@ -1,4 +1,4 @@
-module Mongo::Ext::ModelHelper
+  module Mongo::Ext::ObjectHelper
   #
   # CRUD
   #
@@ -21,7 +21,7 @@ module Mongo::Ext::ModelHelper
   end
 
   def update_with_model selector, doc, opts = {}
-    doc = Mongo::Ext::ModelHelper.convert_object_to_doc doc unless doc.is_a?(Hash)
+    doc = Mongo::Ext::ObjectHelper.convert_object_to_doc doc unless doc.is_a?(Hash)
     update_without_model selector, doc, opts
   end
 
@@ -40,12 +40,12 @@ module Mongo::Ext::ModelHelper
   #
   def first *args, &block
     doc = super *args, &block
-    Mongo::Ext::ModelHelper.convert_doc_to_object doc
+    Mongo::Ext::ObjectHelper.convert_doc_to_object doc
   end
 
   def each *args, &block
     super *args do |doc|
-      doc = Mongo::Ext::ModelHelper.convert_doc_to_object(doc)
+      doc = Mongo::Ext::ObjectHelper.convert_doc_to_object(doc)
       block.call doc
     end
     nil
@@ -54,11 +54,11 @@ module Mongo::Ext::ModelHelper
   protected
     def _insert_with_model docs, opts
       hashes = docs.collect do |doc|
-        doc.is_a?(Hash) ? doc : Mongo::Ext::ModelHelper.convert_object_to_doc(doc)
+        doc.is_a?(Hash) ? doc : Mongo::Ext::ObjectHelper.convert_object_to_doc(doc)
       end
       result = insert_without_model hashes, opts
       hashes.each_with_index do |h, i|
-        Mongo::Ext::ModelHelper.update_object_after_insertion docs[i], h
+        Mongo::Ext::ObjectHelper.update_object_after_insertion docs[i], h
       end
       result
     end

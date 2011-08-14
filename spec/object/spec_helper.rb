@@ -1,3 +1,3 @@
-require 'mongo_db/model'
+require 'mongo_db/object'
 
 require 'driver/spec_helper'

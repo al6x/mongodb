@@ -1,4 +1,4 @@
-require 'mongo_db/model'
+require 'mongo_db/object'
 require 'rspec'
 
 describe "Object example" do
@@ -29,7 +29,7 @@ describe "Object example" do
     end
 
     # connecting to MongoDB
-    require 'mongo_db/model'
+    require 'mongo_db/object'
     Mongo.defaults.merge! symbolize: true, multi: true, safe: true
     connection = Mongo::Connection.new
     db = connection.db 'default_test'

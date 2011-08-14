@@ -1,2 +1,1 @@
-- refactor argument names in collection helper methods
-- move helper methods from collection helper to serializer
+- identity map

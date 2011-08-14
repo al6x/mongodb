@@ -1,7 +1,7 @@
 Object Model & Ruby driver enhancements for MongoDB.
 
-- Driver enchancements (done)
-- Persistence for pure Ruby objects (done)
+- Driver enchancements
+- Persistence for pure Ruby objects
 - Migrations (work in progress)
 - Object Model (callbacks, validations, mass-assignment, finders, ...) (work in progress)
 

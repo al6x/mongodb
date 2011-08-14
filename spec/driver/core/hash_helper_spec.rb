@@ -1,13 +1,13 @@
 require 'driver/spec_helper'
 
-describe "HashHelper" do
+describe "Collection" do
   before do
     @helper = Object.new
-    @helper.send :extend, Mongo::Ext::HashHelper
+    @helper.send :extend, Mongo::Ext::Collection
   end
   
   it "symbolize" do        
-    @helper.send(:symbolize_hash, {
+    @helper.send(:symbolize_doc, {
       'a' => 1,
       'b' => {
         'c' => 2,

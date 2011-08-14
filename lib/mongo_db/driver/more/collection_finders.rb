@@ -1,4 +1,4 @@
-module Mongo::Ext::HashFinders
+module Mongo::Ext::CollectionFinders
   #
   # first_by_id, special case
   #
@@ -11,10 +11,6 @@ module Mongo::Ext::HashFinders
     first_by_id(id) || raise(Mongo::NotFound, "document with id #{id} not found!")
   end
   alias_method :by_id!, :first_by_id!
-
-  def where &block
-    Mongo::Ext::Query.new self, &block
-  end
 
   protected
     #

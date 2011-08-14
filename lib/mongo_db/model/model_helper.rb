@@ -14,32 +14,22 @@ module Mongo::Ext::ModelHelper
     end
   end
   
-  def insert_with_model doc_or_docs, opts = {}
-    docs = doc_or_docs.is_a?(Array) ? doc_or_docs : [doc_or_docs]
+  def insert_with_model args, opts = {}
+    docs = args.is_a?(Array) ? args : [args]
     result = _insert_with_model docs, opts
-    result = result.first unless doc_or_docs.is_a?(Array)
-    result
+    args.is_a?(Array) ? result : result.first
   end
   
-  def _insert_with_model docs, opts
-    hashes = docs.collect{|doc| doc.is_a?(Hash) ? doc : convert_object_to_hash(doc)}
-    result = insert_without_model hashes, opts
-    hashes.each_with_index{|h, i| update_object_after_insertion docs[i], h}
-    result
+  def update_with_model selector, doc, opts = {}
+    doc = Mongo::Ext::ModelHelper.convert_object_to_doc doc unless doc.is_a?(Hash)        
+    update_without_model selector, doc, opts
   end
 
-  def update_with_model selector, document, opts = {}
-    # checking is it document or atomic update
-    document = convert_object_to_hash document unless document.is_a?(Hash) and document.keys.any?{|k| k =~ /^\$/}
-        
-    update_without_model selector, document, opts
-  end
-
-  def remove_with_model selector = {}, opts = {}
-    if selector.is_a? Hash    
-      remove_without_model selector, opts
-    else
-      id = selector.instance_variable_get(:@_id) || "can't remove object without _id (#{selector})!"
+  def remove_with_model arg = {}, opts = {}
+    if arg.is_a? Hash
+      remove_without_model arg, opts
+    else      
+      id = arg.instance_variable_get(:@_id) || "can't remove object without _id (#{arg})!"
       remove_without_model({_id: id}, opts)
     end
   end
@@ -49,97 +39,116 @@ module Mongo::Ext::ModelHelper
   # Querying
   #  
   def first *args, &block
-    h = super *args, &block
-    convert_hash_to_object h
+    doc = super *args, &block
+    Mongo::Ext::ModelHelper.convert_doc_to_object doc
   end
 
   def each *args, &block
-    selector = convert_underscore_to_dollar_in_selector selector
-    super *args do |h|
-      o = convert_hash_to_object(h)
-      block.call o
+    super *args do |doc|
+      doc = Mongo::Ext::ModelHelper.convert_doc_to_object(doc)
+      block.call doc
     end
     nil
   end
 
   protected
-    SIMPLE_TYPES = [
-      Fixnum, Float,
-      TrueClass, FalseClass,
-      String, Symbol, 
-      Array, Hash, Set,
-      Data, DateTime,
-      NilClass, Time,
-      BSON::ObjectId
-    ].to_set
+    def _insert_with_model docs, opts
+      hashes = docs.collect do |doc| 
+        doc.is_a?(Hash) ? doc : Mongo::Ext::ModelHelper.convert_object_to_doc(doc)
+      end
+      result = insert_without_model hashes, opts
+      hashes.each_with_index do |h, i| 
+        Mongo::Ext::ModelHelper.update_object_after_insertion docs[i], h
+      end
+      result
+    end
   
-    def update_object_after_insertion hash_or_object, hash
-      return if hash_or_object.is_a? Hash      
-      obj = hash_or_object
-      
+  
+  SIMPLE_TYPES = [
+    Fixnum, Float,
+    TrueClass, FalseClass,
+    String, Symbol, 
+    Array, Hash, Set,
+    Data, DateTime,
+    NilClass, Time,
+    BSON::ObjectId
+  ].to_set
+  
+  class << self
+    def update_object_after_insertion doc, hash
+      return if doc.is_a? Hash      
       if id = hash[:_id] || hash['_id']    
-        obj.instance_variable_set :@_id, id
-      end      
-      nil
+        doc.instance_variable_set :@_id, id 
+      end
     end
     
     # converts object to hash (also works with nested & arrays)
-    def convert_object_to_hash o
-      return o.to_mongo if o.respond_to? :to_mongo
-      
-      if o.is_a? Hash
-        result = {}
-        o.each do |k, v|
-          result[k] = convert_object_to_hash v          
+    def convert_object_to_doc obj
+      return obj.to_mongo if obj.respond_to? :to_mongo
+
+      if obj.is_a? Hash
+        doc = {}
+        obj.each do |k, v|
+          doc[k] = convert_object_to_doc v          
         end
-        result
-      elsif o.is_a? Array
-        o.collect{|v| convert_object_to_hash v}
-      elsif SIMPLE_TYPES.include? o.class
-        o
+        doc
+      elsif obj.is_a? Array
+        obj.collect{|v| convert_object_to_doc v}
+      elsif SIMPLE_TYPES.include? obj.class
+        obj
       else
-        result = {}
-        
+        doc = {}
+
         # copying instance variables to hash
-        o.instance_variables.each do |iv_name|
+        obj.instance_variables.each do |iv_name|
           # skipping variables starting with _xx, usually they
           # have specific meaning and used for example for cache
           next if iv_name =~ /^@_/ and iv_name != :@_id
-          
+
           k = iv_name.to_s[1..-1]
           k = k.to_sym if Mongo.defaults[:symbolize]
-          v = o.instance_variable_get iv_name
-          result[k] = convert_object_to_hash v          
+          v = obj.instance_variable_get iv_name
+          doc[k] = convert_object_to_doc v          
         end
-        
+
         # setting class
         class_name = '_class'
         class_name = class_name.to_sym if Mongo.defaults[:symbolize]
-        result[class_name] = o.class.name        
-        
-        result
+        doc[class_name] = obj.class.name        
+
+        doc
       end
     end
     
-    def convert_hash_to_object o
-      if o.is_a? Hash
-        if class_name = o[:_class] || o['_class']
-          klass = Mongo::Ext::ModelSerializer.constantize class_name
-          result = klass.new
-          o.each do |k, v|
+    def convert_doc_to_object doc
+      if doc.is_a? Hash
+        if class_name = doc[:_class] || doc['_class']
+          klass = constantize class_name
+          obj = klass.new
+          doc.each do |k, v|
             next if k.to_sym == :_class
-            
-            v = convert_hash_to_object v
-            result.instance_variable_set "@#{k}", v
+
+            v = convert_doc_to_object v
+            obj.instance_variable_set "@#{k}", v
           end
-          result
+          obj
         else
-          o
+          doc
         end
-      elsif o.is_a? Array
-        o.collect{|v| convert_hash_to_object v}
+      elsif doc.is_a? Array
+        doc.collect{|v| convert_doc_to_object v}
       else
-        o
+        doc
       end
     end
+    
+    def constantize class_name
+      @constantize_cache ||= {}
+      unless klass = @constantize_cache[class_name]
+        klass = eval class_name, TOPLEVEL_BINDING, __FILE__, __LINE__
+        @constantize_cache[class_name] = klass
+      end
+      klass
+    end
+  end    
 end

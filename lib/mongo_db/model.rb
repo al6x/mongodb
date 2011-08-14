@@ -1,7 +1,6 @@
 require 'mongo_db/driver'
 
 %w(
-  model_serializer
   model_helper
 ).each{|f| require "mongo_db/model/#{f}"}
 

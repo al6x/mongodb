@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'Object callbacks' do
-  with_mongo_model
+  with_mongo
 
   before do
     class Player

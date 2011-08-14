@@ -1,8 +1,13 @@
 require 'driver/spec_helper'
 
 describe "HashHelper" do
-  it "symbolize" do
-    Mongo::Ext::HashHelper.symbolize({
+  before do
+    @helper = Object.new
+    @helper.send :extend, Mongo::Ext::HashHelper
+  end
+  
+  it "symbolize" do        
+    @helper.send(:symbolize_hash, {
       'a' => 1,
       'b' => {
         'c' => 2,

@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'object/crud_shared'
 
 describe "Object CRUD" do
-  with_mongo_model
+  with_mongo
 
   describe 'simple' do
     before do
@@ -12,7 +12,7 @@ describe "Object CRUD" do
         def == o; [self.class, name, info] == [o.class, o.respond_to(:name), o.respond_to(:info)] end
       end
 
-      @zeratul = User.new 'Zeratul', 'Dark Templar'
+      @zeratul = Person.new 'Zeratul', 'Dark Templar'
     end
     after{remove_constants :Person}
 

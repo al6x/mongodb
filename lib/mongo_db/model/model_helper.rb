@@ -1,109 +1,145 @@
-class Mongo::Ext::ModelHelper
+module Mongo::Ext::ModelHelper
   #
   # CRUD
   #
-  def insert_with_model doc_or_docs, opts = {}
-    doc_or_docs = [doc_or_docs] unless doc_or_docs.is_a?(Array)
-    result = _insert_without_model doc_or_docs, opts
-    result.size > 1 ? result : result.first
+  def save_with_model doc, opts = {}
+    if doc.is_a? Hash
+      save_without_model doc, opts
+    else
+      if id = doc.instance_variable_get(:@_id)
+        update({:_id => id}, doc, opts.merge(upsert: true))
+      else
+        insert doc, opts
+      end
+    end
   end
   
-  def _insert_without_model docs, opts
-    result = insert_models docs do |hashes|
-      r = insert_without_model hashes, opts
-      r.is_a?(Array) ? r : [doc_or_docs]
-    end
+  def insert_with_model doc_or_docs, opts = {}
+    docs = doc_or_docs.is_a?(Array) ? doc_or_docs : [doc_or_docs]
+    result = _insert_with_model docs, opts
+    result = result.first unless doc_or_docs.is_a?(Array)
+    result
+  end
+  
+  def _insert_with_model docs, opts
+    hashes = docs.collect{|doc| doc.is_a?(Hash) ? doc : convert_object_to_hash(doc)}
+    result = insert_without_model hashes, opts
+    hashes.each_with_index{|h, i| update_object_after_insertion docs[i], h}
+    result
   end
 
   def update_with_model selector, document, opts = {}
-    selector = convert_underscore_to_dollar_in_selector selector
-    document = convert_underscore_to_dollar_in_update document
-
-    # because :multi works only with $ operators, we need to check it
-    opts = if document.keys.any?{|k| k =~ /^\$/}
-      reverse_merge_defaults(opts, :safe, :multi)
-    else
-      reverse_merge_defaults(opts, :safe)
-    end
-
+    # checking is it document or atomic update
+    document = convert_object_to_hash document unless document.is_a?(Hash) and document.keys.any?{|k| k =~ /^\$/}
+        
     update_without_model selector, document, opts
   end
 
   def remove_with_model selector = {}, opts = {}
-    selector = convert_underscore_to_dollar_in_selector selector
-    remove_without_model selector, reverse_merge_defaults(opts, :safe, :multi)
+    if selector.is_a? Hash    
+      remove_without_model selector, opts
+    else
+      id = selector.instance_variable_get(:@_id) || "can't remove object without _id (#{selector})!"
+      remove_without_model({_id: id}, opts)
+    end
   end
-
-  def destroy *args
-    remove *args
-  end
-
+  
+  
   #
   # Querying
-  #
-  def first spec_or_object_id = nil, opts = {}
-    spec_or_object_id = convert_underscore_to_dollar_in_selector spec_or_object_id if spec_or_object_id.is_a? Hash
-
-    o = find_one spec_or_object_id, opts
-    o = ::Mongo::Ext::HashHelper.symbolize o if Mongo.defaults[:symbolize]
-    o
+  #  
+  def first *args, &block
+    h = super *args, &block
+    convert_hash_to_object h
   end
 
-  def all *args, &block
-    if block
-      each *args, &block
-    else
-      list = []
-      each(*args){|o| list << o}
-      list
-    end
-  end
-
-  def each selector = {}, opts = {}, &block
+  def each *args, &block
     selector = convert_underscore_to_dollar_in_selector selector
-
-    cursor = nil
-    begin
-      cursor = find selector, reverse_merge_defaults(opts, :batch_size)
-      cursor.each do |o|
-        o = ::Mongo::Ext::HashHelper.symbolize o if Mongo.defaults[:symbolize]
-        block.call o
-      end
-      nil
-    ensure
-      cursor.close if cursor
+    super *args do |h|
+      o = convert_hash_to_object(h)
+      block.call o
     end
+    nil
   end
 
   protected
-    def insert_model objects, &block
-      hashes = objects.collect do      
-        Mongo::Ext::ModelHelper.convert_to_hash obj
-      end
-      results = block.call hashes
-      p results
-      Mongo::Ext::ModelHelper.conv
-    end
+    SIMPLE_TYPES = [
+      Fixnum, Float,
+      TrueClass, FalseClass,
+      String, Symbol, 
+      Array, Hash, Set,
+      Data, DateTime,
+      NilClass, Time,
+      BSON::ObjectId
+    ].to_set
   
-    def convert_underscore_to_dollar_in_selector selector
-      if Mongo.defaults[:convert_underscore_to_dollar]
-        selector = ::Mongo::Ext::HashHelper.convert_underscore_to_dollar_in_selector selector
-      end
-      selector
+    def update_object_after_insertion hash_or_object, hash
+      return if hash_or_object.is_a? Hash      
+      obj = hash_or_object
+      
+      if id = hash[:_id] || hash['_id']    
+        obj.instance_variable_set :@_id, id
+      end      
+      nil
     end
-
-    def convert_underscore_to_dollar_in_update update
-      if Mongo.defaults[:convert_underscore_to_dollar]
-        update = ::Mongo::Ext::HashHelper.convert_underscore_to_dollar_in_selector update
+    
+    # converts object to hash (also works with nested & arrays)
+    def convert_object_to_hash o
+      return o.to_mongo if o.respond_to? :to_mongo
+      
+      if o.is_a? Hash
+        result = {}
+        o.each do |k, v|
+          result[k] = convert_object_to_hash v          
+        end
+        result
+      elsif o.is_a? Array
+        o.collect{|v| convert_object_to_hash v}
+      elsif SIMPLE_TYPES.include? o.class
+        o
+      else
+        result = {}
+        
+        # copying instance variables to hash
+        o.instance_variables.each do |iv_name|
+          # skipping variables starting with _xx, usually they
+          # have specific meaning and used for example for cache
+          next if iv_name =~ /^@_/ and iv_name != :@_id
+          
+          k = iv_name.to_s[1..-1]
+          k = k.to_sym if Mongo.defaults[:symbolize]
+          v = o.instance_variable_get iv_name
+          result[k] = convert_object_to_hash v          
+        end
+        
+        # setting class
+        class_name = '_class'
+        class_name = class_name.to_sym if Mongo.defaults[:symbolize]
+        result[class_name] = o.class.name        
+        
+        result
       end
-      update
     end
-
-    def reverse_merge_defaults opts, *keys
-      h = opts.clone
-      keys.each do |k|
-        h[k] = Mongo.defaults[k] if Mongo.defaults.include?(k) and !h.include?(k)
+    
+    def convert_hash_to_object o
+      if o.is_a? Hash
+        if class_name = o[:_class] || o['_class']
+          klass = Mongo::Ext::ModelSerializer.constantize class_name
+          result = klass.new
+          o.each do |k, v|
+            next if k.to_sym == :_class
+            
+            v = convert_hash_to_object v
+            result.instance_variable_set "@#{k}", v
+          end
+          result
+        else
+          o
+        end
+      elsif o.is_a? Array
+        o.collect{|v| convert_hash_to_object v}
+      else
+        o
       end
-      h
     end
 end

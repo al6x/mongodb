@@ -1,4 +1,9 @@
-Object Model & Ruby driver enhancements for MongoDB.
+Object Model & Ruby driver enhancements for MongoDB. There are following parts:
+
+- Driver enchancements (done)
+- Persistence for pure Ruby objects (done)
+- Migrations (work in progress)
+- Object Model (callbacks, validations, mass-assignment, finders, ...) (work in progress)
 
 # MongoDB driver enhancements
 
@@ -32,8 +37,8 @@ db.units.save tassadar
 # querying - first & all, there's also :each, the same as :all
 db.units.first name: 'Zeratul'                      # => zeratul
 db.units.all name: 'Zeratul'                        # => [zeratul]
-db.units.all name: 'Zeratul' do |hero|
-  hero                                              # => zeratul
+db.units.all name: 'Zeratul' do |unit|
+  unit                                              # => zeratul
 end
 ```
 
@@ -51,14 +56,62 @@ db.units.all_by_name 'Zeratul'                     # => [zeratul]
 
 # query sugar, use {life: {_lt: 100}} instead of {life: {:$lt => 100}}
 Mongo.defaults.merge! convert_underscore_to_dollar: true
-db.units.all life: {_lt: 100}                      # => [tassadar]
-
-# it's also trivial to add support for {:life.lt => 100} notion,
-# but the '=>' symbol looks ugly and I don't like it.
+db.units.all 'stats.life' => {_lt: 100}            # => [tassadar]
 ```
 
 More docs - there's no need for more docs, the whole point of this extension is to be small, intuitive, 100% compatible with the official driver (at least should be), and require no extra knowledge.
 So, please use standard Ruby driver documentation.
+
+# Persistence for pure Ruby objects
+
+Save any Ruby object to MongoDB, as if it's hash, it can be any type, simple or composite with other objects / arrays / hashes inside. 
+
+- The :initialize method should allow to create object without arguments.
+
+``` ruby
+# let's define the game unit
+class Unit
+  attr_reader :name, :stats
+  
+  # don't forget to allow creating object with no arguments
+  def initialize name = nil, stats = {}
+    @name, @stats = name, stats
+  end
+end
+
+# connecting to MongoDB
+require 'mongo_db/model'
+Mongo.defaults.merge! symbolize: true, multi: true, safe: true
+connection = Mongo::Connection.new
+db = connection.db 'default_test'
+
+# create
+zeratul =  Unit.new 'Zeratul',  attack: 85, life: 300, shield: 100
+tassadar = Unit.new 'Tassadar', attack: 0,  life: 80,  shield: 300
+
+db.units.save zeratul
+db.units.save tassadar
+
+# udate (we made error - mistakenly set Tassadar's attack as zero, let's fix it)
+tassadar.stats[:attack] = 20
+db.units.save tassadar
+
+# querying first & all, there's also :each, the same as :all
+db.units.first name: 'Zeratul'                     # => zeratul
+db.units.all name: 'Zeratul'                       # => [zeratul]
+db.units.all name: 'Zeratul' do |unit|
+  unit                                             # => zeratul
+end
+
+# simple finders (bang versions also availiable)
+db.units.by_name 'Zeratul'                         # => zeratul
+db.units.first_by_name 'Zeratul'                   # => zeratul
+db.units.all_by_name 'Zeratul'                     # => [zeratul]
+
+# query sugar, use {life: {_lt: 100}} instead of {life: {:$lt => 100}}
+Mongo.defaults.merge! convert_underscore_to_dollar: true
+db.units.all('stats.life' => {_lt: 100})           # => [tassadar]
+```
 
 # Object Model (work in progress)
 

@@ -10,7 +10,7 @@ describe "Model CRUD" do
         inherit Mongo::Model
         collection{db.units}
 
-        def initialize name, info; @name, @info = name, info end
+        def initialize name = nil, info = nil; @name, @info = name, info end
         attr_accessor :name, :info
         def == o; [self.class, name, info] == [o.class, o.respond_to(:name), o.respond_to(:info)] end
       end
@@ -29,7 +29,7 @@ describe "Model CRUD" do
 
       # create
       @zeratul.save.should be_true
-      @zeratul._id.should be_present
+      @zeratul._id.should_not be_nil
 
       # read
       Person.count.should == 1
@@ -51,7 +51,7 @@ describe "Model CRUD" do
     it 'should be able to save to another collection' do
       # create
       @zeratul.save(collection: db.protosses).should be_true
-      @zeratul._id.should be_present
+      @zeratul._id.should_not be_nil
 
       # read
       Person.count.should == 0
@@ -77,13 +77,13 @@ describe "Model CRUD" do
       class Player
         inherit Mongo::Model
         attr_accessor :missions
-        def == o; [self.class, self.missions] = [o.class, o.respond_to(:missions)] end
+        def == o; [self.class, self.missions] == [o.class, o.respond_to(:missions)] end
 
         class Mission
           inherit Mongo::Model
-          def initialize name, stats; @name, @stats = name, stats end
+          def initialize name = nil, stats = nil; @name, @stats = name, stats end
           attr_accessor :name, :stats
-          def == o; [self.class, self.name, self.stats] = [o.class, o.respond_to(:name), o.respond_to(:stats)] end
+          def == o; [self.class, self.name, self.stats] == [o.class, o.respond_to(:name), o.respond_to(:stats)] end
         end
       end
 
@@ -100,7 +100,7 @@ describe "Model CRUD" do
     it 'crud' do
       # create
       @player.save.should be_true
-      @player._id.should be_present
+      @player._id.should_not be_nil
 
       # read
       Player.count.should == 1

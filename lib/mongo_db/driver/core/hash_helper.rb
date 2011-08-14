@@ -74,6 +74,7 @@ module Mongo::Ext::HashHelper
     ensure
       cursor.close if cursor
     end
+    nil
   end
   
   protected

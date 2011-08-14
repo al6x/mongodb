@@ -1,13 +1,15 @@
 require 'mongo_db/driver'
 
 %w(
+  model_serializer
   model_helper
-  collection
 ).each{|f| require "mongo_db/model/#{f}"}
 
 # collection
 Mongo::Collection.class_eval do
-  %w(insert update remove).each do |method|
+  include Mongo::Ext::ModelHelper
+  
+  %w(insert update remove save).each do |method|
     alias_method "#{method}_without_model", method
     alias_method method, "#{method}_with_model"
   end

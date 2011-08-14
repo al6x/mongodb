@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'object/spec_helper'
 require 'object/crud_shared'
 
 describe "Object CRUD" do
@@ -7,7 +7,7 @@ describe "Object CRUD" do
   describe 'simple' do
     before do
       class Person
-        def initialize name, info; @name, @info = name, info end
+        def initialize name = nil, info = nil; @name, @info = name, info end
         attr_accessor :name, :info
         def == o; [self.class, name, info] == [o.class, o.respond_to(:name), o.respond_to(:info)] end
       end
@@ -23,12 +23,12 @@ describe "Object CRUD" do
     before do
       class Player
         attr_accessor :missions
-        def == o; [self.class, self.missions] = [o.class, o.respond_to(:missions)] end
+        def == o; [self.class, self.missions] == [o.class, o.respond_to(:missions)] end
 
         class Mission
-          def initialize name, stats; @name, @stats = name, stats end
+          def initialize name = nil, stats = nil; @name, @stats = name, stats end
           attr_accessor :name, :stats
-          def == o; [self.class, self.name, self.stats] = [o.class, o.respond_to(:name), o.respond_to(:stats)] end
+          def == o; [self.class, self.name, self.stats] == [o.class, o.respond_to(:name), o.respond_to(:stats)] end
         end
       end
 

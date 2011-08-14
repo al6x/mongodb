@@ -1,5 +1,10 @@
-require 'spec_helper'
+require 'driver/spec_helper'
 
-db = Mongo::Connection.new("localhost").db("default_test")
-p db.class
-puts db.methods.sort
+describe 'Test' do
+  with_mongo
+  
+  it do
+    class A; end
+    db.units.save a: A.new
+  end
+end

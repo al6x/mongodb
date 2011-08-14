@@ -1,8 +1,7 @@
-require 'driver/spec_helper'
+require 'mongo_db/driver/core'
+require 'rspec'
 
-describe "Example" do
-  with_mongo
-
+describe "Driver example" do
   defaults = nil
   before(:all){defaults = Mongo.defaults.clone}
   after(:all){Mongo.defaults = defaults}
@@ -34,12 +33,14 @@ describe "Example" do
     # querying first & all, there's also :each, the same as :all
     db.units.first name: 'Zeratul'                     # => zeratul
     db.units.all name: 'Zeratul'                       # => [zeratul]
-    db.units.all name: 'Zeratul' do |hero|
-      hero                                             # => zeratul
+    db.units.all name: 'Zeratul' do |unit|
+      unit                                             # => zeratul
     end
-  end
 
-  it "optional" do
+    
+    # 
+    # optional
+    # 
     require 'mongo_db/driver/more'
 
     # simple finders (bang versions also availiable)
@@ -49,9 +50,6 @@ describe "Example" do
 
     # query sugar, use {life: {_lt: 100}} instead of {life: {:$lt => 100}}
     Mongo.defaults.merge! convert_underscore_to_dollar: true
-    db.units.all life: {_lt: 100}                      # => [tassadar]
-
-    # it's also trivial to add support for {:life.lt => 100} notion,
-    # but the '=>' symbol looks ugly and I don't like it.
+    db.units.all 'stats.life' => {_lt: 100}            # => [tassadar]
   end
 end

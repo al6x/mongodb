@@ -113,6 +113,8 @@ Mongo.defaults.merge! convert_underscore_to_dollar: true
 db.units.all('stats.life' => {_lt: 100})           # => [tassadar]
 ```
 
+# Migrations (work in progress)
+
 # Object Model (work in progress)
 
 Model designed after the excellent "Domain-Driven Design" book by Eric Evans.

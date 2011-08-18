@@ -2,9 +2,6 @@ require 'mongo_db/gems'
 
 require 'mongo'
 
-# namespace for extensions
-class Mongo::Ext; end
-
 %w(
   database
   collection
@@ -19,11 +16,11 @@ Mongo.class_eval do
 end
 
 # database
-Mongo::DB.send :include, Mongo::Ext::DB
+Mongo::DB.send :include, Mongo::DBExt
 
 # collection
 Mongo::Collection.class_eval do
-  include Mongo::Ext::Collection
+  include Mongo::CollectionExt
 
   %w(insert update remove save).each do |method|
     alias_method "#{method}_without_ext", method

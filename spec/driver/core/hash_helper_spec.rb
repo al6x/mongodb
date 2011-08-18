@@ -3,7 +3,7 @@ require 'driver/spec_helper'
 describe "Collection" do
   before do
     @helper = Object.new
-    @helper.send :extend, Mongo::Ext::Collection
+    @helper.send :extend, Mongo::CollectionExt
   end
 
   it "symbolize" do

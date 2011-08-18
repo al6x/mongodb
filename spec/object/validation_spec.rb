@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'object/spec_helper'
 
 describe 'Object validation' do
   with_mongo
@@ -16,49 +16,61 @@ describe 'Object validation' do
     @player.missions = [@mission]
   end
   after{remove_constants :Player}
-
+  
   it 'should not save/update/destroy invalid objects' do
     # create
+    @player.should_receive(:validate).once
     @player.stub!(:valid?).and_return(false)
     db.players.save(@player).should be_false
 
+    @player.should_receive(:validate).once
     @player.stub!(:valid?).and_return(true)
     db.players.save(@player).should be_true
-
+    
     # update
+    @player.should_receive(:validate).once
     @player.stub!(:valid?).and_return(false)
     db.players.save(@player).should be_false
-
+    
+    @player.should_receive(:validate).once
     @player.stub!(:valid?).and_return(true)
     db.players.save(@player).should be_true
-
+    
     # destroy
+    @player.should_receive(:validate).once
     @player.stub!(:valid?).and_return(false)
     db.players.destroy(@player).should be_false
-
+    
+    @player.should_receive(:validate).once
     @player.stub!(:valid?).and_return(true)
     db.players.destroy(@player).should be_true
   end
 
   it 'should not save/update/destroy invalid embedded objects' do
-    # create
+    # create    
+    @mission.should_receive(:validate).once
     @mission.stub!(:valid?).and_return(false)
     db.players.save(@player).should be_false
-
+    
+    @mission.should_receive(:validate).once
     @mission.stub!(:valid?).and_return(true)
     db.players.save(@player).should be_true
 
     # update
+    @mission.should_receive(:validate).once
     @mission.stub!(:valid?).and_return(false)
     db.players.save(@player).should be_false
-
+    
+    @mission.should_receive(:validate).once
     @mission.stub!(:valid?).and_return(true)
     db.players.save(@player).should be_true
 
     # destroy
+    @mission.should_receive(:validate).once
     @mission.stub!(:valid?).and_return(false)
     db.players.destroy(@player).should be_false
 
+    @mission.should_receive(:validate).once
     @mission.stub!(:valid?).and_return(true)
     db.players.destroy(@player).should be_true
   end

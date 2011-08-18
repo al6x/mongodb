@@ -1,4 +1,4 @@
-class Mongo::Ext::Query
+class Mongo::Query
   class Dsl < BasicObject
     class Statement < ::Array
       def add_to hash

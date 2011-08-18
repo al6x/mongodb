@@ -1,1 +1,2 @@
 - identity map
+- :name.lt => 'value'

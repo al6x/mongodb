@@ -6,5 +6,5 @@ class Mongo::NotFound < StandardError; end
   collection_finders
 ).each{|f| require "mongo_db/driver/more/#{f}"}
 
-Mongo::Collection.send :include, Mongo::Ext::CollectionFinders
+Mongo::Collection.send :include, Mongo::CollectionFinders
 

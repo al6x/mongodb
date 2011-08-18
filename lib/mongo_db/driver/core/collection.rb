@@ -1,7 +1,7 @@
 require 'set'
 require 'date'
 
-module Mongo::Ext::Collection
+module Mongo::CollectionExt
   #
   # CRUD
   #
@@ -37,6 +37,10 @@ module Mongo::Ext::Collection
 
   def destroy *args
     remove *args
+  end
+  
+  def create *args
+    insert *args
   end
 
   #
@@ -100,7 +104,7 @@ module Mongo::Ext::Collection
     def symbolize_doc doc
       return doc unless Mongo.defaults[:symbolize]
 
-      Mongo::Ext::Collection.convert_doc doc do |k, v, result|
+      Mongo::CollectionExt.convert_doc doc do |k, v, result|
         k = k.to_sym if k.is_a? String
         result[k] = v
       end
@@ -110,7 +114,7 @@ module Mongo::Ext::Collection
     def convert_underscore_to_dollar_in_selector selector
       return selector unless Mongo.defaults[:convert_underscore_to_dollar]
 
-      Mongo::Ext::Collection.convert_doc selector do |k, v, result|
+      Mongo::CollectionExt.convert_doc selector do |k, v, result|
         k = "$#{k.to_s[1..-1]}".to_sym if QUERY_KEYWORDS.include?(k)
         result[k] = v
       end
@@ -120,7 +124,7 @@ module Mongo::Ext::Collection
     def convert_underscore_to_dollar_in_update update
       return update unless Mongo.defaults[:convert_underscore_to_dollar]
 
-      Mongo::Ext::Collection.convert_doc update do |k, v, result|
+      Mongo::CollectionExt.convert_doc update do |k, v, result|
         k = "$#{k.to_s[1..-1]}".to_sym if UPDATE_KEYWORDS.include?(k)
         result[k] = v
       end

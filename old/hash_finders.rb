@@ -1,5 +1,5 @@
-module Mongo::Ext::CollectionFinders
+module Mongo::CollectionFinders
   def where &block
-    Mongo::Ext::Query.new self, &block
+    Mongo::Query.new self, &block
   end
 end

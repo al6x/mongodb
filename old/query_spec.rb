@@ -1,7 +1,7 @@
 require 'driver/spec_helper'
 
 describe "Query" do
-  dsl_class = Mongo::Ext::Query::Dsl
+  dsl_class = Mongo::Query::Dsl
   dsl_class.class_eval do
     public :statements
   end
@@ -43,7 +43,7 @@ describe "Query" do
 
   describe "statement" do
     def process_statement *args
-      s = Mongo::Ext::Query::Dsl::Statement.new
+      s = Mongo::Query::Dsl::Statement.new
       s.push *args
       result = {}
       s.add_to result

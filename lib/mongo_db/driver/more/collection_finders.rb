@@ -1,4 +1,4 @@
-module Mongo::Ext::CollectionFinders
+module Mongo::CollectionFinders
   #
   # first_by_id, special case
   #

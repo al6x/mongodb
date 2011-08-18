@@ -1,7 +1,7 @@
 Object Model & Ruby driver enhancements for MongoDB.
 
 1. Driver enchancements
-2. Persistence for pure Ruby objects
+2. Persistence for any Ruby object
 3. Object Model (callbacks, validations, mass-assignment, finders, ...) (work in progress)
 
 Lower layers are completely independent from upper, use only what You need. There are also support for migrations.
@@ -62,7 +62,7 @@ db.units.all 'stats.life' => {_lt: 100}            # => [tassadar]
 More docs - there's no need for more docs, the whole point of this extension is to be small, intuitive, 100% compatible with the official driver, and require no extra knowledge.
 So, please use standard Ruby driver documentation.
 
-# Persistence for pure Ruby objects
+# Persistence for any Ruby object
 
 Save any Ruby object to MongoDB, as if it's a document. Objects can be any type, simple or composite with other objects / arrays / hashes inside.
 

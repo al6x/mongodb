@@ -1,6 +1,4 @@
-require 'mongo_db/object'
-
-# let's define the game unit
+# Let's define the game unit.
 class Unit
   attr_reader :name, :stats
 
@@ -18,35 +16,36 @@ class Unit
   end
 end
 
-# connecting to MongoDB
+# Connecting to MongoDB.
 require 'mongo_db/object'
 Mongo.defaults.merge! symbolize: true, multi: true, safe: true
 connection = Mongo::Connection.new
 db = connection.db 'default_test'
+db.units.drop
 
-# create
+# Create.
 zeratul  = Unit.new('Zeratul',  Unit::Stats.new(85, 300, 100))
 tassadar = Unit.new('Tassadar', Unit::Stats.new(0,  80,  300))
 
 db.units.save zeratul
 db.units.save tassadar
 
-# udate (we made error - mistakenly set Tassadar's attack as zero, let's fix it)
+# Udate (we made error - mistakenly set Tassadar's attack as zero, let's fix it).
 tassadar.stats.attack = 20
 db.units.save tassadar
 
-# querying first & all, there's also :each, the same as :all
+# Querying first & all, there's also :each, the same as :all.
 db.units.first name: 'Zeratul'                     # => zeratul
 db.units.all name: 'Zeratul'                       # => [zeratul]
 db.units.all name: 'Zeratul' do |unit|
   unit                                             # => zeratul
 end
 
-# simple finders (bang versions also availiable)
+# Simple finders (bang versions also availiable).
 db.units.by_name 'Zeratul'                         # => zeratul
 db.units.first_by_name 'Zeratul'                   # => zeratul
 db.units.all_by_name 'Zeratul'                     # => [zeratul]
 
-# query sugar, use {life: {_lt: 100}} instead of {life: {:$lt => 100}}
+# Query sugar, use {name: {_gt: 'Z'}} instead of {name: {:$gt => 'Z'}}.
 Mongo.defaults.merge! convert_underscore_to_dollar: true
-db.units.all('stats.life' => {_lt: 100})           # => [tassadar]
+db.units.all name: {_gt: 'Z'}                      # => [zeratul]

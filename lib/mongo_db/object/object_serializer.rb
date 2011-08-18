@@ -76,7 +76,7 @@ class Mongo::ObjectSerializer
 
   def valid?
     objects.each do |obj|
-      return false if obj.respond_to?(:valid?) and !obj.valid?
+      return false if obj.respond_to?(:_valid?) and !obj._valid?
     end
     true
   end

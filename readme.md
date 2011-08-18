@@ -18,45 +18,50 @@ These enhancements alter the driver's API and made it more simple and intuitive.
 ``` ruby
 require 'mongo_db/driver/core'
 
-# changing some defaults
+# Changing some defaults.
 Mongo.defaults.merge! symbolize: true, multi: true, safe: true
 
-# connection & db
+# Connection & db.
 connection = Mongo::Connection.new
 db = connection.db 'default_test'
+db.units.drop
 
-# create
+# Collection shortcuts.
+db.some_collection
+
+# Create.
 zeratul =  {name: 'Zeratul',  stats: {attack: 85, life: 300, shield: 100}}
 tassadar = {name: 'Tassadar', stats: {attack: 0,  life: 80,  shield: 300}}
 
 db.units.save zeratul
 db.units.save tassadar
 
-# udate (we made error - mistakenly set Tassadar's attack as zero, let's fix it)
+# Udate (we made error - mistakenly set Tassadar's attack as zero, let's fix it).
 tassadar[:stats][:attack] = 20
 db.units.save tassadar
 
-# querying - first & all, there's also :each, the same as :all
-db.units.first name: 'Zeratul'                      # => zeratul
-db.units.all name: 'Zeratul'                        # => [zeratul]
+# Querying first & all, there's also :each, the same as :all.
+db.units.first name: 'Zeratul'                     # => zeratul
+db.units.all name: 'Zeratul'                       # => [zeratul]
 db.units.all name: 'Zeratul' do |unit|
-  unit                                              # => zeratul
+  unit                                             # => zeratul
 end
 ```
 
 Optionall stuff - simple query enchancements:
 
 ``` ruby
+# Finders.
 require 'mongo_db/driver/more'
 
-# simple finders (bang versions also availiable)
+# Simple finders (bang versions also availiable).
 db.units.by_name 'Zeratul'                         # => zeratul
 db.units.first_by_name 'Zeratul'                   # => zeratul
 db.units.all_by_name 'Zeratul'                     # => [zeratul]
 
-# query sugar, use {life: {_lt: 100}} instead of {life: {:$lt => 100}}
+# Query sugar, use {name: {_gt: 'Z'}} instead of {name: {:$gt => 'Z'}}.
 Mongo.defaults.merge! convert_underscore_to_dollar: true
-db.units.all 'stats.life' => {_lt: 100}            # => [tassadar]
+db.units.all name: {_gt: 'Z'}                      # => [zeratul]
 ```
 
 More docs - there's no need for more docs, the whole point of this extension is to be small, intuitive, 100% compatible with the official driver, and require no extra knowledge.
@@ -69,7 +74,7 @@ Save any Ruby object to MongoDB, as if it's a document. Objects can be any type,
 Note: the :initialize method should allow to create object without arguments.
 
 ``` ruby
-# let's define the game unit
+# Let's define the game unit.
 class Unit
   attr_reader :name, :stats
 
@@ -87,38 +92,39 @@ class Unit
   end
 end
 
-# connecting to MongoDB
+# Connecting to MongoDB.
 require 'mongo_db/object'
 Mongo.defaults.merge! symbolize: true, multi: true, safe: true
 connection = Mongo::Connection.new
 db = connection.db 'default_test'
+db.units.drop
 
-# create
+# Create.
 zeratul  = Unit.new('Zeratul',  Unit::Stats.new(85, 300, 100))
 tassadar = Unit.new('Tassadar', Unit::Stats.new(0,  80,  300))
 
 db.units.save zeratul
 db.units.save tassadar
 
-# udate (we made error - mistakenly set Tassadar's attack as zero, let's fix it)
+# Udate (we made error - mistakenly set Tassadar's attack as zero, let's fix it).
 tassadar.stats.attack = 20
 db.units.save tassadar
 
-# querying first & all, there's also :each, the same as :all
+# Querying first & all, there's also :each, the same as :all.
 db.units.first name: 'Zeratul'                     # => zeratul
 db.units.all name: 'Zeratul'                       # => [zeratul]
 db.units.all name: 'Zeratul' do |unit|
   unit                                             # => zeratul
 end
 
-# simple finders (bang versions also availiable)
+# Simple finders (bang versions also availiable).
 db.units.by_name 'Zeratul'                         # => zeratul
 db.units.first_by_name 'Zeratul'                   # => zeratul
 db.units.all_by_name 'Zeratul'                     # => [zeratul]
 
-# query sugar, use {life: {_lt: 100}} instead of {life: {:$lt => 100}}
+# Query sugar, use {name: {_gt: 'Z'}} instead of {name: {:$gt => 'Z'}}.
 Mongo.defaults.merge! convert_underscore_to_dollar: true
-db.units.all('stats.life' => {_lt: 100})           # => [tassadar]
+db.units.all name: {_gt: 'Z'}                      # => [zeratul]
 ```
 
 # Migrations (work in progress)

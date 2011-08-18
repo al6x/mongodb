@@ -6,6 +6,7 @@ Mongo.defaults.merge! symbolize: true, multi: true, safe: true
 # Connection & db.
 connection = Mongo::Connection.new
 db = connection.db 'default_test'
+db.units.drop
 
 # Collection shortcuts.
 db.some_collection
@@ -37,6 +38,6 @@ db.units.by_name 'Zeratul'                         # => zeratul
 db.units.first_by_name 'Zeratul'                   # => zeratul
 db.units.all_by_name 'Zeratul'                     # => [zeratul]
 
-# Query sugar, use {life: {_lt: 100}} instead of {life: {:$lt => 100}}.
+# Query sugar, use {name: {_gt: 'Z'}} instead of {name: {:$gt => 'Z'}}.
 Mongo.defaults.merge! convert_underscore_to_dollar: true
-db.units.all 'stats.life' => {_lt: 100}            # => [tassadar]
+db.units.all name: {_gt: 'Z'}                      # => [zeratul]

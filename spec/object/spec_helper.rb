@@ -7,7 +7,7 @@ Mongo::ObjectSerializer::SIMPLE_TYPES << RSpec::Mocks::Proxy
 
 # To simplify callback expectations
 module RSpec::CallbackHelper
-  def run_callbacks name
+  def _run_callbacks name
     send name if respond_to? name
   end
 end

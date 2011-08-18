@@ -24,46 +24,92 @@ class Mongo::ObjectSerializer
   end
 
   def insert opts, collection
-    opts, object_opts = parse_object_options opts
+    opts, validate, callbacks = parse_object_options opts
 
-    run_validate_callbacks object_opts do
-      run_callbacks :save, object_opts do
-        run_create_callbacks object_opts do
-          doc = to_document
-          collection.insert_without_object doc, opts
-          id = doc[:_id] || doc['_id'] || raise("internal error: no id after document insertion (#{doc})!")
-          object.instance_variable_set :@_id, id
-          update_internal_state!
-        end
-      end
-    end
+    # before callbacks
+    return false if callbacks and !run_callbacks(objects, :before_validate, :before_save, :before_create)
+
+    # validation
+    return false if validate  and !valid?
+
+    # saving document
+    doc = to_document
+    collection.insert_without_object doc, opts
+    id = doc[:_id] || doc['_id'] || raise("internal error: no id after document insertion (#{doc})!")
+    object.instance_variable_set :@_id, id
+    update_internal_state!
+
+    # after callbacks
+    run_callbacks(objects, :after_create, :after_save, :after_validate) if callbacks
+
+    true
   end
 
   def update opts, collection
-    opts, object_opts = parse_object_options opts
+    opts, validate, callbacks = parse_object_options opts
 
-    run_validate_callbacks object_opts do
-      run_callbacks :save, object_opts do
-        run_update_callbacks object_opts do
-          doc = to_document
-          id = _id || raise("can't update document without id (#{doc})!")
-          collection.update_without_object({_id: id}, doc, opts)
-          update_internal_state!
-        end
+    # before callbacks.
+    # we need to sort out embedded objects into created, updated and destroyed
+    created_objects, updated_objects, destroyed_objects = [], [], []
+    if callbacks
+      original_ids = original_embedded_objects.collect{|obj| obj.object_id}.to_set
+      objects.each do |obj|
+        (original_ids.include?(obj.object_id) ? updated_objects : created_objects) << obj
       end
+
+      objects_ids = objects.collect{|obj| obj.object_id}.to_set
+      destroyed_objects = original_embedded_objects.select{|obj| !objects_ids.include?(obj.object_id)}
+
+      all_successfull = [
+        run_callbacks(created_objects,   :before_validate, :before_save,   :before_create),
+        run_callbacks(updated_objects,   :before_validate, :before_save,   :before_update),
+        run_callbacks(destroyed_objects, :before_validate, :before_destroy)
+      ].reduce(:&)
+
+      return false unless all_successfull
     end
+
+    # validation
+    return false if validate  and !valid?
+
+    # saving document
+    doc = to_document
+    id = _id || raise("can't update document without id (#{doc})!")
+    collection.update_without_object({_id: id}, doc, opts)
+    update_internal_state!
+
+    # after callbacks
+    if callbacks
+      run_callbacks(created_objects,   :after_create,  :after_save,    :after_validate)
+      run_callbacks(updated_objects,   :after_update,  :after_save,    :after_validate)
+      run_callbacks(destroyed_objects, :after_destroy, :after_validate)
+    end
+
+    true
   end
 
   def remove opts, collection
-    opts, object_opts = parse_object_options opts
+    opts, validate, callbacks = parse_object_options opts
 
-    run_validate_callbacks object_opts do
-      run_destroy_callbacks object_opts do
-        id = _id || "can't destroy object without _id (#{arg})!"
-        collection.remove_without_object({_id: id}, opts)
-        update_internal_state!
-      end
+    # before callbacks
+    if callbacks
+      # we need to run :destroy callbacks also on detached embedded objects.
+      all_objects = (objects + original_embedded_objects).uniq{|o| o.object_id}
+      return false unless run_callbacks(all_objects, :before_validate, :before_destroy)
     end
+
+    # validation
+    return false if validate  and !valid?
+
+    # saving document
+    id = _id || "can't destroy object without _id (#{arg})!"
+    collection.remove_without_object({_id: id}, opts)
+    update_internal_state!
+
+    # after callbacks
+    run_callbacks(objects, :after_destroy, :after_validate) if callbacks
+
+    true
   end
 
   def to_document
@@ -81,36 +127,16 @@ class Mongo::ObjectSerializer
     true
   end
 
-  def run_callbacks name, object_opts, objects = nil, &block
-    unless object_opts[:callbacks]
-      block.call
-      return true
-    end
-
-    objects ||= self.objects
-
-    before_name, after_name = "before_#{name}".to_sym, "after_#{name}".to_sym
-
-    result = catch :halt do
-      some_failed = false
+  def run_callbacks objects, *names
+    all_successfull = true
+    names.each do |name|
       objects.each do |obj|
-        if obj.respond_to? :run_callbacks
-          result = obj.run_callbacks before_name
-
-          some_failed = true if result == false
+        if obj.respond_to? :_run_callbacks
+          all_successfull = false if obj._run_callbacks(name) == false
         end
       end
-
-      throw :halt, false if some_failed
-
-      throw :halt, false unless block.call
-
-      objects.each do |obj|
-        obj.run_callbacks after_name if obj.respond_to? :run_callbacks
-      end
-
-      true
     end
+    all_successfull
   end
 
   def objects
@@ -125,75 +151,15 @@ class Mongo::ObjectSerializer
     self.original_embedded_objects = objects if Mongo.defaults[:callbacks]
   end
 
-  def original_embedded_objects; object.instance_variable_get(:@_original_embedded_objects) end
-  def original_embedded_objects= objects; object.instance_variable_set(:@_original_embedded_objects, objects) end
-
   protected
-    def run_create_callbacks object_opts, &block
-      run_callbacks :create, object_opts do
-        block.call
-        true
-      end
-    end
-
-    def run_update_callbacks object_opts, &block
-      # we need also run :create and :destroy callbacks on
-      # inserted and removed embedded objects
-      if object_opts[:callbacks]
-        original_ids = original_embedded_objects.collect{|obj| obj.object_id}.to_set
-        objects_ids = objects.collect{|obj| obj.object_id}.to_set
-        created_objects = objects.select{|obj| !original_ids.include?(obj.object_id)}
-        destroyed_objects = original_embedded_objects.select{|obj| !objects_ids.include?(obj.object_id)}
-      else
-        created_objects, destroyed_objects = [], []
-      end
-
-      run_callbacks :create, object_opts, created_objects do
-        run_callbacks :destroy, object_opts, destroyed_objects do
-          run_callbacks :update, object_opts do
-            block.call
-            true
-          end
-        end
-      end
-    end
-
-    def run_destroy_callbacks object_opts, &block
-      # we need also run :destroy callbacks on detached embedded objects
-      all_objects = if object_opts[:callbacks]
-        (objects + original_embedded_objects).uniq{|o| o.object_id}
-      else
-        nil
-      end
-
-      run_callbacks :destroy, object_opts, all_objects do
-        block.call
-        true
-      end
-    end
-
-    def run_validate_callbacks object_opts, &block
-      unless object_opts[:validate]
-        block.call
-        return true
-      end
-
-      run_callbacks :validate, object_opts do
-        if valid?
-          block.call
-        else
-          false
-        end
-      end
-    end
+    def original_embedded_objects; object.instance_variable_get(:@_original_embedded_objects) end
+    def original_embedded_objects= objects; object.instance_variable_set(:@_original_embedded_objects, objects) end
 
     def parse_object_options opts
       opts = opts.clone
-      object_opts = {
-        validate: (opts.delete(:validate) == false ? false : true),
-        callbacks: (opts.delete(:callbacks) == false ? false : Mongo.defaults[:callbacks])
-      }
-      return opts, object_opts
+      validate  = opts.delete(:validate)  == false ? false : true
+      callbacks = opts.delete(:callbacks) == false ? false : Mongo.defaults[:callbacks]
+      return opts, validate, callbacks
     end
 
     # need this to allow change it in specs

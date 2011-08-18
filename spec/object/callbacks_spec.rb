@@ -49,8 +49,8 @@ describe 'Object callbacks' do
   end
 
   it 'should be able skip callbacks' do
-    @player.should_not_receive(:run_callbacks)
-    @mission.should_not_receive(:run_callbacks)
+    @player.should_not_receive(:_run_callbacks)
+    @mission.should_not_receive(:_run_callbacks)
 
     db.players.save @player, callbacks: false
     db.players.count.should == 1
@@ -61,7 +61,7 @@ describe 'Object callbacks' do
   end
 
   it 'should be able interrupt CRUD' do
-    @mission.stub! :run_callbacks do |name|
+    @mission.stub! :_run_callbacks do |name|
       false if name == :before_save
     end
     db.players.save(@player).should be_false
@@ -88,6 +88,7 @@ describe 'Object callbacks' do
       mission2 = Player::Mission.new
       @player.missions << mission2
       mission2.should_receive(:before_create).once
+      mission2.should_not_receive(:before_update)
       db.players.save @player
     end
   end

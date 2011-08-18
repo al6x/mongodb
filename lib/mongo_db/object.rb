@@ -1,10 +1,11 @@
 require 'mongo_db/driver'
 
-%w(  
+%w(
   object_serializer
-  document_serializer
   object_helper
 ).each{|f| require "mongo_db/object/#{f}"}
+
+Mongo.defaults[:callbacks] = true
 
 # collection
 Mongo::Collection.class_eval do

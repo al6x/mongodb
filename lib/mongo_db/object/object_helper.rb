@@ -6,7 +6,7 @@ module Mongo::ObjectHelper
     if doc.is_a? Hash
       save_without_object doc, opts
     else
-      Mongo::ObjectSerializer.new(doc).save opts, self
+      ::Mongo::ObjectSerializer.new(doc).save opts, self
     end
   end
 
@@ -14,16 +14,16 @@ module Mongo::ObjectHelper
     if args.is_a?(Hash) or args.is_a?(Array)
       insert_without_object args, opts
     else
-      Mongo::ObjectSerializer.new(args).insert opts, self
+      ::Mongo::ObjectSerializer.new(args).insert opts, self
     end
   end
-  
+
   def update_with_object selector, doc, opts = {}
     if doc.is_a?(Hash)
       update_without_object selector, doc, opts
     else
       raise "can't use update selector with object (#{selector}, {#{doc}})!" unless selector == nil
-      Mongo::ObjectSerializer.new(doc).update opts, self
+      ::Mongo::ObjectSerializer.new(doc).update opts, self
     end
   end
 
@@ -31,7 +31,7 @@ module Mongo::ObjectHelper
     if arg.is_a? Hash
       remove_without_object arg, opts
     else
-      Mongo::ObjectSerializer.new(arg).remove opts, self
+      ::Mongo::ObjectSerializer.new(arg).remove opts, self
     end
   end
 
@@ -41,13 +41,13 @@ module Mongo::ObjectHelper
   #
   def first *args, &block
     doc = super *args, &block
-    Mongo::DocumentSerializer.new(doc).to_object
+    ::Mongo::ObjectSerializer.build(doc)
   end
 
   def each *args, &block
     super *args do |doc|
-      doc = Mongo::DocumentSerializer.new(doc).to_object
-      block.call doc
+      obj = ::Mongo::ObjectSerializer.build(doc)
+      block.call obj
     end
     nil
   end

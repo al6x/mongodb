@@ -5,9 +5,11 @@ describe 'Object callbacks' do
 
   before do
     class Player
+      include RSpec::CallbackHelper
       attr_accessor :missions
 
       class Mission
+        include RSpec::CallbackHelper
       end
     end
 
@@ -18,9 +20,9 @@ describe 'Object callbacks' do
   after{remove_constants :Player}
 
   it 'create' do
-    [:before_validate, :before_save, :before_create, :after_create, :after_save, :after_validate].each do |name|
-      @player.should_receive(:run_callbacks).with(name).once.ordered
-      @mission.should_receive(:run_callbacks).with(name).once.ordered
+    %w(before_validate before_save before_create after_create after_save after_validate).each do |name|
+      @player.should_receive(name).once.ordered
+      @mission.should_receive(name).once.ordered
     end
 
     db.players.save @player
@@ -29,9 +31,9 @@ describe 'Object callbacks' do
   it 'update' do
     db.players.save(@player)
 
-    [:before_validate, :before_save, :before_update, :after_update, :after_save, :after_validate].each do |name|
-      @player.should_receive(:run_callbacks).with(name).once.ordered
-      @mission.should_receive(:run_callbacks).with(name).once.ordered
+    %w(before_validate before_save before_update after_update after_save after_validate).each do |name|
+      @player.should_receive(name).once.ordered
+      @mission.should_receive(name).once.ordered
     end
     db.players.save @player
   end
@@ -39,9 +41,9 @@ describe 'Object callbacks' do
   it 'destroy' do
     db.players.save @player
 
-    [:before_validate, :before_save, :before_destroy, :after_destroy, :after_save, :after_validate].each do |name|
-      @player.should_receive(:run_callbacks).with(name).once.ordered
-      @mission.should_receive(:run_callbacks).with(name).once.ordered
+    %w(before_validate before_destroy after_destroy after_validate).each do |name|
+      @player.should_receive(name).once.ordered
+      @mission.should_receive(name).once.ordered
     end
     db.players.destroy @player
   end
@@ -66,4 +68,27 @@ describe 'Object callbacks' do
     db.players.count.should == 0
   end
 
+  describe "embedded" do
+    it 'should fire :destroy on detached objects' do
+      db.players.save @player
+      @player.missions.clear
+      @mission.should_receive(:before_destroy).once
+      db.players.destroy @player
+    end
+
+    it 'should fire :destroy on deleted objects in update' do
+      db.players.save @player
+      @player.missions.clear
+      @mission.should_receive(:before_destroy).once
+      db.players.save @player
+    end
+
+    it 'should fire :create on new objects in update' do
+      db.players.save @player
+      mission2 = Player::Mission.new
+      @player.missions << mission2
+      mission2.should_receive(:before_create).once
+      db.players.save @player
+    end
+  end
 end

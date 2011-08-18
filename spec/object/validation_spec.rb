@@ -19,64 +19,46 @@ describe 'Object validation' do
 
   it 'should not save/update/destroy invalid objects' do
     # create
-    @player.should_receive(:run_callbacks).with(:before_validate).once
     @player.stub!(:valid?).and_return(false)
     db.players.save(@player).should be_false
 
-    @player.should_receive(:run_callbacks).with(:before_validate).once
-    @player.should_receive(:run_callbacks).with(:after_validate).once
     @player.stub!(:valid?).and_return(true)
     db.players.save(@player).should be_true
 
     # update
-    @player.should_receive(:run_callbacks).with(:before_validate).once
     @player.stub!(:valid?).and_return(false)
     db.players.save(@player).should be_false
 
-    @player.should_receive(:run_callbacks).with(:before_validate).once
-    @player.should_receive(:run_callbacks).with(:after_validate).once
     @player.stub!(:valid?).and_return(true)
     db.players.save(@player).should be_true
 
     # destroy
-    @player.should_receive(:run_callbacks).with(:before_validate).once
     @player.stub!(:valid?).and_return(false)
     db.players.destroy(@player).should be_false
 
-    @player.should_receive(:run_callbacks).with(:before_validate).once
-    @player.should_receive(:run_callbacks).with(:after_validate).once
     @player.stub!(:valid?).and_return(true)
     db.players.destroy(@player).should be_true
   end
 
   it 'should not save/update/destroy invalid embedded objects' do
     # create
-    @mission.should_receive(:run_callbacks).with(:before_validate).once
     @mission.stub!(:valid?).and_return(false)
     db.players.save(@player).should be_false
 
-    @mission.should_receive(:run_callbacks).with(:before_validate).once
-    @mission.should_receive(:run_callbacks).with(:after_validate).once
     @mission.stub!(:valid?).and_return(true)
     db.players.save(@player).should be_true
 
     # update
-    @mission.should_receive(:run_callbacks).with(:before_validate).once
     @mission.stub!(:valid?).and_return(false)
     db.players.save(@player).should be_false
 
-    @mission.should_receive(:run_callbacks).with(:before_validate).once
-    @mission.should_receive(:run_callbacks).with(:after_validate).once
     @mission.stub!(:valid?).and_return(true)
     db.players.save(@player).should be_true
 
     # destroy
-    @mission.should_receive(:run_callbacks).with(:before_validate).once
     @mission.stub!(:valid?).and_return(false)
     db.players.destroy(@player).should be_false
 
-    @mission.should_receive(:run_callbacks).with(:before_validate).once
-    @mission.should_receive(:run_callbacks).with(:after_validate).once
     @mission.stub!(:valid?).and_return(true)
     db.players.destroy(@player).should be_true
   end

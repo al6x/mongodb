@@ -27,10 +27,14 @@ class Mongo::ObjectSerializer
     opts, object_opts = parse_object_options opts
 
     run_validate_callbacks object_opts do
-      doc = to_document
-      collection.insert_without_object doc, opts
-      id = doc[:_id] || doc['_id'] || raise("internal error: no id after document insertion (#{doc})!")
-      object.instance_variable_set :@_id, id
+      run_callbacks :save, object_opts do
+        run_create_callbacks object_opts do
+          doc = to_document
+          collection.insert_without_object doc, opts
+          id = doc[:_id] || doc['_id'] || raise("internal error: no id after document insertion (#{doc})!")
+          object.instance_variable_set :@_id, id
+        end
+      end
     end
   end
 
@@ -38,9 +42,13 @@ class Mongo::ObjectSerializer
     opts, object_opts = parse_object_options opts
 
     run_validate_callbacks object_opts do
-      doc = to_document
-      id = _id || raise("can't update document without id (#{doc})!")
-      collection.update_without_object({_id: id}, doc, opts)
+      run_callbacks :save, object_opts do
+        run_update_callbacks object_opts do
+          doc = to_document
+          id = _id || raise("can't update document without id (#{doc})!")
+          collection.update_without_object({_id: id}, doc, opts)
+        end
+      end
     end
   end
 
@@ -48,8 +56,12 @@ class Mongo::ObjectSerializer
     opts, object_opts = parse_object_options opts
 
     run_validate_callbacks object_opts do
-      id = _id || "can't remove object without _id (#{arg})!"
-      collection.remove_without_object({_id: id}, opts)
+      run_callbacks :save, object_opts do
+        run_destroy_callbacks object_opts do
+          id = _id || "can't remove object without _id (#{arg})!"
+          collection.remove_without_object({_id: id}, opts)
+        end
+      end
     end
   end
 
@@ -68,22 +80,6 @@ class Mongo::ObjectSerializer
     true
   end
 
-  def run_validate_callbacks object_opts, &block
-    unless object_opts[:validate]
-      block.call
-      return true
-    end
-
-    run_callbacks :validate, object_opts do
-      if valid?
-        block.call
-        true
-      else
-        false
-      end
-    end
-  end
-
   def each_object &block
     _each_object object, &block
   end
@@ -96,14 +92,16 @@ class Mongo::ObjectSerializer
 
     before_name, after_name = "before_#{name}".to_sym, "after_#{name}".to_sym
 
-    catch :halt do
+    result = catch :halt do
       some_failed = false
       each_object do |obj|
         if obj.respond_to? :run_callbacks
           result = obj.run_callbacks before_name
+
           some_failed = true if result == false
         end
       end
+
       throw :halt, false if some_failed
 
       throw :halt, false unless block.call
@@ -117,6 +115,42 @@ class Mongo::ObjectSerializer
   end
 
   protected
+    def run_create_callbacks object_opts, &block
+      run_callbacks :create, object_opts do
+        block.call
+        true
+      end
+    end
+
+    def run_update_callbacks object_opts, &block
+      run_callbacks :update, object_opts do
+        block.call
+        true
+      end
+    end
+
+    def run_destroy_callbacks object_opts, &block
+      run_callbacks :destroy, object_opts do
+        block.call
+        true
+      end
+    end
+
+    def run_validate_callbacks object_opts, &block
+      unless object_opts[:validate]
+        block.call
+        return true
+      end
+
+      run_callbacks :validate, object_opts do
+        if valid?
+          block.call
+        else
+          false
+        end
+      end
+    end
+
     def parse_object_options opts
       opts = opts.clone
       object_opts = {

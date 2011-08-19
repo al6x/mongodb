@@ -38,7 +38,7 @@ module Mongo::CollectionExt
   def destroy *args
     remove *args
   end
-  
+
   def create *args
     insert *args
   end

@@ -50,7 +50,7 @@ describe "Query" do
       result
     end
 
-    it "basics", focus: true do
+    it "basics" do
       p process_statement(:age, :$gt, 34)
     end
   end

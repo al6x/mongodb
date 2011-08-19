@@ -65,6 +65,8 @@ Mongo.defaults.merge! convert_underscore_to_dollar: true
 db.units.all name: {_gt: 'Z'}                      # => [zeratul]
 ```
 
+Source: examples/driver.rb
+
 More docs - there's no need for more docs, the whole point of this extension is to be small, intuitive, 100% compatible with the official driver, and require no extra knowledge.
 So, please use standard Ruby driver documentation.
 
@@ -128,6 +130,8 @@ Mongo.defaults.merge! convert_underscore_to_dollar: true
 db.units.all name: {_gt: 'Z'}                      # => [zeratul]
 ```
 
+Source: examples/object.rb
+
 # Migrations
 
 Define migration steps, specify desired version and apply it (usually all this should be done via Rake task).
@@ -177,6 +181,8 @@ migration.update
 migration.current_version                        # => 2
 db.units.count                                   # => 2
 ```
+
+Source: examples/migration.rb
 
 # Object Model (work in progress)
 

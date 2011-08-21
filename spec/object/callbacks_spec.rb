@@ -61,8 +61,8 @@ describe 'Object callbacks' do
   end
 
   it 'should be able interrupt CRUD' do
-    @mission.stub! :_run_callbacks do |name|
-      false if name == :before_save
+    @mission.stub! :_run_callbacks do |type, method_name|
+      false if type == :before and method_name == :save
     end
     db.players.save(@player).should be_false
     db.players.count.should == 0

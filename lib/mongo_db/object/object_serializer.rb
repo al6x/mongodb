@@ -27,7 +27,7 @@ class Mongo::ObjectSerializer
     opts, validate, callbacks = parse_object_options opts
 
     # before callbacks
-    return false if callbacks and !run_callbacks(objects, :before_validate, :before_save, :before_create)
+    return false if callbacks and !run_callbacks(objects, [:before, :validate], [:before, :save], [:before, :create])
 
     # validation
     return false if validate  and !valid?
@@ -40,7 +40,7 @@ class Mongo::ObjectSerializer
     update_internal_state!
 
     # after callbacks
-    run_callbacks(objects, :after_create, :after_save, :after_validate) if callbacks
+    run_callbacks(objects, [:after, :create], [:after, :save], [:after, :validate]) if callbacks
 
     true
   end
@@ -61,9 +61,9 @@ class Mongo::ObjectSerializer
       destroyed_objects = original_embedded_objects.select{|obj| !objects_ids.include?(obj.object_id)}
 
       all_successfull = [
-        run_callbacks(created_objects,   :before_validate, :before_save,   :before_create),
-        run_callbacks(updated_objects,   :before_validate, :before_save,   :before_update),
-        run_callbacks(destroyed_objects, :before_validate, :before_destroy)
+        run_callbacks(created_objects,   [:before, :validate], [:before, :save],   [:before, :create]),
+        run_callbacks(updated_objects,   [:before, :validate], [:before, :save],   [:before, :update]),
+        run_callbacks(destroyed_objects, [:before, :validate], [:before, :destroy])
       ].reduce(:&)
 
       return false unless all_successfull
@@ -80,9 +80,9 @@ class Mongo::ObjectSerializer
 
     # after callbacks
     if callbacks
-      run_callbacks(created_objects,   :after_create,  :after_save,    :after_validate)
-      run_callbacks(updated_objects,   :after_update,  :after_save,    :after_validate)
-      run_callbacks(destroyed_objects, :after_destroy, :after_validate)
+      run_callbacks(created_objects,   [:after, :create],  [:after, :save],    [:after, :validate])
+      run_callbacks(updated_objects,   [:after, :update],  [:after, :save],    [:after, :validate])
+      run_callbacks(destroyed_objects, [:after, :destroy], [:after, :validate])
     end
 
     true
@@ -95,7 +95,7 @@ class Mongo::ObjectSerializer
     if callbacks
       # we need to run :destroy callbacks also on detached embedded objects.
       all_objects = (objects + original_embedded_objects).uniq{|o| o.object_id}
-      return false unless run_callbacks(all_objects, :before_validate, :before_destroy)
+      return false unless run_callbacks(all_objects, [:before, :validate], [:before, :destroy])
     end
 
     # validation
@@ -107,7 +107,7 @@ class Mongo::ObjectSerializer
     update_internal_state!
 
     # after callbacks
-    run_callbacks(objects, :after_destroy, :after_validate) if callbacks
+    run_callbacks(objects, [:after, :destroy], [:after, :validate]) if callbacks
 
     true
   end
@@ -127,16 +127,15 @@ class Mongo::ObjectSerializer
     true
   end
 
-  def run_callbacks objects, *names
-    all_successfull = true
-    names.each do |name|
+  def run_callbacks objects, *callbacks
+    callbacks.each do |type, method_name|
       objects.each do |obj|
         if obj.respond_to? :_run_callbacks
-          all_successfull = false if obj._run_callbacks(name) == false
+          return false if obj._run_callbacks(type, method_name) == false
         end
       end
     end
-    all_successfull
+    true
   end
 
   def objects

@@ -52,13 +52,13 @@ class Mongo::ObjectSerializer
     # we need to sort out embedded objects into created, updated and destroyed
     created_objects, updated_objects, destroyed_objects = [], [], []
     if callbacks
-      original_ids = original_embedded_objects.collect{|obj| obj.object_id}.to_set
+      original_ids = original_objects.collect{|obj| obj.object_id}.to_set
       objects.each do |obj|
         (original_ids.include?(obj.object_id) ? updated_objects : created_objects) << obj
       end
 
       objects_ids = objects.collect{|obj| obj.object_id}.to_set
-      destroyed_objects = original_embedded_objects.select{|obj| !objects_ids.include?(obj.object_id)}
+      destroyed_objects = original_objects.select{|obj| !objects_ids.include?(obj.object_id)}
 
       all_successfull = [
         run_callbacks(created_objects,   [:before, :validate], [:before, :save],   [:before, :create]),
@@ -94,7 +94,7 @@ class Mongo::ObjectSerializer
     # before callbacks
     if callbacks
       # we need to run :destroy callbacks also on detached embedded objects.
-      all_objects = (objects + original_embedded_objects).uniq{|o| o.object_id}
+      all_objects = (objects + original_objects).uniq{|o| o.object_id}
       return false unless run_callbacks(all_objects, [:before, :validate], [:before, :destroy])
     end
 
@@ -147,12 +147,12 @@ class Mongo::ObjectSerializer
   end
 
   def update_internal_state!
-    self.original_embedded_objects = objects if Mongo.defaults[:callbacks]
+    self.original_objects = objects if Mongo.defaults[:callbacks]
   end
 
   protected
-    def original_embedded_objects; object.instance_variable_get(:@_original_embedded_objects) end
-    def original_embedded_objects= objects; object.instance_variable_set(:@_original_embedded_objects, objects) end
+    def original_objects; object.instance_variable_get(:@_original_objects) end
+    def original_objects= objects; object.instance_variable_set(:@_original_objects, objects) end
 
     def parse_object_options opts
       opts = opts.clone

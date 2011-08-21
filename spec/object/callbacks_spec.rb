@@ -3,7 +3,7 @@ require 'object/spec_helper'
 describe 'Object callbacks' do
   with_mongo
 
-  before do
+  before :all do
     class Player
       include RSpec::CallbackHelper
       attr_accessor :missions
@@ -12,12 +12,14 @@ describe 'Object callbacks' do
         include RSpec::CallbackHelper
       end
     end
+  end
+  after(:all){remove_constants :Player}
 
+  before do
     @mission = Player::Mission.new
     @player = Player.new
     @player.missions = [@mission]
   end
-  after{remove_constants :Player}
 
   it 'create' do
     %w(before_validate before_save before_create after_create after_save after_validate).each do |name|

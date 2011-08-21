@@ -1,6 +1,7 @@
 require 'mongo_db/driver/core'
 
-class Mongo::NotFound < StandardError; end
+class Mongo::Error < StandardError; end
+class Mongo::NotFound < Mongo::Error; end
 
 %w(
   collection_finders

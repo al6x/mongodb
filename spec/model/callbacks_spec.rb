@@ -3,7 +3,7 @@ require 'model/spec_helper'
 describe 'Model callbacks' do
   with_mongo
 
-  after{remove_constants :TheModel, :Player}
+  after(:all){remove_constants :TheModel, :Player}
 
   it "callback integration" do
     class TheModel

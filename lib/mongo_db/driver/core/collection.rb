@@ -46,19 +46,19 @@ module Mongo::CollectionExt
   #
   # Querying
   #
-  def first selector = nil, opts = {}
+  def first selector = {}, opts = {}
     selector = convert_underscore_to_dollar_in_selector selector if selector.is_a? Hash
 
     h = find_one selector, opts
     symbolize_doc h
   end
 
-  def all *args, &block
+  def all selector = {}, opts = {}, &block
     if block
-      each *args, &block
+      each selector, opts, &block
     else
       list = []
-      each(*args){|doc| list << doc}
+      each(selector, opts){|doc| list << doc}
       list
     end
   end

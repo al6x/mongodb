@@ -3,19 +3,21 @@ require 'object/spec_helper'
 describe 'Object validation' do
   with_mongo
 
-  before do
+  before :all do
     class Player
       attr_accessor :missions
 
       class Mission
       end
     end
+  end
+  after(:all){remove_constants :Player}
 
+  before do
     @mission = Player::Mission.new
     @player = Player.new
     @player.missions = [@mission]
   end
-  after{remove_constants :Player}
 
   it 'should not save/update/destroy invalid objects' do
     # create

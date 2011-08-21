@@ -1,101 +1,109 @@
-require 'spec_helper'
+require 'model/spec_helper'
 require 'object/crud_shared'
 
 describe "Model CRUD" do
-  with_mongo
+  with_mongo_model
 
   describe 'simple' do
-    before do
-      class Person
+    before :all do
+      class Unit
         inherit Mongo::Model
-        collection{db.units}
+        collection :units
 
         def initialize name = nil, info = nil; @name, @info = name, info end
         attr_accessor :name, :info
         def == o; [self.class, name, info] == [o.class, o.respond_to(:name), o.respond_to(:info)] end
       end
-
-      @zeratul = Person.new 'Zeratul', 'Dark Templar'
     end
-    after{remove_constants :Person}
+    after(:all){remove_constants :Unit}
+
+    before do
+      @zeratul = Unit.new 'Zeratul', 'Dark Templar'
+    end
 
     it_should_behave_like "object CRUD"
 
     it 'model crud' do
       # read
-      Person.count.should == 0
-      Person.all.should == []
-      Person.first.should == nil
+      Unit.count.should == 0
+      Unit.all.should == []
+      Unit.first.should == nil
 
       # create
       @zeratul.save.should be_true
       @zeratul._id.should_not be_nil
 
       # read
-      Person.count.should == 1
-      Person.all.should == [@zeratul]
-      Person.first.should == @zeratul
-      Person.first.object_id.should_not == @zeratul.object_id
+      Unit.count.should == 1
+      Unit.all.should == [@zeratul]
+      Unit.first.should == @zeratul
+      Unit.first.object_id.should_not == @zeratul.object_id
 
       # update
       @zeratul.info = 'Killer of Cerebrates'
       @zeratul.save.should be_true
-      Person.count.should == 1
-      Person.first(name: 'Zeratul').info.should == 'Killer of Cerebrates'
+      Unit.count.should == 1
+      Unit.first(name: 'Zeratul').info.should == 'Killer of Cerebrates'
 
       # destroy
       @zeratul.destroy.should be_true
-      Person.count.should == 0
+      Unit.count.should == 0
     end
 
     it 'should be able to save to another collection' do
       # create
-      @zeratul.save(collection: db.protosses).should be_true
+      @zeratul.save(collection: db.heroes).should be_true
       @zeratul._id.should_not be_nil
 
       # read
-      Person.count.should == 0
-      db.protosses.count.should == 1
-      db.protosses.should == @zeratul
-      db.protosses.object_id.should_not == @zeratul.object_id
+      Unit.count.should == 0
+      db.heroes.count.should == 1
+      db.heroes.first.should == @zeratul
+      db.heroes.first.object_id.should_not == @zeratul.object_id
 
       # update
       @zeratul.info = 'Killer of Cerebrates'
-      @zeratul.save(collection: db.protosses).should be_true
-      Person.count.should == 0
-      db.protosses.count.should == 1
-      db.protosses.first(name: 'Zeratul').info.should == 'Killer of Cerebrates'
+      @zeratul.save(collection: db.heroes).should be_true
+      Unit.count.should == 0
+      db.heroes.count.should == 1
+      db.heroes.first(name: 'Zeratul').info.should == 'Killer of Cerebrates'
 
       # destroy
-      @zeratul.destroy(collection: db.protosses).should be_true
-      db.protosses.count.should == 0
+      @zeratul.destroy(collection: db.heroes).should be_true
+      db.heroes.count.should == 0
     end
   end
 
   describe 'embedded' do
-    before do
+    before :all do
       class Player
         inherit Mongo::Model
+        collection :players
+
         attr_accessor :missions
         def == o; [self.class, self.missions] == [o.class, o.respond_to(:missions)] end
 
         class Mission
           inherit Mongo::Model
+
           def initialize name = nil, stats = nil; @name, @stats = name, stats end
           attr_accessor :name, :stats
           def == o; [self.class, self.name, self.stats] == [o.class, o.respond_to(:name), o.respond_to(:stats)] end
         end
       end
+    end
+    after(:all){remove_constants :Player}
 
+    before do
+      @mission_class = Player::Mission
       @player = Player.new
       @player.missions = [
         Player::Mission.new('Wasteland',         {buildings: 5, units: 10}),
         Player::Mission.new('Backwater Station', {buildings: 8, units: 25}),
       ]
     end
-    after{remove_constants :Player}
 
-    it_should_behave_like 'shared object CRUD'
+    it_should_behave_like 'embedded object CRUD'
 
     it 'crud' do
       # create
@@ -109,7 +117,7 @@ describe "Model CRUD" do
 
       # update
       @player.missions.first.stats[:units] = 9
-      @player.missions << Player::Mission.new('Desperate Alliance', {buildings: 11, units: 40}),
+      @player.missions << Player::Mission.new('Desperate Alliance', {buildings: 11, units: 40})
       @player.save.should be_true
       Player.count.should == 1
       Player.first.should == @player

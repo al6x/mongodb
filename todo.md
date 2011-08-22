@@ -1,12 +1,9 @@
 - identity map
-
-- include ::ActiveModel::Conversion include ::ActiveModel::Serialization include ::ActiveModel::Serializers::Xml include  ::ActiveModel::Serializers::JSON
-
 - reload ?
-- MongoMapper::Modifiers
-
+- MongoMapper::Modifiers ?
 - timestamps!
-- MongoMapper::Validations
+- MongoMapper::Validations ?
+- replace initialize with set!
 
 # Low
 

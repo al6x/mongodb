@@ -16,11 +16,12 @@ module Mongo::Model; end
   crud
   query
   scope
+  misc
   model
 ).each{|f| require "mongo_db/model/#{f}"}
 
 module Mongo
   module Model
-    inherit Db, Callbacks, Validation, Crud, Query, Scope
+    inherit Db, Callbacks, Validation, Crud, Query, Scope, Misc
   end
 end

@@ -22,7 +22,7 @@ Mongo::DB.send :include, Mongo::DBExt
 Mongo::Collection.class_eval do
   include Mongo::CollectionExt
 
-  %w(insert update remove save).each do |method|
+  %w(insert update remove save count).each do |method|
     alias_method "#{method}_without_ext", method
     alias_method method, "#{method}_with_ext"
   end

@@ -15,6 +15,7 @@ module Mongo::Model::Db
       if block
         self.db = block
       elsif !args.empty?
+        args.size.must == 1
         self.db = args.first
       else
         (_db && _db.call) || ::Mongo::Model.db
@@ -36,6 +37,7 @@ module Mongo::Model::Db
       if block
         self.collection = block
       elsif !args.empty?
+        args.size.must == 1
         self.collection = args.first
       else
         (_collection && _collection.call) || db.collection(default_collection_name)

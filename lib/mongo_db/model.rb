@@ -12,12 +12,14 @@ module Mongo::Model; end
 %w(
   db
   callbacks
-  collection
+  crud
+  query
+  scope
   model
 ).each{|f| require "mongo_db/model/#{f}"}
 
 module Mongo
   module Model
-    inherit Db, Callbacks, Collection
+    inherit Db, Callbacks, Crud, Query, Scope
   end
 end

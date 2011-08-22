@@ -72,6 +72,10 @@ describe "Model CRUD" do
       @zeratul.destroy(collection: db.heroes).should be_true
       db.heroes.count.should == 0
     end
+
+    it 'create'
+
+    it 'destroy_all'
   end
 
   describe 'embedded' do

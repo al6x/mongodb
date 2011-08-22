@@ -1,4 +1,8 @@
 module Mongo::CollectionFinders
+  def first! selector = {}, opts = {}
+    first(selector, opts) || raise(Mongo::NotFound, "document with selector #{selector} not found!")
+  end
+
   #
   # first_by_id, special case
   #

@@ -80,6 +80,10 @@ module Mongo::CollectionExt
     nil
   end
 
+  def count_with_ext selector = {}, opts = {}
+    find(selector, opts).count()
+  end
+
   protected
     QUERY_KEYWORDS = [
       :_lt, :_lte, :_gt, :_gte,

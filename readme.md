@@ -189,11 +189,16 @@ Source: examples/migration.rb
 Model designed after the excellent "Domain-Driven Design" book by Eric Evans.
 
 - Very small.
+- The same API for pure driver and Models.
 - Minimum extra abstraction, trying to keep things as close to the MongoDB semantic as possible.
 - Schema-less, dynamic (with ability to specify types for mass-assignment).
 - Models can be saved to any collection.
 - Full support for embedded objects (and MDD composite pattern).
+- scope & default_scope
 - Doesn't try to mimic ActiveRecord, it's differrent and designed to get most of MongoDB.
+
+Existing ODM like MongoMapper and Mongoid are trying to hide simple but non-standard API of MongoDB by introducing complicated but familiar API over it.
+This ODM exposes simplicity of MongoDB and leverages it's differences.
 
 # Installation
 

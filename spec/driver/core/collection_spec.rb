@@ -67,4 +67,11 @@ describe "Collection" do
     list.size.should == 1
     list.first[:name].should == 'Zeratul'
   end
+
+  it 'count' do
+    db.units.count(name: 'Zeratul').should == 0
+    db.units.save name: 'Zeratul'
+    db.units.save name: 'Tassadar'
+    db.units.count(name: 'Zeratul').should == 1
+  end
 end

@@ -9,9 +9,6 @@ describe "Scope" do
       collection :units
 
       attr_accessor :name, :status, :race
-      def initialize name = nil, status = nil, race = nil
-        @name, @status, @race = name, status, race
-      end
     end
   end
 
@@ -19,9 +16,9 @@ describe "Scope" do
 
   describe 'current scope' do
     it "should affect finders" do
-      Unit.new('Zeratul', 'alive').save!
-      Unit.new('Jim', 'alive').save!
-      Unit.new('Tassadar', 'dead').save!
+      Unit.new.set!(name: 'Zeratul',  status: 'alive').save!
+      Unit.new.set!(name: 'Jim',      status: 'alive').save!
+      Unit.new.set!(name: 'Tassadar', status: 'dead').save!
 
       Unit.count.should == 3
       Unit.all.size.should == 3

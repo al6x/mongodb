@@ -11,13 +11,12 @@ describe "Validations" do
       attr_accessor :errors
 
       attr_accessor :name
-      def initialize name = nil; @name = name end
     end
   end
   after{remove_constants :Unit}
 
   it "should not save model with errors" do
-    unit = Unit.new 'Zeratul'
+    unit = Unit.new.set! name: 'Zeratul'
     unit.save.should be_true
 
     unit.errors = []
@@ -31,7 +30,7 @@ describe "Validations" do
   end
 
   it "should check :errors only and ignore valid? method" do
-    unit = Unit.new 'Zeratul'
+    unit = Unit.new.set! name: 'Zeratul'
     unit.should_not_receive(:valid?)
     unit.save.should be_true
   end

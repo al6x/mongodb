@@ -9,13 +9,12 @@ describe "Model Query" do
       inherit Mongo::Model
       collection :units
 
-      def initialize name = nil; @name = name end
       attr_accessor :name
     end
   end
   after(:all){remove_constants :Unit}
 
-  before{@zeratul = Unit.new 'Zeratul'}
+  before{@zeratul = Unit.new.set! name: 'Zeratul'}
 
   it 'exist?' do
     Unit.should_not exist(name: 'Zeratul')
@@ -42,7 +41,7 @@ describe "Model Query" do
 
   it 'dynamic finders integration' do
     Unit.first_by_name('Zeratul').should be_nil
-    Unit.new('Zeratul').save!
+    Unit.new.set!(name: 'Zeratul').save!
     Unit.first_by_name('Zeratul').name.should == 'Zeratul'
   end
 end

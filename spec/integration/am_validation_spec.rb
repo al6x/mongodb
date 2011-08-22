@@ -14,9 +14,6 @@ begin
         include ActiveModel::Validations
 
         attr_accessor :name, :status
-        def initialize name = nil, status = nil
-          @name, @status = name, status
-        end
 
         validates_presence_of :name
       end

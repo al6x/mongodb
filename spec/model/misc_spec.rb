@@ -11,12 +11,11 @@ describe 'Model Miscellaneous' do
       collection :units
 
       attr_accessor :name
-      def initialize name = nil; @name = name end
 
       timestamps!
     end
 
-    unit = Unit3.new 'Zeratul'
+    unit = Unit3.new.set! name: 'Zeratul'
     unit.save!
 
     unit = Unit3.first

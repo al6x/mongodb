@@ -25,5 +25,10 @@ module Mongo::Model::Query
     def first! selector = {}, opts = {}
       first(selector, opts) || raise(Mongo::NotFound, "document with selector #{selector} not found!")
     end
+
+    def exists? selector = {}, opts = {}
+      count(selector, opts) > 0
+    end
+    alias :exist? :exists?
   end
 end

@@ -11,10 +11,6 @@ module Mongo::Model::Callbacks
     end
   end
 
-  def _valid?
-    respond_to?(:valid?) ? valid? : true
-  end
-
   module ClassMethods
     [:validate, :update, :save, :destroy].each do |method_name|
       define_method "before_#{method_name}" do |*args, &block|

@@ -5,8 +5,6 @@
 - reload ?
 - MongoMapper::Modifiers
 
-- new_record? (new?)
-- MongoMapper::Scope
 - timestamps!
 - MongoMapper::Validations
 
@@ -16,8 +14,6 @@
 
 # Done
 
-- units.count status: 'alive'
-- first!
 
 # Rejected
 

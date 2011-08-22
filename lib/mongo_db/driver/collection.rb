@@ -53,6 +53,10 @@ module Mongo::CollectionExt
     symbolize_doc h
   end
 
+  def first! selector = {}, opts = {}
+    first(selector, opts) || raise(Mongo::NotFound, "document with selector #{selector} not found!")
+  end
+
   def all selector = {}, opts = {}, &block
     if block
       each selector, opts, &block

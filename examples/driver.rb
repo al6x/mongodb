@@ -1,4 +1,4 @@
-require 'mongo_db/driver/core'
+require 'mongo_db/driver'
 
 # Changing some defaults.
 Mongo.defaults.merge! symbolize: true, multi: true, safe: true
@@ -29,11 +29,7 @@ db.units.all name: 'Zeratul' do |unit|
   unit                                             # => zeratul
 end
 
-
-# Finders.
-require 'mongo_db/driver/more'
-
-# Simple finders (bang versions also availiable).
+# Dynamic Finders (bang versions also availiable).
 db.units.by_name 'Zeratul'                         # => zeratul
 db.units.first_by_name 'Zeratul'                   # => zeratul
 db.units.all_by_name 'Zeratul'                     # => [zeratul]

@@ -1,4 +1,4 @@
-require 'mongo_db/driver/core'
+require 'mongo_db/driver'
 
 class Mongo::Migration; end
 

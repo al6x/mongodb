@@ -12,6 +12,7 @@ module Mongo::Model; end
 %w(
   db
   callbacks
+  validation
   crud
   query
   scope
@@ -20,6 +21,6 @@ module Mongo::Model; end
 
 module Mongo
   module Model
-    inherit Db, Callbacks, Crud, Query, Scope
+    inherit Db, Callbacks, Validation, Crud, Query, Scope
   end
 end

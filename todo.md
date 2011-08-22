@@ -3,7 +3,7 @@
 - MongoMapper::Modifiers ?
 - timestamps!
 - MongoMapper::Validations ?
-- replace initialize with set!
+- replace initialize with set
 
 # Low
 

@@ -15,7 +15,7 @@ describe 'Model Miscellaneous' do
       timestamps!
     end
 
-    unit = Unit3.new.set! name: 'Zeratul'
+    unit = Unit3.new.set name: 'Zeratul'
     unit.save!
 
     unit = Unit3.first

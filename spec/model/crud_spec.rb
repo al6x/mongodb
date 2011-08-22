@@ -17,7 +17,7 @@ describe "Model CRUD" do
     after(:all){remove_constants :Unit}
 
     before do
-      @zeratul = Unit.new.set! name: 'Zeratul', info: 'Dark Templar'
+      @zeratul = Unit.new.set name: 'Zeratul', info: 'Dark Templar'
     end
 
     it_should_behave_like "object CRUD"
@@ -100,8 +100,8 @@ describe "Model CRUD" do
       @mission_class = Player::Mission
       @player = Player.new
       @player.missions = [
-        Player::Mission.new.set!(name: 'Wasteland',         stats: {buildings: 5, units: 10}),
-        Player::Mission.new.set!(name: 'Backwater Station', stats: {buildings: 8, units: 25}),
+        Player::Mission.new.set(name: 'Wasteland',         stats: {buildings: 5, units: 10}),
+        Player::Mission.new.set(name: 'Backwater Station', stats: {buildings: 8, units: 25}),
       ]
     end
 
@@ -119,7 +119,7 @@ describe "Model CRUD" do
 
       # update
       @player.missions.first.stats[:units] = 9
-      @player.missions << Player::Mission.new.set!(name: 'Desperate Alliance', stats: {buildings: 11, units: 40})
+      @player.missions << Player::Mission.new.set(name: 'Desperate Alliance', stats: {buildings: 11, units: 40})
       @player.save.should be_true
       Player.count.should == 1
       Player.first.should == @player

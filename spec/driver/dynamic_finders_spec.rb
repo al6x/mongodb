@@ -41,4 +41,10 @@ describe "Dynamic Finders" do
     stub = FindersStub.new
     -> {stub.all_by_name!('Jim')}.should raise_error(/can't use bang/)
   end
+
+  it 'integration with collection' do
+    db.units.first_by_name('Jim').should be_nil
+    db.units.save name: 'Jim'
+    db.units.first_by_name('Jim')[:name].should == 'Jim'
+  end
 end

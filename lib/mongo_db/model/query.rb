@@ -1,5 +1,7 @@
 module Mongo::Model::Query
   module ClassMethods
+    include Mongo::DynamicFinders
+
     def count selector = {}, opts = {}
       collection.count selector, opts
     end

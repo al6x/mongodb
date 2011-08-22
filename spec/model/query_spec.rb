@@ -40,7 +40,9 @@ describe "Model Query" do
     list.size.should == 1
   end
 
-  it 'first_by, all_by' do
-
+  it 'dynamic finders integration' do
+    Unit.first_by_name('Zeratul').should be_nil
+    Unit.new('Zeratul').save!
+    Unit.first_by_name('Zeratul').name.should == 'Zeratul'
   end
 end

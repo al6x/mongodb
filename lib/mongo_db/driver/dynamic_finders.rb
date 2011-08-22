@@ -24,10 +24,16 @@ module Mongo::DynamicFinders
           finder = "#{finder}!"
         end
 
-        raise "invalid arguments for finder (#{a})!" unless args.size == 1
+        raise "invalid arguments for finder (#{args})!" unless args.size == 1
         field_value = args.first
 
-        send finder.to_sym, {field.to_sym => field_value}, &block
+        finder, field = finder.to_sym, field.to_sym
+
+        if respond_to? finder
+          send finder, {field => field_value}, &block
+        else
+          super
+        end
       else
         super
       end

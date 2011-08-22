@@ -1,41 +1,38 @@
 require 'model/spec_helper'
-if defined? ActiveModel
 
-  describe "Validations" do
-    with_mongo_model
+describe "Validations" do
+  with_mongo_model
 
-    before do
-      class Unit
-        inherit Mongo::Model
-        collection :units
+  before do
+    class Unit
+      inherit Mongo::Model
+      collection :units
 
-        include ActiveModel::Validations
+      attr_accessor :errors
 
-        attr_accessor :name, :status
-        def initialize name = nil, status = nil
-          @name, @status = name, status
-        end
-
-        validates_presence_of :name
-      end
-    end
-
-    after{remove_constants :Unit}
-
-    it "ActiveModel integration smoke test" do
-      unit = Unit.new
-      unit.should be_invalid
-      unit.errors.size.should == 1
-      unit.errors.first.first.should == :name
-      unit.save.should be_false
-
-      unit.name = 'Zeratul'
-      unit.should be_valid
-      unit.errors.should be_empty
-      unit.save.should be_true
+      attr_accessor :name
+      def initialize name = nil; @name = name end
     end
   end
+  after{remove_constants :Unit}
 
-else
-  warn 'skipping validations spec'
+  it "should not save model with errors" do
+    unit = Unit.new 'Zeratul'
+    unit.save.should be_true
+
+    unit.errors = []
+    unit.save.should be_true
+
+    unit.errors = ['hairy error']
+    unit.save.should be_false
+
+    unit.errors = {name: 'hairy error'}
+    unit.save.should be_false
+  end
+
+  it "should check :errors only and ignore valid? method" do
+    unit = Unit.new 'Zeratul'
+    unit.should_not_receive(:valid?)
+    unit.save.should be_true
+  end
 end

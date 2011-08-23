@@ -1,9 +1,8 @@
 Object Model & Ruby driver enhancements for MongoDB.
 
-1. Driver enchancements.
-2. Migrations.
-3. Persistence for any Ruby object.
-4. Object Model (callbacks, validations, mass-assignment, finders, ...) (work in progress).
+1. Driver enchancements & Migrations.
+2. Persistence for any Ruby object.
+3. Object Model (callbacks, validations, mass-assignment, finders, ...) (work in progress).
 
 Lower layers are independent from upper, use only what You need.
 
@@ -125,6 +124,22 @@ db.units.all name: {_gt: 'Z'}                      # => [zeratul]
 
 Source: examples/object.rb
 
+# Object Model (work in progress)
+
+Model designed after the excellent "Domain-Driven Design" book by Eric Evans.
+
+- Very small.
+- The same API for pure driver and Models.
+- Minimum extra abstractions, trying to keep things as close to the MongoDB semantic as possible.
+- Schema-less, dynamic (with ability to specify types for mass-assignment).
+- Models can be saved to any collection.
+- Full support for embedded objects (validations, callbacks, ...).
+- Scope, default_scope
+- Doesn't try to mimic ActiveRecord, MongoDB is differrent and this tool designed to get most of it.
+
+Existing ODM like MongoMapper and Mongoid are trying to hide simple but non-standard API of MongoDB by covering it with complicated but familiar API.
+This ODM exposes simplicity of MongoDB and leverages it's differences.
+
 # Migrations
 
 Define migration steps, specify desired version and apply it (usually all this should be done via Rake task).
@@ -176,23 +191,6 @@ db.units.count                                   # => 2
 ```
 
 Source: examples/migration.rb
-
-# Object Model (work in progress)
-
-Model designed after the excellent "Domain-Driven Design" book by Eric Evans.
-
-- Very small.
-- The same API for pure driver and Models.
-- Minimum extra abstraction, trying to keep things as close to the MongoDB semantic as possible.
-- Schema-less, dynamic (with ability to specify types for mass-assignment).
-- Models can be saved to any collection.
-- Full support for embedded objects (and MDD composite pattern).
-- scope & default_scope
-- Doesn't try to mimic ActiveRecord, it's differrent and designed to get most of MongoDB.
-- Weak model - model by default has no attribute types, but it allows to use types when needed (mass assignment).
-
-Existing ODM like MongoMapper and Mongoid are trying to hide simple but non-standard API of MongoDB by introducing complicated but familiar API over it.
-This ODM exposes simplicity of MongoDB and leverages it's differences.
 
 # Installation
 

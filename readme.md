@@ -124,7 +124,7 @@ db.units.all name: {_gt: 'Z'}                      # => [zeratul]
 
 Source: examples/object.rb
 
-# Object Model (work in progress)
+# Object Model
 
 Model designed after the excellent "Domain-Driven Design" book by Eric Evans.
 

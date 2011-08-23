@@ -189,6 +189,7 @@ Model designed after the excellent "Domain-Driven Design" book by Eric Evans.
 - Full support for embedded objects (and MDD composite pattern).
 - scope & default_scope
 - Doesn't try to mimic ActiveRecord, it's differrent and designed to get most of MongoDB.
+- Weak model - model by default has no attribute types, but it allows to use types when needed (mass assignment).
 
 Existing ODM like MongoMapper and Mongoid are trying to hide simple but non-standard API of MongoDB by introducing complicated but familiar API over it.
 This ODM exposes simplicity of MongoDB and leverages it's differences.

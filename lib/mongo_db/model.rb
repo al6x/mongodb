@@ -10,6 +10,8 @@ require 'mongo_db/object'
 module Mongo::Model; end
 
 %w(
+  support/types
+
   db
   assignment
   callbacks

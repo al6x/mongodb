@@ -4,6 +4,7 @@
 - timestamps!
 - MongoMapper::Validations ?
 - replace initialize with set
+- allow to specify type-conversion block in assignment
 
 # Low
 

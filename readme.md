@@ -2,7 +2,7 @@ Object Model & Ruby driver enhancements for MongoDB.
 
 1. Driver enchancements & Migrations.
 2. Persistence for any Ruby object.
-3. Object Model (callbacks, validations, mass-assignment, finders, ...) (work in progress).
+3. Object Model (callbacks, validations, mass-assignment, finders, ...).
 
 Lower layers are independent from upper, use only what You need.
 

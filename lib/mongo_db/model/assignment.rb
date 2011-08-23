@@ -16,7 +16,7 @@ module Mongo::Model::Assignment
 
       def method_missing attribute_name, *args
         attribute_name.must_be.a Symbol
-has_mail
+
         args.size.must_be.in 1..2
         if args.first.is_a? Class
           type, mass_assignment = args
@@ -24,8 +24,8 @@ has_mail
           type.must.respond_to :cast
         else
           type, mass_assignment = nil, args.first
-        endhas_mail
-has_mail
+        end
+
         attributes[attribute_name] = [type, mass_assignment]
       end
   end
@@ -33,10 +33,10 @@ has_mail
   def set attributes, options = {}
     if rules = self.class._assign
       force = options[:force]
-      attributes.each do |n, v|has_mail
+      attributes.each do |n, v|
         n = n.to_sym
         if rule = rules[n]
-          type, mass_assignment = rulehas_mail
+          type, mass_assignment = rule
           if mass_assignment or force
             v = type.cast(v) if type
             send "#{n}=", v

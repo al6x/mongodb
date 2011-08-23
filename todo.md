@@ -12,8 +12,8 @@
 
 # Readme
 
-Existing ODM like MongoMapper and Mongoid are trying to hide simple but non-standard API of MongoDB by covering it with complicated but familiar API.
-This ODM exposes simplicity and power of MongoDB and leverages it's differences.
+Existing ODM like MongoMapper and Mongoid are trying to hide 
+Other ODM usually try to cover simple but non-standard API of MongoDB with complex ORM-like abstractions. This tool exposes simplicity and power of MongoDB and leverages it's differences.
 
 # Done
 

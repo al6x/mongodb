@@ -137,6 +137,8 @@ Model designed after the excellent "Domain-Driven Design" book by Eric Evans.
 - Scope, default_scope
 - Doesn't try to mimic ActiveRecord, MongoDB is differrent and this tool designed to get most of it.
 
+Other ODM usually try to cover simple but non-standard API of MongoDB behind complex ORM-like abstractions. This tool **exposes simplicity and power of MongoDB and leverages it's differences**.
+
 ``` ruby
 # Connecting to MongoDB.
 require 'mongo_db/model'

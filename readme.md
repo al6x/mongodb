@@ -128,7 +128,7 @@ Source: examples/object.rb
 
 Model designed after the excellent "Domain-Driven Design" book by Eric Evans.
 
-- Very small, see [code stats][:code_stats].
+- Very small, see [code stats][code_stats].
 - The same API for pure driver and Models.
 - Minimum extra abstractions, trying to keep things as close to the MongoDB semantic as possible.
 - Schema-less, dynamic (with ability to specify types for mass-assignment).

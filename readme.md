@@ -128,7 +128,7 @@ Source: examples/object.rb
 
 Model designed after the excellent "Domain-Driven Design" book by Eric Evans.
 
-- Very small.
+- Very small, see [code stats][:code_stats].
 - The same API for pure driver and Models.
 - Minimum extra abstractions, trying to keep things as close to the MongoDB semantic as possible.
 - Schema-less, dynamic (with ability to specify types for mass-assignment).
@@ -139,6 +139,66 @@ Model designed after the excellent "Domain-Driven Design" book by Eric Evans.
 
 Existing ODM like MongoMapper and Mongoid are trying to hide simple but non-standard API of MongoDB by covering it with complicated but familiar API.
 This ODM exposes simplicity of MongoDB and leverages it's differences.
+
+``` ruby
+# Connecting to MongoDB.
+require 'mongo_db/model'
+Mongo.defaults.merge! symbolize: true, multi: true, safe: true
+connection = Mongo::Connection.new
+db = connection.db 'default_test'
+db.units.drop
+Mongo::Model.db = db
+
+# Let's define the game unit.
+class Unit
+  inherit Mongo::Model
+  collection :units
+  
+  attr_accessor :name, :status, :stats
+  
+  scope :alive, status: 'alive'
+  
+  class Stats
+    inherit Mongo::Model
+    attr_accessor :attack, :life, :shield
+  end
+end
+
+# Create.
+zeratul  = Unit.new.set(name: 'Zeratul',  status: 'alive', stats: Unit::Stats.new.set(attack: 85, life: 300, shield: 100))
+tassadar = Unit.new.set(name: 'Tassadar', status: 'dead',  stats: Unit::Stats.new.set(attack: 0,  life: 80,  shield: 300))
+
+zeratul.save
+tassadar.save
+
+# Udate (we made error - mistakenly set Tassadar's attack as zero, let's fix it).
+tassadar.stats.attack = 20
+tassadar.save
+
+# Querying first & all, there's also :each, the same as :all.
+Unit.first name: 'Zeratul'                         # => zeratul
+Unit.all name: 'Zeratul'                           # => [zeratul]
+Unit.all name: 'Zeratul' do |unit|
+  unit                                             # => zeratul
+end
+
+# Simple finders (bang versions also availiable).
+Unit.by_name 'Zeratul'                             # => zeratul
+Unit.first_by_name 'Zeratul'                       # => zeratul
+Unit.all_by_name 'Zeratul'                         # => [zeratul]
+
+# Scopes.
+Unit.alive.count                                   # => 1
+Unit.alive.first                                   # => zeratul
+
+# Callbacks & callbacks on embedded models.
+
+# Validations.
+
+# Save model to any collection.
+```
+
+Source: examples/model.rb
 
 # Migrations
 
@@ -204,3 +264,4 @@ Copyright (c) Alexey Petrushin, http://petrush.in, released under the MIT licens
 
 [mongo_mapper_ext]: https://github.com/alexeypetrushin/mongo_mapper_ext
 [mongoid_misc]: https://github.com/alexeypetrushin/mongoid_misc
+[code_stats]: https://raw.github.com/alexeypetrushin/mongo_db/master/doc/code_stats.png

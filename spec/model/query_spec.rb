@@ -14,7 +14,7 @@ describe "Model Query" do
   end
   after(:all){remove_constants :Unit}
 
-  before{@zeratul = Unit.new.set name: 'Zeratul'}
+  before{@zeratul = Unit.build name: 'Zeratul'}
 
   it 'exist?' do
     Unit.should_not exist(name: 'Zeratul')
@@ -41,7 +41,7 @@ describe "Model Query" do
 
   it 'dynamic finders integration' do
     Unit.first_by_name('Zeratul').should be_nil
-    Unit.new.set(name: 'Zeratul').save!
+    Unit.build(name: 'Zeratul').save!
     Unit.first_by_name('Zeratul').name.should == 'Zeratul'
   end
 end

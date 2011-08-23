@@ -3,7 +3,7 @@ require 'model/spec_helper'
 describe 'Model Miscellaneous' do
   with_mongo_model
 
-  after{remove_constants :Unit}
+  after{remove_constants :Unit3}
 
   it "timestamps" do
     class Unit3
@@ -15,7 +15,7 @@ describe 'Model Miscellaneous' do
       timestamps!
     end
 
-    unit = Unit3.new.set name: 'Zeratul'
+    unit = Unit3.build name: 'Zeratul'
     unit.save!
 
     unit = Unit3.first
@@ -28,5 +28,11 @@ describe 'Model Miscellaneous' do
     unit.updated_at.should >  updated_at
   end
 
-
+  it 'cache' do
+    class Unit3
+      inherit Mongo::Model
+    end
+    u = Unit3.new
+    u._cache.should == {}
+  end
 end

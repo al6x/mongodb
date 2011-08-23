@@ -16,7 +16,7 @@ describe "Validations" do
   after{remove_constants :Unit}
 
   it "should not save model with errors" do
-    unit = Unit.new.set name: 'Zeratul'
+    unit = Unit.build name: 'Zeratul'
     unit.save.should be_true
 
     unit.errors = []
@@ -30,7 +30,7 @@ describe "Validations" do
   end
 
   it "should check :errors only and ignore valid? method" do
-    unit = Unit.new.set name: 'Zeratul'
+    unit = Unit.build name: 'Zeratul'
     unit.should_not_receive(:valid?)
     unit.save.should be_true
   end

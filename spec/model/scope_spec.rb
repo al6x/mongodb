@@ -16,9 +16,9 @@ describe "Scope" do
 
   describe 'current scope' do
     it "should affect finders" do
-      Unit.new.set(name: 'Zeratul',  status: 'alive').save!
-      Unit.new.set(name: 'Jim',      status: 'alive').save!
-      Unit.new.set(name: 'Tassadar', status: 'dead').save!
+      Unit.build(name: 'Zeratul',  status: 'alive').save!
+      Unit.build(name: 'Jim',      status: 'alive').save!
+      Unit.build(name: 'Tassadar', status: 'dead').save!
 
       Unit.count.should == 3
       Unit.all.size.should == 3

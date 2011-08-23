@@ -5,6 +5,14 @@ module Mongo::Model::Misc
     self.updated_at = now
   end
 
+  def _cache
+    @_cache ||= {}
+  end
+
+  def _clear_cache
+    @_cache = {}
+  end
+
   module ClassMethods
     def timestamps!
       attr_accessor :created_at, :updated_at

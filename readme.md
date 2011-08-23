@@ -150,11 +150,11 @@ Mongo::Model.db = db
 class Unit
   inherit Mongo::Model
   collection :units
-  
+
   attr_accessor :name, :status, :stats
-  
+
   scope :alive, status: 'alive'
-  
+
   class Stats
     inherit Mongo::Model
     attr_accessor :attack, :life, :shield
@@ -162,8 +162,8 @@ class Unit
 end
 
 # Create.
-zeratul  = Unit.new.set(name: 'Zeratul',  status: 'alive', stats: Unit::Stats.new.set(attack: 85, life: 300, shield: 100))
-tassadar = Unit.new.set(name: 'Tassadar', status: 'dead',  stats: Unit::Stats.new.set(attack: 0,  life: 80,  shield: 300))
+zeratul  = Unit.build(name: 'Zeratul',  status: 'alive', stats: Unit::Stats.build(attack: 85, life: 300, shield: 100))
+tassadar = Unit.build(name: 'Tassadar', status: 'dead',  stats: Unit::Stats.build(attack: 0,  life: 80,  shield: 300))
 
 zeratul.save
 tassadar.save

@@ -17,7 +17,7 @@ describe "Model CRUD" do
     after(:all){remove_constants :Unit}
 
     before do
-      @zeratul = Unit.new.set name: 'Zeratul', info: 'Dark Templar'
+      @zeratul = Unit.build name: 'Zeratul', info: 'Dark Templar'
     end
 
     it_should_behave_like "object CRUD"
@@ -72,9 +72,27 @@ describe "Model CRUD" do
       db.heroes.count.should == 0
     end
 
-    it 'create'
+    it 'build' do
+      u = Unit.build name: 'Zeratul'
+      u.name.should == 'Zeratul'
+    end
 
-    it 'destroy_all'
+    it 'create' do
+      u = Unit.create(name: 'Zeratul')
+      u.new_record?.should be_false
+
+      u = Unit.create!(name: 'Zeratul')
+      u.new_record?.should be_false
+    end
+
+    it 'destroy_all' do
+      Unit.create(name: 'Zeratul')
+      Unit.count.should == 1
+      Unit.destroy_all
+      Unit.count.should == 0
+
+      Unit.destroy_all!
+    end
   end
 
   describe 'embedded' do
@@ -100,8 +118,8 @@ describe "Model CRUD" do
       @mission_class = Player::Mission
       @player = Player.new
       @player.missions = [
-        Player::Mission.new.set(name: 'Wasteland',         stats: {buildings: 5, units: 10}),
-        Player::Mission.new.set(name: 'Backwater Station', stats: {buildings: 8, units: 25}),
+        Player::Mission.build(name: 'Wasteland',         stats: {buildings: 5, units: 10}),
+        Player::Mission.build(name: 'Backwater Station', stats: {buildings: 8, units: 25}),
       ]
     end
 
@@ -119,7 +137,7 @@ describe "Model CRUD" do
 
       # update
       @player.missions.first.stats[:units] = 9
-      @player.missions << Player::Mission.new.set(name: 'Desperate Alliance', stats: {buildings: 11, units: 40})
+      @player.missions << Player::Mission.build(name: 'Desperate Alliance', stats: {buildings: 11, units: 40})
       @player.save.should be_true
       Player.count.should == 1
       Player.first.should == @player

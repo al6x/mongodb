@@ -1,7 +1,8 @@
 module Mongo::Model
   attr_accessor :_id, :_class
 
-  def new_record?; !!_id end
+  def _id?; !!_id end
+  def new_record?; !_id end
 
   class << self
     attr_accessor :db, :connection

@@ -14,22 +14,33 @@ module Mongo::Model::Assignment
     protected
       attr_reader :attributes
 
-      def method_missing attribute_name, type, mass_assignment = false
+      def method_missing attribute_name, *args
         attribute_name.must_be.a Symbol
-        type.must.respond_to :cast
+has_mail
+        args.size.must_be.in 1..2
+        if args.first.is_a? Class
+          type, mass_assignment = args
+          mass_assignment ||= false
+          type.must.respond_to :cast
+        else
+          type, mass_assignment = nil, args.first
+        endhas_mail
+has_mail
         attributes[attribute_name] = [type, mass_assignment]
       end
   end
 
   def set attributes, options = {}
-    if rules = self.class._assignment
+    if rules = self.class._assign
       force = options[:force]
-      attributes.each do |n, v|
+      attributes.each do |n, v|has_mail
         n = n.to_sym
-        type, mass_assignment = rules[n]
-        if type and (mass_assignment or force)
-          v = type.cast(v)
-          send "#{n}=", v
+        if rule = rules[n]
+          type, mass_assignment = rulehas_mail
+          if mass_assignment or force
+            v = type.cast(v) if type
+            send "#{n}=", v
+          end
         end
       end
     else
@@ -43,12 +54,12 @@ module Mongo::Model::Assignment
   end
 
   module ClassMethods
-    inheritable_accessor :_assignment, nil
+    inheritable_accessor :_assign, nil
 
-    def assignment &block
+    def assign &block
       dsl = ::Mongo::Model::Assignment::Dsl.new
       dsl.instance_eval &block
-      self._assignment = (_assignment || {}).merge dsl.to_h
+      self._assign = (_assign || {}).merge dsl.to_h
     end
   end
 end

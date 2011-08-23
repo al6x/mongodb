@@ -9,31 +9,32 @@ describe 'Model callbacks' do
     class User
       inherit Mongo::Model
 
-      attr_accessor :name, :active, :age, :banned
+      attr_accessor :name, :has_mail, :age, :banned
     end
 
     u = User.new
-    u.set name: 'Alex', active: '1', age: '31', banned: '0'
-    [u.name, u.active, u.age, u.banned].should == ['Alex', '1', '31', '0']
+    u.set name: 'Alex', has_mail: '1', age: '31', banned: '0'
+    [u.name, u.has_mail, u.age, u.banned].should == ['Alex', '1', '31', '0']
   end
 
   it "should update only specified attributes" do
     class User
       inherit Mongo::Model
 
-      attr_accessor :name, :active, :age, :banned
+      attr_accessor :name, :has_mail, :age, :position, :banned
 
-      assignment do
+      assign do
         name     String,  true
-        active   Boolean, true
+        has_mail Boolean, true
         age      Integer, true
+        position true
         banned   Boolean
       end
     end
 
     u = User.new
-    u.set name: 'Alex', active: '1', age: '31', password: 'fake'
-    [u.name, u.active, u.age, u.banned].should == ['Alex', true, 31, nil]
+    u.set name: 'Alex', has_mail: '1', age: '31', position: [11, 34] ,banned: '0'
+    [u.name, u.has_mail, u.age, u.position, u.banned].should == ['Alex', true, 31, [11, 34], nil]
 
     # should allow to forcefully cast and update any attribute
     u.set! banned: '0'
@@ -46,7 +47,7 @@ describe 'Model callbacks' do
 
       attr_accessor :age
 
-      assignment do
+      assign do
         age Integer,  true
       end
     end
@@ -54,7 +55,7 @@ describe 'Model callbacks' do
     class Writer < User
       attr_accessor :posts
 
-      assignment do
+      assign do
         posts Integer, true
       end
     end

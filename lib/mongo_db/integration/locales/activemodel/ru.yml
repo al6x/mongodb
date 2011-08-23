@@ -1,0 +1,27 @@
+ru:
+  errors:
+    # The default format to use in full error messages.
+    format: "%{attribute} %{message}"
+
+    # The values :model, :attribute and :value are always available for interpolation
+    # The value :count is available when applicable. Can be used for pluralization.
+    messages:
+      inclusion: "недопустимое значение"
+      exclusion: "недопустимо"
+      invalid: "неверно"
+      confirmation: "не совпадает с подтверждением"
+      accepted: "долно быть принято"
+      empty: "не может быть пустым"
+      blank: "не может быть пустым"
+      too_long: "слишком длинно (максимально допустимо %{count})"
+      too_short: "слищком коротко (минимально допустимо %{count})"
+      wrong_length: "неверная длинна (должно быть %{count})"
+      not_a_number: "не номер"
+      not_an_integer: "долно быть целочисленно"
+      greater_than: "должно быть больше чем %{count}"
+      greater_than_or_equal_to: "должно быть больше чем или равно %{count}"
+      equal_to: "должно быть равно %{count}"
+      less_than: "должно быть меньше чем %{count}"
+      less_than_or_equal_to: "должно быть меньше чем или равно %{count}"
+      odd: "должно быть не четно"
+      even: "должно быть четно"

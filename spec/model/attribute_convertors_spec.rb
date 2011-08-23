@@ -1,4 +1,4 @@
-require 'extension/spec_helper'
+require 'model/spec_helper'
 
 describe "Attribute Convertors" do
   with_mongo_model
@@ -31,7 +31,7 @@ describe "Attribute Convertors" do
 
   it ":field should generate helper methods if :as_string option provided" do
     class ::TheSample
-      inherit Mongo::ExtModel
+      inherit Mongo::Model
 
       attr_accessor :tags, :protected_tags
       available_as_string :tags, :line

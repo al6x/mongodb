@@ -3,7 +3,13 @@ require 'model/spec_helper'
 describe 'Model Miscellaneous' do
   with_mongo_model
 
-  after{remove_constants :Unit3}
+  before do
+    class User
+      inherit Mongo::Model
+      collection :users
+    end
+  end
+  after{remove_constants :Unit3, :User}
 
   it "timestamps" do
     class Unit3
@@ -34,5 +40,19 @@ describe 'Model Miscellaneous' do
     end
     u = Unit3.new
     u._cache.should == {}
+  end
+
+  it "to_param" do
+    u = User.new
+    u.to_param.should == ''
+    u.save!
+    u.to_param.should_not be_empty
+  end
+
+  it "dom_id" do
+    u = User.new
+    u.dom_id.should == ''
+    u.save!
+    u.dom_id.should_not be_empty
   end
 end

@@ -5,13 +5,24 @@ module Mongo::Model::Misc
     self.updated_at = now
   end
 
+
   def _cache
     @_cache ||= {}
   end
-
   def _clear_cache
     @_cache = {}
   end
+
+
+  def dom_id
+    # new_record? ? "new_#{self.class.name.underscore}" : to_param
+    to_param
+  end
+
+  def to_param
+    (_id || '').to_s
+  end
+
 
   module ClassMethods
     def timestamps!

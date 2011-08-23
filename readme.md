@@ -126,7 +126,6 @@ Source: examples/object.rb
 
 # Object Model
 
-- Very small, see [code stats][code_stats].
 - The same API for pure driver and Models.
 - Minimum extra abstractions, trying to keep things as close to the MongoDB semantic as possible.
 - Schema-less, dynamic (with ability to specify types for mass-assignment).
@@ -134,6 +133,7 @@ Source: examples/object.rb
 - Full support for embedded objects (validations, callbacks, ...).
 - Scope, default_scope
 - Doesn't try to mimic ActiveRecord, MongoDB is differrent and this tool designed to get most of it.
+- Very small, see [code stats][code_stats].
 
 Other ODM usually try to cover simple but non-standard API of MongoDB behind complex ORM-like abstractions. This tool **exposes simplicity and power of MongoDB and leverages it's differences**.
 

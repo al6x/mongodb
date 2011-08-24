@@ -1,11 +1,6 @@
-begin
-  require 'ruby_ext'
-rescue LoadError => e
-  warn 'Model requires the ruby_ext gem, please install it'
-  raise e
-end
-
 require 'mongo_db/object'
+require 'ruby_ext'
+require 'i18n'
 
 module Mongo::Model; end
 

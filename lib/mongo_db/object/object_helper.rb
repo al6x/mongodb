@@ -34,20 +34,28 @@ module Mongo::ObjectHelper
       ::Mongo::ObjectSerializer.new(arg).remove opts, self
     end
   end
+  
+  def save! doc, opts = {}
+    save(doc, opts) || raise(Mongo::Error, "can't save #{doc.inspect}!")
+  end
 
 
   #
   # Querying
   #
-  def first *args, &block
-    doc = super *args, &block
-    ::Mongo::ObjectSerializer.build(doc)
+  def first selector = {}, opts = {}, &block
+    opts = opts.clone
+    object = (opts.delete(:object) == false) ? false : true
+    doc = super selector, opts, &block
+    object ? ::Mongo::ObjectSerializer.build(doc) : doc
   end
-
-  def each *args, &block
-    super *args do |doc|
-      obj = ::Mongo::ObjectSerializer.build(doc)
-      block.call obj
+  
+  def each selector = {}, opts = {}, &block
+    opts = opts.clone
+    object = (opts.delete(:object) == false) ? false : true
+    super selector, opts do |doc|
+      doc = ::Mongo::ObjectSerializer.build(doc) if object
+      block.call doc
     end
     nil
   end

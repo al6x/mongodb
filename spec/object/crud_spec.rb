@@ -19,6 +19,11 @@ describe "Object CRUD" do
     end
 
     it_should_behave_like "object CRUD"
+    
+    it "should allow to read object as hash" do
+      db.units.save! @zeratul
+      db.units.first({}, object: false).class.should == Hash
+    end
   end
 
   describe 'embedded' do

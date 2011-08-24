@@ -1,3 +1,5 @@
+- add validates_uniquiness_of
+
 - identity map
 - reload ?
 - MongoMapper::Modifiers ?

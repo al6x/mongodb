@@ -31,4 +31,10 @@ describe "Integration with validatable2" do
     unit.errors.should be_empty
     unit.save.should be_true
   end
+  
+  it "should not save errors as instance variables" do
+    unit = Unit.new
+    unit.valid?
+    unit.instance_variables.select{|iv_name| iv_name !~ /^@_/}.should be_empty
+  end
 end

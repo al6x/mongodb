@@ -34,7 +34,7 @@ module Mongo::ObjectHelper
       ::Mongo::ObjectSerializer.new(arg).remove opts, self
     end
   end
-  
+
   def save! doc, opts = {}
     save(doc, opts) || raise(Mongo::Error, "can't save #{doc.inspect}!")
   end
@@ -49,7 +49,7 @@ module Mongo::ObjectHelper
     doc = super selector, opts, &block
     object ? ::Mongo::ObjectSerializer.build(doc) : doc
   end
-  
+
   def each selector = {}, opts = {}, &block
     opts = opts.clone
     object = (opts.delete(:object) == false) ? false : true

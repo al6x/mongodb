@@ -1,4 +1,4 @@
-require 'mongo_db/object'
+require 'mongodb/object'
 require 'ruby_ext'
 require 'i18n'
 
@@ -17,7 +17,7 @@ module Mongo::Model; end
   attribute_convertors
   misc
   model
-).each{|f| require "mongo_db/model/#{f}"}
+).each{|f| require "mongodb/model/#{f}"}
 
 module Mongo
   module Model

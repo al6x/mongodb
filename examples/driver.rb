@@ -1,4 +1,4 @@
-require 'mongo_db/driver'
+require 'mongodb/driver'
 
 # Changing some defaults.
 Mongo.defaults.merge! symbolize: true, multi: true, safe: true

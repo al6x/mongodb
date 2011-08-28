@@ -1,4 +1,4 @@
-require 'mongo_db/driver/spec'
+require 'mongodb/driver/spec'
 
 rspec do
   class << self

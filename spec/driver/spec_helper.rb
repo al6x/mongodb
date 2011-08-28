@@ -1,4 +1,4 @@
-require 'mongo_db/driver'
+require 'mongodb/driver'
 
 Mongo.defaults.merge! \
   symbolize:                    true,
@@ -9,7 +9,7 @@ Mongo.defaults.merge! \
 
 require 'ruby_ext'
 require 'rspec_ext'
-require 'mongo_db/driver/spec'
+require 'mongodb/driver/spec'
 
 #
 # Handy spec helpers

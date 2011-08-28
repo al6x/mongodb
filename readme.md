@@ -16,7 +16,7 @@ These enhancements alter the driver's API and made it more simple and intuitive.
 - 100% backward compatibility with original driver API (if not - it's a bug, report it please)
 
 ``` ruby
-require 'mongo_db/driver'
+require 'mongodb/driver'
 
 # Changing some defaults.
 Mongo.defaults.merge! symbolize: true, multi: true, safe: true
@@ -88,7 +88,7 @@ class Unit
 end
 
 # Connecting to MongoDB.
-require 'mongo_db/object'
+require 'mongodb/object'
 Mongo.defaults.merge! symbolize: true, multi: true, safe: true
 connection = Mongo::Connection.new
 db = connection.db 'default_test'
@@ -139,7 +139,7 @@ Other ODM usually try to cover simple but non-standard API of MongoDB behind com
 
 ``` ruby
 # Connecting to MongoDB.
-require 'mongo_db/model'
+require 'mongodb/model'
 Mongo.defaults.merge! symbolize: true, multi: true, safe: true
 connection = Mongo::Connection.new
 db = connection.db 'default_test'
@@ -202,7 +202,7 @@ Source: examples/model.rb
 Define migration steps, specify desired version and apply it (usually all this should be done via Rake task).
 
 ``` ruby
-require 'mongo_db/migration'
+require 'mongodb/migration'
 
 # Connection & db.
 connection = Mongo::Connection.new
@@ -252,7 +252,7 @@ Source: examples/migration.rb
 # Installation
 
 ``` bash
-gem install mongo_db
+gem install mongodb
 ```
 
 # License
@@ -261,4 +261,4 @@ Copyright (c) Alexey Petrushin, http://petrush.in, released under the MIT licens
 
 [mongo_mapper_ext]: https://github.com/alexeypetrushin/mongo_mapper_ext
 [mongoid_misc]: https://github.com/alexeypetrushin/mongoid_misc
-[code_stats]: https://github.com/alexeypetrushin/mongo_db/raw/master/docs/code_stats.png
+[code_stats]: https://github.com/alexeypetrushin/mongodb/raw/master/docs/code_stats.png

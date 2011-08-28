@@ -1,4 +1,4 @@
-require 'mongo_db/object'
+require 'mongodb/object'
 require 'driver/spec_helper'
 
 # RSpec adds some instance variables and we need to skip it.

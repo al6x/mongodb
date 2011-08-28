@@ -1,4 +1,4 @@
-require 'mongo_db/model'
+require 'mongodb/model'
 
 require 'object/spec_helper'
-require 'mongo_db/model/spec'
+require 'mongodb/model/spec'

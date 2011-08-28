@@ -1,5 +1,5 @@
 require 'driver/spec_helper'
-require 'mongo_db/migration'
+require 'mongodb/migration'
 
 describe "Migration" do
   with_mongo

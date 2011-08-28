@@ -1,4 +1,5 @@
 - add validates_uniquiness_of
+- file_model
 
 - identity map
 - reload ?

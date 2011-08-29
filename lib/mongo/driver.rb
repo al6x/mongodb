@@ -1,4 +1,4 @@
-require 'mongodb/gems'
+require 'mongo/gems'
 
 require 'mongo'
 
@@ -9,7 +9,7 @@ class Mongo::NotFound < Mongo::Error; end
   database
   collection
   dynamic_finders
-).each{|f| require "mongodb/driver/#{f}"}
+).each{|f| require "mongo/driver/#{f}"}
 
 # defaults
 Mongo.class_eval do

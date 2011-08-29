@@ -1,9 +1,9 @@
-require 'mongodb/driver'
+require 'mongo/driver'
 
 %w(
   object_serializer
   object_helper
-).each{|f| require "mongodb/object/#{f}"}
+).each{|f| require "mongo/object/#{f}"}
 
 Mongo.defaults[:callbacks] = true
 

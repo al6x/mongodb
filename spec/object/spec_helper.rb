@@ -1,6 +1,6 @@
-require 'mongodb/object'
+require 'mongo/object'
 
-require 'mongodb/object/spec'
+require 'mongo/object/spec'
 require 'driver/spec_helper'
 
 # To simplify callback expectations

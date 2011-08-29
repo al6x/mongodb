@@ -17,7 +17,7 @@ class Unit
 end
 
 # Connecting to MongoDB.
-require 'mongodb/object'
+require 'mongo/object'
 Mongo.defaults.merge! symbolize: true, multi: true, safe: true
 connection = Mongo::Connection.new
 db = connection.db 'default_test'

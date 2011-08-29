@@ -1,4 +1,4 @@
-require 'mongodb/migration'
+require 'mongo/migration'
 
 # Connection & db.
 connection = Mongo::Connection.new

@@ -1,4 +1,4 @@
-require 'mongodb/driver/spec'
+require 'mongo/driver/spec'
 
 # RSpec adds some instance variables and we need to skip it.
 Mongo::ObjectSerializer.send :const_set, :SKIP_IV_REGEXP, /^@_|^@mock_proxy/

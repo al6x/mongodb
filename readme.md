@@ -16,7 +16,7 @@ These enhancements alter the driver's API and made it more simple and intuitive.
 - 100% backward compatibility with original driver API (if not - it's a bug, report it please)
 
 ``` ruby
-require 'mongodb/driver'
+require 'mongo/driver'
 
 # Changing some defaults.
 Mongo.defaults.merge! symbolize: true, multi: true, safe: true
@@ -67,7 +67,7 @@ So, please use standard Ruby driver documentation.
 Define migration steps, specify desired version and apply it (usually all this should be done via Rake task).
 
 ``` ruby
-require 'mongodb/migration'
+require 'mongo/migration'
 
 # Connection & db.
 connection = Mongo::Connection.new
@@ -140,7 +140,7 @@ class Unit
 end
 
 # Connecting to MongoDB.
-require 'mongodb/object'
+require 'mongo/object'
 Mongo.defaults.merge! symbolize: true, multi: true, safe: true
 connection = Mongo::Connection.new
 db = connection.db 'default_test'

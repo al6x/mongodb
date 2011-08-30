@@ -7,13 +7,15 @@ module Mongo::Object
       return false if opts[:callbacks] and !::Mongo::Object.run_before_callbacks(self, :validate)
 
       child_opts = opts.merge internal: true
-      children_valid = child_objects.all?{|group| group.all?{|obj| obj.valid?(child_opts)}}
-      if children_valid and ::Mongo::Object.run_validations(self) and errors.empty?
-        ::Mongo::Object.run_after_callbacks(self, :validate) if opts[:callbacks]
-        true
-      else
-        false
-      end
+      result = [
+        child_objects.all?{|group| group.all?{|obj| obj.valid?(child_opts)}},
+        ::Mongo::Object.run_validations(self),
+        errors.empty?
+      ].all?
+
+      ::Mongo::Object.run_after_callbacks(self, :validate) if opts[:callbacks]
+
+      result
     ensure
       clear_child_objects unless opts[:internal]
     end
@@ -288,7 +290,7 @@ module Mongo::Object
         raise_error "unknown callback method (#{method})!"
       end
 
-      result &= if type == :after
+      if type == :after
         ::Mongo::Object.run_after_callbacks self, method
       else
         true

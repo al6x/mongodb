@@ -4,13 +4,11 @@ module Mongo::Object
   def valid? opts = {}
     opts = ::Mongo::Object.parse_options opts
     begin
-      return false unless errors.empty?
-
-      return false if opts[:callbacks] and !::Mongo::Object.run_callbacks(self, :before, :validate)
+      return false if opts[:callbacks] and !::Mongo::Object.run_before_callbacks(self, :validate)
 
       child_opts = opts.merge internal: true
       if child_objects.all?{|group| group.all?{|obj| obj.valid?(child_opts)}} and errors.empty?
-        ::Mongo::Object.run_callbacks(self, :after, :validate) if opts[:callbacks]
+        ::Mongo::Object.run_after_callbacks(self, :validate) if opts[:callbacks]
         true
       else
         false
@@ -136,12 +134,26 @@ module Mongo::Object
     def build doc
       return unless doc
       obj = _build doc
-      obj.send :update_internal_state! if obj.is_a? ::Mongo::Object
+      obj.send :update_original_children! if obj.is_a? ::Mongo::Object
       obj
     end
 
-    def run_callbacks obj, type, method_name
-      obj.respond_to?(:run_callbacks) ? obj.run_callbacks(type, method_name) : true
+    def run_before_callbacks obj, method
+      if obj.respond_to?(:run_before_callbacks)
+        obj.run_before_callbacks(:save, method: :save) if method == :update or method == :create
+        obj.run_before_callbacks(method, method: method)
+      else
+        true
+      end
+    end
+
+    def run_after_callbacks obj, method
+      if obj.respond_to?(:run_before_callbacks)
+        obj.run_after_callbacks(method, method: method)
+        obj.run_after_callbacks(:save, method: :save) if method == :update or method == :create
+      else
+        true
+      end
     end
 
     protected
@@ -183,17 +195,15 @@ module Mongo::Object
   end
 
   protected
-    attr_writer :_original_children
-    def _original_children
-      @_original_children ||= []
-    end
+    attr_writer :original_children
+    def original_children; @_original_children ||= [] end
 
-    def update_internal_state!
+    def update_original_children!
       return unless ::Mongo.defaults[:callbacks]
 
-      _original_children.clear
+      original_children.clear
       ::Mongo::Object.each_object self, false do |obj|
-        _original_children << obj
+        original_children << obj
       end
     end
 
@@ -210,34 +220,34 @@ module Mongo::Object
       unless @_child_objects
         created_children, updated_children, destroyed_children = [], [], []
 
-        original_children_ids = Set.new; _original_children.each{|obj| original_children_ids << obj.object_id}
+        original_children_ids = Set.new; original_children.each{|obj| original_children_ids << obj.object_id}
         ::Mongo::Object.each_object self, false do |obj|
           (original_children_ids.include?(obj.object_id) ? updated_children : created_children) << obj
         end
 
         children_ids = Set.new; ::Mongo::Object.each_object(self, false){|obj| children_ids << obj.object_id}
-        destroyed_children = _original_children.select{|obj| !children_ids.include?(obj.object_id)}
+        destroyed_children = original_children.select{|obj| !children_ids.include?(obj.object_id)}
 
         @_child_objects = [created_children, updated_children, destroyed_children]
       end
       @_child_objects
     end
 
-    def with_object_callbacks method_name, opts, &block
+    def with_object_callbacks method, opts, &block
       opts = ::Mongo::Object.parse_options opts
 
       # validation
       return false if opts[:validate] and !valid?(opts.merge(internal: true))
 
       # before callbacks
-      return false if opts[:callbacks] and !run_all_callbacks(:before, method_name)
+      return false if opts[:callbacks] and !run_all_callbacks(:before, method)
 
       # saving
       block.call ::Mongo::Object.to_mongo_options(opts)
-      update_internal_state!
+      update_original_children!
 
       # after callbacks
-      run_all_callbacks :after, method_name if opts[:callbacks]
+      run_all_callbacks :after, method if opts[:callbacks]
 
       true
     ensure
@@ -245,36 +255,36 @@ module Mongo::Object
     end
 
     # TODO1 move to static method
-    def run_all_callbacks type, method_name
+    def run_all_callbacks type, method
       result = if type == :before
-        ::Mongo::Object.run_callbacks self, type, method_name
+        ::Mongo::Object.run_before_callbacks self, method
       else
         true
       end
 
-      result &= if method_name == :create
+      result &= if method == :create
         child_objects.all? do |group|
           group.all? do |obj|
-            obj.run_all_callbacks type, method_name
+            obj.run_all_callbacks type, method
           end
         end
-      elsif method_name == :update
+      elsif method == :update
         created_children, updated_children, destroyed_children = child_objects
         created_children.all?{|obj| obj.run_all_callbacks type, :create} and
           updated_children.all?{|obj| obj.run_all_callbacks type, :update} and
           destroyed_children.all?{|obj| obj.run_all_callbacks type, :destroy}
-      elsif method_name == :destroy
+      elsif method == :destroy
         child_objects.all? do |group|
           group.all? do |obj|
-            obj.run_all_callbacks type, method_name
+            obj.run_all_callbacks type, method
           end
         end
       else
-        raise_error "unknown callback method (#{method_name})!"
+        raise_error "unknown callback method (#{method})!"
       end
 
       result &= if type == :after
-        ::Mongo::Object.run_callbacks self, type, method_name
+        ::Mongo::Object.run_after_callbacks self, method
       else
         true
       end

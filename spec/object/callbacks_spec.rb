@@ -22,7 +22,7 @@ describe 'Object callbacks' do
   end
 
   it 'create' do
-    %w(before_validate after_validate before_create after_create).each do |name|
+    %w(before_validate after_validate before_save before_create after_create after_save).each do |name|
       @player.should_receive(name).once.ordered.and_return(true)
       @mission.should_receive(name).once.ordered.and_return(true)
     end
@@ -33,7 +33,7 @@ describe 'Object callbacks' do
   it 'update' do
     db.players.save(@player).should be_true
 
-    %w(before_validate after_validate before_update after_update).each do |name|
+    %w(before_validate after_validate before_save before_update after_update after_save).each do |name|
       @player.should_receive(name).once.ordered.and_return(true)
       @mission.should_receive(name).once.ordered.and_return(true)
     end
@@ -63,8 +63,8 @@ describe 'Object callbacks' do
   end
 
   it 'should be able interrupt CRUD' do
-    @mission.stub! :run_callbacks do |type, method_name|
-      false if type == :before and method_name == :create
+    @mission.stub! :run_before_callbacks do |method_name|
+      false if method_name == :create
     end
     db.players.save(@player).should be_false
     db.players.count.should == 0

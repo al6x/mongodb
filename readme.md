@@ -192,4 +192,4 @@ Copyright (c) Alexey Petrushin, http://petrush.in, released under the MIT licens
 [mongo_mapper_ext]: https://github.com/alexeypetrushin/mongo_mapper_ext
 [mongoid_misc]: https://github.com/alexeypetrushin/mongoid_misc
 [code_stats]: https://github.com/alexeypetrushin/mongodb/raw/master/docs/code_stats.png
-[mongo_model]: https://github.com/alexeypetrushin/mongodb_model
+[mongodb_model]: https://github.com/alexeypetrushin/mongodb_model

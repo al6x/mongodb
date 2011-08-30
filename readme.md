@@ -3,6 +3,7 @@ Ruby object persistence & driver enhancements for MongoDB.
 1. Driver enchancements.
 2. Migrations.
 3. Persistence for any Ruby object.
+4. Object Model [mongodb_model][:mongodb_model]
 
 Lower layers are independent from upper, use only what You need.
 
@@ -191,3 +192,4 @@ Copyright (c) Alexey Petrushin, http://petrush.in, released under the MIT licens
 [mongo_mapper_ext]: https://github.com/alexeypetrushin/mongo_mapper_ext
 [mongoid_misc]: https://github.com/alexeypetrushin/mongoid_misc
 [code_stats]: https://github.com/alexeypetrushin/mongodb/raw/master/docs/code_stats.png
+[mongo_model]: https://github.com/alexeypetrushin/mongodb_model

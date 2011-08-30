@@ -7,7 +7,8 @@ module Mongo::Object
       return false if opts[:callbacks] and !::Mongo::Object.run_before_callbacks(self, :validate)
 
       child_opts = opts.merge internal: true
-      if child_objects.all?{|group| group.all?{|obj| obj.valid?(child_opts)}} and errors.empty?
+      children_valid = child_objects.all?{|group| group.all?{|obj| obj.valid?(child_opts)}}
+      if children_valid and ::Mongo::Object.run_validations(self) and errors.empty?
         ::Mongo::Object.run_after_callbacks(self, :validate) if opts[:callbacks]
         true
       else
@@ -154,6 +155,10 @@ module Mongo::Object
       else
         true
       end
+    end
+
+    def run_validations obj
+      obj.respond_to?(:run_validations) ? obj.run_validations : true
     end
 
     protected

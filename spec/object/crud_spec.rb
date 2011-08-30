@@ -7,6 +7,8 @@ describe "Object CRUD" do
   describe 'simple' do
     before :all do
       class Unit2
+        include Mongo::Object
+
         def initialize name = nil, info = nil; @name, @info = name, info end
         attr_accessor :name, :info
         def == o; [self.class, name, info] == [o.class, o.respond_to(:name), o.respond_to(:info)] end
@@ -29,10 +31,14 @@ describe "Object CRUD" do
   describe 'embedded' do
     before :all do
       class Player2
+        include Mongo::Object
+
         attr_accessor :missions
         def == o; [self.class, self.missions] == [o.class, o.respond_to(:missions)] end
 
         class Mission
+          include Mongo::Object
+
           def initialize name = nil, stats = nil; @name, @stats = name, stats end
           attr_accessor :name, :stats
           def == o; [self.class, self.name, self.stats] == [o.class, o.respond_to(:name), o.respond_to(:stats)] end

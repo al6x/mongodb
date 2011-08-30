@@ -1,7 +1,7 @@
 require 'mongo/driver'
 
 %w(
-  object_serializer
+  object
   object_helper
 ).each{|f| require "mongo/object/#{f}"}
 
@@ -11,7 +11,7 @@ Mongo.defaults[:callbacks] = true
 Mongo::Collection.class_eval do
   include Mongo::ObjectHelper
 
-  %w(insert update remove save).each do |method|
+  %w(create update save destroy).each do |method|
     alias_method "#{method}_without_object", method
     alias_method method, "#{method}_with_object"
   end

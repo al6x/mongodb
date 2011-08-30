@@ -2,41 +2,56 @@ module Mongo::ObjectHelper
   #
   # CRUD
   #
+  def create_with_object doc, opts = {}
+    if doc.is_a? ::Mongo::Object
+      doc.create_object self, opts
+    else
+      create_without_object doc, opts
+    end
+  end
+
+  def update_with_object *args
+    if args.first.is_a? ::Mongo::Object
+      doc, opts = args
+      opts ||= {}
+      doc.update_object self, opts
+    else
+      update_without_object *args
+    end
+  end
+
   def save_with_object doc, opts = {}
-    if doc.is_a? Hash
+    if doc.is_a? ::Mongo::Object
+      doc.save_object self, opts
+    else
       save_without_object doc, opts
-    else
-      ::Mongo::ObjectSerializer.new(doc).save opts, self
     end
   end
 
-  def insert_with_object args, opts = {}
-    if args.is_a?(Hash) or args.is_a?(Array)
-      insert_without_object args, opts
+  def destroy_with_object *args
+    if args.first.is_a? ::Mongo::Object
+      doc, opts = args
+      opts ||= {}
+      doc.destroy_object self, opts
     else
-      ::Mongo::ObjectSerializer.new(args).insert opts, self
+      destroy_without_object *args
     end
   end
 
-  def update_with_object selector, doc, opts = {}
-    if doc.is_a?(Hash)
-      update_without_object selector, doc, opts
-    else
-      raise "can't use update selector with object (#{selector}, {#{doc}})!" unless selector == nil
-      ::Mongo::ObjectSerializer.new(doc).update opts, self
-    end
+  def create! *args
+    create(*args) || raise(Mongo::Error, "can't create #{doc.inspect}!")
   end
 
-  def remove_with_object arg = {}, opts = {}
-    if arg.is_a? Hash
-      remove_without_object arg, opts
-    else
-      ::Mongo::ObjectSerializer.new(arg).remove opts, self
-    end
+  def update! *args
+    update(*args) || raise(Mongo::Error, "can't update #{doc.inspect}!")
   end
 
-  def save! doc, opts = {}
-    save(doc, opts) || raise(Mongo::Error, "can't save #{doc.inspect}!")
+  def save! *args
+    save(*args) || raise(Mongo::Error, "can't save #{doc.inspect}!")
+  end
+
+  def destroy! *args
+    destroy(*args) || raise(Mongo::Error, "can't destroy #{doc.inspect}!")
   end
 
 
@@ -45,18 +60,21 @@ module Mongo::ObjectHelper
   #
   def first selector = {}, opts = {}, &block
     opts = opts.clone
-    object = (opts.delete(:object) == false) ? false : true
-    doc = super selector, opts, &block
-    object ? ::Mongo::ObjectSerializer.build(doc) : doc
+    if opts.delete(:object) == false
+      super selector, opts, &block
+    else
+      ::Mongo::Object.build super(selector, opts, &block)
+    end
   end
 
   def each selector = {}, opts = {}, &block
     opts = opts.clone
-    object = (opts.delete(:object) == false) ? false : true
-    super selector, opts do |doc|
-      doc = ::Mongo::ObjectSerializer.build(doc) if object
-      block.call doc
+    if opts.delete(:object) == false
+      super selector, opts, &block
+    else
+      super selector, opts do |doc|
+        block.call ::Mongo::Object.build(doc)
+      end
     end
-    nil
   end
 end

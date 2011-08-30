@@ -7,7 +7,7 @@ shared_examples_for 'object CRUD' do
 
     # create
     db.units.save(@zeratul).should be_true
-    @zeratul.instance_variable_get(:@_id).should_not be_nil
+    @zeratul._id.should_not be_nil
 
     # read
     db.units.count.should == 1
@@ -31,7 +31,7 @@ shared_examples_for 'embedded object CRUD' do
   it 'crud' do
     # create
     db.players.save(@player)
-    @player.instance_variable_get(:@_id).should_not be_nil
+    @player._id.should_not be_nil
 
     # read
     db.players.count.should == 1

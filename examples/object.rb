@@ -1,5 +1,13 @@
+# Connecting to MongoDB.
+require 'mongo/object'
+Mongo.defaults.merge! symbolize: true, multi: true, safe: true
+connection = Mongo::Connection.new
+db = connection.db 'default_test'
+db.units.drop
+
 # Let's define the game unit.
 class Unit
+  include Mongo::Object
   attr_reader :name, :stats
 
   # don't forget to allow creating object with no arguments
@@ -8,6 +16,7 @@ class Unit
   end
 
   class Stats
+    include Mongo::Object
     attr_accessor :attack, :life, :shield
 
     def initialize attack = nil, life = nil, shield = nil
@@ -15,13 +24,6 @@ class Unit
     end
   end
 end
-
-# Connecting to MongoDB.
-require 'mongo/object'
-Mongo.defaults.merge! symbolize: true, multi: true, safe: true
-connection = Mongo::Connection.new
-db = connection.db 'default_test'
-db.units.drop
 
 # Create.
 zeratul  = Unit.new('Zeratul',  Unit::Stats.new(85, 300, 100))

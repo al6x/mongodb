@@ -15,16 +15,16 @@ class Mongo::ObjectSerializer
     @object = object
   end
 
-  def save opts, collection
+  def save options, collection
     if _id
-      self.update opts.merge(upsert: true), collection
+      self.update options.merge(upsert: true), collection
     else
-      self.insert opts, collection
+      self.insert options, collection
     end
   end
 
-  def insert opts, collection
-    opts, validate, callbacks = parse_object_options opts
+  def insert options, collection
+    options, validate, callbacks = parse_object_options options
 
     # before callbacks
     return false if callbacks and !run_callbacks(objects, [:before, :validate], [:before, :save], [:before, :create])
@@ -34,7 +34,7 @@ class Mongo::ObjectSerializer
 
     # saving document
     doc = to_document
-    collection.insert_without_object doc, opts
+    collection.insert_without_object doc, options
     id = doc[:_id] || doc['_id'] || raise("internal error: no id after document insertion (#{doc})!")
     object.instance_variable_set :@_id, id
     update_internal_state!
@@ -45,8 +45,8 @@ class Mongo::ObjectSerializer
     true
   end
 
-  def update opts, collection
-    opts, validate, callbacks = parse_object_options opts
+  def update options, collection
+    options, validate, callbacks = parse_object_options options
 
     # before callbacks.
     # we need to sort out embedded objects into created, updated and destroyed
@@ -75,7 +75,7 @@ class Mongo::ObjectSerializer
     # saving document
     doc = to_document
     id = _id || raise("can't update document without id (#{doc})!")
-    collection.update_without_object({_id: id}, doc, opts)
+    collection.update_without_object({_id: id}, doc, options)
     update_internal_state!
 
     # after callbacks
@@ -88,8 +88,8 @@ class Mongo::ObjectSerializer
     true
   end
 
-  def remove opts, collection
-    opts, validate, callbacks = parse_object_options opts
+  def remove options, collection
+    options, validate, callbacks = parse_object_options options
 
     # before callbacks
     if callbacks
@@ -103,7 +103,7 @@ class Mongo::ObjectSerializer
 
     # saving document
     id = _id || "can't destroy object without _id (#{arg})!"
-    collection.remove_without_object({_id: id}, opts)
+    collection.remove_without_object({_id: id}, options)
     update_internal_state!
 
     # after callbacks
@@ -154,11 +154,11 @@ class Mongo::ObjectSerializer
     def original_objects; object.instance_variable_get(:@_original_objects) end
     def original_objects= objects; object.instance_variable_set(:@_original_objects, objects) end
 
-    def parse_object_options opts
-      opts = opts.clone
-      validate  = opts.delete(:validate)  == false ? false : true
-      callbacks = opts.delete(:callbacks) == false ? false : Mongo.defaults[:callbacks]
-      return opts, validate, callbacks
+    def parse_object_options options
+      options = options.clone
+      validate  = options.delete(:validate)  == false ? false : true
+      callbacks = options.delete(:callbacks) == false ? false : Mongo.defaults[:callbacks]
+      return options, validate, callbacks
     end
 
     # need this to allow change it in specs

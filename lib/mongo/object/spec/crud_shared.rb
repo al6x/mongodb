@@ -50,4 +50,10 @@ shared_examples_for 'embedded object CRUD' do
     db.players.destroy @player
     db.players.count.should == 0
   end
+
+  it "embedded object should have :_parent reference to the main object" do
+    db.players.save @player
+    player = db.players.first
+    player.missions.first._parent.should == player
+  end
 end

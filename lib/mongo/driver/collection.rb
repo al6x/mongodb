@@ -5,34 +5,34 @@ module Mongo::CollectionExt
   #
   # CRUD
   #
-  def save_with_ext doc, opts = {}
-    save_without_ext doc, reverse_merge_defaults(opts, :safe)
+  def save_with_ext doc, options = {}
+    save_without_ext doc, reverse_merge_defaults(options, :safe)
   end
 
-  def insert_with_ext args, opts = {}
-    result = insert_without_ext args, reverse_merge_defaults(opts, :safe)
+  def insert_with_ext args, options = {}
+    result = insert_without_ext args, reverse_merge_defaults(options, :safe)
 
     # fix for mongodriver, it will return single result if we supply [doc] as args
     (args.is_a?(Array) and !result.is_a?(Array)) ? [result] : result
   end
 
-  def update_with_ext selector, doc, opts = {}
+  def update_with_ext selector, doc, options = {}
     selector = convert_underscore_to_dollar_in_selector selector
     doc      = convert_underscore_to_dollar_in_update doc
 
     # because :multi works only with $ operators, we need to check if it's applicable
-    opts = if doc.keys.any?{|k| k =~ /^\$/}
-      reverse_merge_defaults(opts, :safe, :multi)
+    options = if doc.keys.any?{|k| k =~ /^\$/}
+      reverse_merge_defaults(options, :safe, :multi)
     else
-      reverse_merge_defaults(opts, :safe)
+      reverse_merge_defaults(options, :safe)
     end
 
-    update_without_ext selector, doc, opts
+    update_without_ext selector, doc, options
   end
 
-  def remove_with_ext selector = {}, opts = {}
+  def remove_with_ext selector = {}, options = {}
     selector = convert_underscore_to_dollar_in_selector selector
-    remove_without_ext selector, reverse_merge_defaults(opts, :safe, :multi)
+    remove_without_ext selector, reverse_merge_defaults(options, :safe, :multi)
   end
 
   def destroy *args
@@ -46,33 +46,33 @@ module Mongo::CollectionExt
   #
   # Querying
   #
-  def first selector = {}, opts = {}
+  def first selector = {}, options = {}
     selector = convert_underscore_to_dollar_in_selector selector if selector.is_a? Hash
 
-    h = find_one selector, opts
+    h = find_one selector, options
     symbolize_doc h
   end
 
-  def first! selector = {}, opts = {}
-    first(selector, opts) || raise(Mongo::NotFound, "document with selector #{selector} not found!")
+  def first! selector = {}, options = {}
+    first(selector, options) || raise(Mongo::NotFound, "document with selector #{selector} not found!")
   end
 
-  def all selector = {}, opts = {}, &block
+  def all selector = {}, options = {}, &block
     if block
-      each selector, opts, &block
+      each selector, options, &block
     else
       list = []
-      each(selector, opts){|doc| list << doc}
+      each(selector, options){|doc| list << doc}
       list
     end
   end
 
-  def each selector = {}, opts = {}, &block
+  def each selector = {}, options = {}, &block
     selector = convert_underscore_to_dollar_in_selector selector
 
     cursor = nil
     begin
-      cursor = find selector, reverse_merge_defaults(opts, :batch_size)
+      cursor = find selector, reverse_merge_defaults(options, :batch_size)
       cursor.each do |doc|
         doc = symbolize_doc doc
         block.call doc
@@ -84,8 +84,8 @@ module Mongo::CollectionExt
     nil
   end
 
-  def count_with_ext selector = {}, opts = {}
-    find(selector, opts).count()
+  def count_with_ext selector = {}, options = {}
+    find(selector, options).count()
   end
 
   protected
@@ -100,8 +100,8 @@ module Mongo::CollectionExt
       :_inc, :_set, :_unset, :_push, :_pushAll, :_addToSet, :_pop, :_pull, :_pullAll, :_rename, :_bit
     ].to_set
 
-    def reverse_merge_defaults opts, *keys
-      h = opts.clone
+    def reverse_merge_defaults options, *keys
+      h = options.clone
       keys.each do |k|
         h[k] = Mongo.defaults[k] if Mongo.defaults.include?(k) and !h.include?(k)
       end

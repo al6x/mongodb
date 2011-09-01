@@ -2,37 +2,37 @@ module Mongo::ObjectHelper
   #
   # CRUD
   #
-  def create_with_object doc, opts = {}
+  def create_with_object doc, options = {}
     if doc.is_a? ::Mongo::Object
-      doc.create_object self, opts
+      doc.create_object self, options
     else
-      create_without_object doc, opts
+      create_without_object doc, options
     end
   end
 
   def update_with_object *args
     if args.first.is_a? ::Mongo::Object
-      doc, opts = args
-      opts ||= {}
-      doc.update_object self, opts
+      doc, options = args
+      options ||= {}
+      doc.update_object self, options
     else
       update_without_object *args
     end
   end
 
-  def save_with_object doc, opts = {}
+  def save_with_object doc, options = {}
     if doc.is_a? ::Mongo::Object
-      doc.save_object self, opts
+      doc.save_object self, options
     else
-      save_without_object doc, opts
+      save_without_object doc, options
     end
   end
 
   def destroy_with_object *args
     if args.first.is_a? ::Mongo::Object
-      doc, opts = args
-      opts ||= {}
-      doc.destroy_object self, opts
+      doc, options = args
+      options ||= {}
+      doc.destroy_object self, options
     else
       destroy_without_object *args
     end
@@ -58,21 +58,21 @@ module Mongo::ObjectHelper
   #
   # Querying
   #
-  def first selector = {}, opts = {}, &block
-    opts = opts.clone
-    if opts.delete(:object) == false
-      super selector, opts, &block
+  def first selector = {}, options = {}, &block
+    options = options.clone
+    if options.delete(:object) == false
+      super selector, options, &block
     else
-      ::Mongo::Object.build super(selector, opts, &block)
+      ::Mongo::Object.build super(selector, options, &block)
     end
   end
 
-  def each selector = {}, opts = {}, &block
-    opts = opts.clone
-    if opts.delete(:object) == false
-      super selector, opts, &block
+  def each selector = {}, options = {}, &block
+    options = options.clone
+    if options.delete(:object) == false
+      super selector, options, &block
     else
-      super selector, opts do |doc|
+      super selector, options do |doc|
         block.call ::Mongo::Object.build(doc)
       end
     end

@@ -1,23 +1,23 @@
 module Mongo::Object
-  attr_accessor :_id
+  attr_accessor :_id, :_parent
 
-  def valid? opts = {}
-    opts = ::Mongo::Object.parse_options opts
+  def valid? options = {}
+    options = ::Mongo::Object.parse_options options
     begin
-      return false if opts[:callbacks] and !::Mongo::Object.run_before_callbacks(self, :validate)
+      return false if options[:callbacks] and !::Mongo::Object.run_before_callbacks(self, :validate)
 
-      child_opts = opts.merge internal: true
+      child_options = options.merge internal: true
       result = [
-        child_objects.all?{|group| group.all?{|obj| obj.valid?(child_opts)}},
+        child_objects.all?{|group| group.all?{|obj| obj.valid?(child_options)}},
         ::Mongo::Object.run_validations(self),
         errors.empty?
       ].all?
 
-      ::Mongo::Object.run_after_callbacks(self, :validate) if opts[:callbacks]
+      ::Mongo::Object.run_after_callbacks(self, :validate) if options[:callbacks]
 
       result
     ensure
-      clear_child_objects unless opts[:internal]
+      clear_child_objects unless options[:internal]
     end
   end
 
@@ -25,34 +25,34 @@ module Mongo::Object
     @_errors ||= {}
   end
 
-  def create_object collection, opts
-    with_object_callbacks :create, opts do |opts|
+  def create_object collection, options
+    with_object_callbacks :create, options do |options|
       doc = ::Mongo::Object.to_mongo self
-      collection.create(doc, opts)
+      collection.create(doc, options)
       self._id = doc[:_id] || doc['_id']
     end
   end
 
-  def update_object collection, opts
-    with_object_callbacks :update, opts do |opts|
+  def update_object collection, options
+    with_object_callbacks :update, options do |options|
       id = _id || "can't update object without _id (#{self})!"
       doc = ::Mongo::Object.to_mongo self
-      collection.update({_id: id}, doc, opts)
+      collection.update({_id: id}, doc, options)
     end
   end
 
-  def destroy_object collection, opts
-    with_object_callbacks :destroy, opts do |opts|
+  def destroy_object collection, options
+    with_object_callbacks :destroy, options do |options|
       id = _id || "can't destroy object without _id (#{self})!"
-      collection.destroy({_id: id}, opts)
+      collection.destroy({_id: id}, options)
     end
   end
 
-  def save_object collection, opts
+  def save_object collection, options
     if _id
-      update_object collection, opts
+      update_object collection, options
     else
-      create_object collection, opts
+      create_object collection, options
     end
   end
 
@@ -61,18 +61,18 @@ module Mongo::Object
   SKIP_IV_REGEXP = /^@_/
 
   class << self
-    def parse_options opts
-      opts = opts.clone
-      opts[:validate]  = true                       unless opts.include?(:validate)
-      opts[:callbacks] = Mongo.defaults[:callbacks] unless opts.include?(:callbacks)
-      return opts
+    def parse_options options
+      options = options.clone
+      options[:validate]  = true                       unless options.include?(:validate)
+      options[:callbacks] = Mongo.defaults[:callbacks] unless options.include?(:callbacks)
+      return options
     end
 
-    def to_mongo_options opts
-      opts = opts.clone
-      opts.delete :validate
-      opts.delete :callbacks
-      opts
+    def to_mongo_options options
+      options = options.clone
+      options.delete :validate
+      options.delete :callbacks
+      options
     end
 
     def each_instance_variable obj, &block
@@ -136,7 +136,7 @@ module Mongo::Object
 
     def build doc
       return unless doc
-      obj = _build doc
+      obj = _build doc, nil
       obj.send :update_original_children! if obj.is_a? ::Mongo::Object
       obj
     end
@@ -164,28 +164,33 @@ module Mongo::Object
     end
 
     protected
-      def _build doc
+      def _build doc, parent = nil
         if doc.is_a? Hash
           if class_name = doc[:_class] || doc['_class']
             klass = constantize class_name
 
             if klass.respond_to? :from_mongo
-              klass.from_mongo doc
+              obj = klass.from_mongo doc
             else
               obj = klass.new
+              parent ||= obj
               doc.each do |k, v|
                 next if k.to_sym == :_class
 
-                v = _build v
+                v = _build v, parent
                 obj.instance_variable_set "@#{k}", v
               end
               obj
             end
+            obj._parent = parent if parent
+            obj
           else
-            doc
+            hash = {}
+            doc.each{|k, v| hash[k] = _build v, parent}
+            hash
           end
         elsif doc.is_a? Array
-          doc.collect{|v| _build v}
+          doc.collect{|v| _build v, parent}
         else
           doc
         end
@@ -240,21 +245,21 @@ module Mongo::Object
       @_child_objects
     end
 
-    def with_object_callbacks method, opts, &block
-      opts = ::Mongo::Object.parse_options opts
+    def with_object_callbacks method, options, &block
+      options = ::Mongo::Object.parse_options options
 
       # validation
-      return false if opts[:validate] and !valid?(opts.merge(internal: true))
+      return false if options[:validate] and !valid?(options.merge(internal: true))
 
       # before callbacks
-      return false if opts[:callbacks] and !run_all_callbacks(:before, method)
+      return false if options[:callbacks] and !run_all_callbacks(:before, method)
 
       # saving
-      block.call ::Mongo::Object.to_mongo_options(opts)
+      block.call ::Mongo::Object.to_mongo_options(options)
       update_original_children!
 
       # after callbacks
-      run_all_callbacks :after, method if opts[:callbacks]
+      run_all_callbacks :after, method if options[:callbacks]
 
       true
     ensure

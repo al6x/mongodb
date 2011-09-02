@@ -40,7 +40,11 @@ shared_examples_for 'embedded object CRUD' do
 
     # update
     @player.missions.first.stats[:units] = 9
-    @player.missions << @mission_class.new('Desperate Alliance', {buildings: 11, units: 40})
+    mission = @mission_class.new.tap do |m|
+      m.name = 'Desperate Alliance'
+      m.stats = {buildings: 11, units: 40}
+    end
+    @player.missions << mission
     db.players.save @player
     db.players.count.should == 1
     db.players.first.should == @player

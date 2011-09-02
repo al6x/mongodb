@@ -75,7 +75,7 @@ module Mongo::Object
       options
     end
 
-    def each_instance_variable obj, &block
+    def each_object_instance_variable obj, &block
       obj.instance_variables.each do |iv_name|
         # skipping variables starting with _xx, usually they
         # have specific meaning and used for example for cache
@@ -102,7 +102,7 @@ module Mongo::Object
         doc = {}
 
         # copying instance variables
-        each_instance_variable obj do |iv_name, v|
+        each_object_instance_variable obj do |iv_name, v|
           k = iv_name.to_s[1..-1]
           k = k.to_sym if symbolize
           doc[k] = to_mongo v
@@ -127,7 +127,7 @@ module Mongo::Object
         obj.each{|v| each_object v, &block}
       elsif obj.is_a? ::Mongo::Object
         block.call obj if include_first
-        each_instance_variable obj do |iv_name, v|
+        each_object_instance_variable obj do |iv_name, v|
           each_object v, &block
         end
       end

@@ -165,7 +165,7 @@ class Mongo::ObjectSerializer
     # RSpec adds @mock_proxy, and we need to skip it
     SKIP_IV_REGEXP = /^@_/
 
-    def _each_instance_variable obj, &block
+    def _each_object_instance_variable obj, &block
       obj.instance_variables.each do |iv_name|
         # skipping variables starting with _xx, usually they
         # have specific meaning and used for example for cache
@@ -193,7 +193,7 @@ class Mongo::ObjectSerializer
         doc = {}
 
         # copying instance variables
-        _each_instance_variable obj do |iv_name, v|
+        _each_object_instance_variable obj do |iv_name, v|
           k = iv_name.to_s[1..-1]
           k = k.to_sym if Mongo.defaults[:symbolize]
           doc[k] = _to_document v
@@ -217,7 +217,7 @@ class Mongo::ObjectSerializer
       elsif SIMPLE_TYPES.include? obj.class
       else
         block.call obj
-        _each_instance_variable obj do |iv_name, v|
+        _each_object_instance_variable obj do |iv_name, v|
           _each_object v, &block
         end
       end

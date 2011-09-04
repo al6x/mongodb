@@ -35,7 +35,7 @@ class Mongo::ObjectSerializer
     # saving document
     doc = to_document
     collection.insert_without_object doc, options
-    id = doc[:_id] || doc['_id'] || raise("internal error: no id after document insertion (#{doc})!")
+    id = doc['_id'] || raise("internal error: no id after document insertion (#{doc})!")
     object.instance_variable_set :@_id, id
     update_internal_state!
 
@@ -195,15 +195,13 @@ class Mongo::ObjectSerializer
         # copying instance variables
         _each_object_instance_variable obj do |iv_name, v|
           k = iv_name.to_s[1..-1]
-          k = k.to_sym if Mongo.defaults[:symbolize]
           doc[k] = _to_document v
         end
 
         # adding _id & _class
-        id_key, class_key = Mongo.defaults[:symbolize] ? [:_id, :_class] : ['_id', '_class']
         id = instance_variable_get('@_id')
-        doc[id_key]    = id if id
-        doc[class_key] = obj.class.name
+        doc['_id']    = id if id
+        doc['_class'] = obj.class.name
 
         doc
       end

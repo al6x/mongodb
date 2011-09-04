@@ -39,10 +39,10 @@ shared_examples_for 'embedded object CRUD' do
     db.players.first.object_id.should_not == @players.object_id
 
     # update
-    @player.missions.first.stats[:units] = 9
+    @player.missions.first.stats['units'] = 9
     mission = @mission_class.new.tap do |m|
       m.name = 'Desperate Alliance'
-      m.stats = {buildings: 11, units: 40}
+      m.stats = {'buildings' => 11, 'units' => 40}
     end
     @player.missions << mission
     db.players.save @player

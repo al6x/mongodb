@@ -29,7 +29,7 @@ module Mongo::Object
     with_object_callbacks :create, options do |options|
       doc = ::Mongo::Object.to_mongo self
       collection.create(doc, options)
-      self._id = doc[:_id] || doc['_id']
+      self._id = doc['_id']
     end
   end
 
@@ -88,7 +88,6 @@ module Mongo::Object
     # converts object to document (also works with nested & arrays)
     def to_mongo obj
       return obj.to_mongo if obj.respond_to? :to_mongo
-      symbolize = ::Mongo.defaults[:symbolize]
 
       if obj.is_a? Hash
         doc = {}
@@ -104,15 +103,13 @@ module Mongo::Object
         # copying instance variables
         each_object_instance_variable obj do |iv_name, v|
           k = iv_name.to_s[1..-1]
-          k = k.to_sym if symbolize
           doc[k] = to_mongo v
         end
 
         # adding _id & _class
-        id_key, class_key = symbolize ? [:_id, :_class] : ['_id', '_class']
         id = instance_variable_get('@_id')
-        doc[id_key]    = id if id
-        doc[class_key] = obj.class.name
+        doc['_id']    = id if id
+        doc['_class'] = obj.class.name
 
         doc
       else # simple type

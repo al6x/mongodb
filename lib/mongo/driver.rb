@@ -18,6 +18,7 @@ Mongo.class_eval do
     attr_writer :defaults
   end
 end
+Mongo.defaults[:convert_id_to_string] = true
 
 # database
 Mongo::DB.send :include, Mongo::DBExt

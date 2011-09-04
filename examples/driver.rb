@@ -1,7 +1,7 @@
 require 'mongo/driver'
 
 # Changing some defaults.
-Mongo.defaults.merge! symbolize: true, multi: true, safe: true
+Mongo.defaults.merge! multi: true, safe: true
 
 # Connection & db.
 connection = Mongo::Connection.new
@@ -35,5 +35,5 @@ db.units.first_by_name 'Zeratul'                   # => zeratul
 db.units.all_by_name 'Zeratul'                     # => [zeratul]
 
 # Query sugar, use {name: {_gt: 'Z'}} instead of {name: {:$gt => 'Z'}}.
-Mongo.defaults.merge! convert_underscore_to_dollar: true
+Mongo.defaults[:convert_underscore_to_dollar] = true
 db.units.all name: {_gt: 'Z'}                      # => [zeratul]

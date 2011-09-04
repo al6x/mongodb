@@ -12,6 +12,14 @@ module Mongo::CollectionExt
   def insert_with_ext args, options = {}
     result = insert_without_ext args, reverse_merge_defaults(options, :safe)
 
+    # for some strange reason MongoDB Ruby driver
+    # uses Strings for all keys but _id.
+    # It's inconvinient, fixing it.
+    if Mongo.defaults[:convert_id_to_string]
+      list = args.is_a?(Array) ? args : [args]
+      list.each{|h| h['_id'] = h.delete :_id}
+    end
+
     # fix for mongodriver, it will return single result if we supply [doc] as args
     (args.is_a?(Array) and !result.is_a?(Array)) ? [result] : result
   end
@@ -48,9 +56,7 @@ module Mongo::CollectionExt
   #
   def first selector = {}, options = {}
     selector = convert_underscore_to_dollar_in_selector selector if selector.is_a? Hash
-
-    h = find_one selector, options
-    symbolize_doc h
+    find_one selector, options
   end
 
   def first! selector = {}, options = {}
@@ -74,7 +80,6 @@ module Mongo::CollectionExt
     begin
       cursor = find selector, reverse_merge_defaults(options, :batch_size)
       cursor.each do |doc|
-        doc = symbolize_doc doc
         block.call doc
       end
       nil
@@ -108,15 +113,15 @@ module Mongo::CollectionExt
       h
     end
 
-    # symbolizing hashes
-    def symbolize_doc doc
-      return doc unless Mongo.defaults[:symbolize]
-
-      Mongo::CollectionExt.convert_doc doc do |k, v, result|
-        k = k.to_sym if k.is_a? String
-        result[k] = v
-      end
-    end
+    # # symbolizing hashes
+    # def symbolize_doc doc
+    #   return doc unless Mongo.defaults[:symbolize]
+    #
+    #   Mongo::CollectionExt.convert_doc doc do |k, v, result|
+    #     k = k.to_sym if k.is_a? String
+    #     result[k] = v
+    #   end
+    # end
 
     # replaces :_lt to :$lt in query
     def convert_underscore_to_dollar_in_selector selector

@@ -24,7 +24,7 @@ describe "Object CRUD" do
 
     it "should allow to read object as hash" do
       db.units.save! @zeratul
-      db.units.first({}, object: false).class.should == Hash
+      db.units.first({}, object: false).is_a?(Hash).should be_true
     end
   end
 
@@ -51,8 +51,8 @@ describe "Object CRUD" do
       @mission_class = Player2::Mission
       @player = Player2.new
       @player.missions = [
-        Player2::Mission.new('Wasteland',         {buildings: 5, units: 10}),
-        Player2::Mission.new('Backwater Station', {buildings: 8, units: 25}),
+        Player2::Mission.new('Wasteland',         {'buildings' => 5, 'units' => 10}),
+        Player2::Mission.new('Backwater Station', {'buildings' => 8, 'units' => 25}),
       ]
     end
 

@@ -45,6 +45,6 @@ describe "Dynamic Finders" do
   it 'integration with collection' do
     db.units.first_by_name('Jim').should be_nil
     db.units.save name: 'Jim'
-    db.units.first_by_name('Jim')[:name].should == 'Jim'
+    db.units.first_by_name('Jim')['name'].should == 'Jim'
   end
 end

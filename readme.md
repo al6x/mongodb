@@ -20,7 +20,7 @@ These enhancements alter the driver's API and made it more simple and intuitive.
 require 'mongo/driver'
 
 # Changing some defaults.
-Mongo.defaults.merge! symbolize: true, multi: true, safe: true
+Mongo.defaults.merge! multi: true, safe: true
 
 # Connection & db.
 connection = Mongo::Connection.new
@@ -124,7 +124,7 @@ Note: the :initialize method should allow to create object without arguments.
 ``` ruby
 # Connecting to MongoDB.
 require 'mongo/object'
-Mongo.defaults.merge! symbolize: true, multi: true, safe: true
+Mongo.defaults.merge! multi: true, safe: true
 connection = Mongo::Connection.new
 db = connection.db 'default_test'
 db.units.drop

@@ -75,14 +75,16 @@ module Mongo::Object
       options
     end
 
-    def each_object_instance_variable obj, &block
-      obj.instance_variables.each do |iv_name|
-        # skipping variables starting with _xx, usually they
-        # have specific meaning and used for example for cache
-        next if iv_name =~ SKIP_IV_REGEXP
-
+    def each_instance_variable obj, &block
+      instance_variables(obj).each do |iv_name|
         block.call iv_name, obj.instance_variable_get(iv_name)
       end
+    end
+
+    def instance_variables obj
+      # skipping variables starting with _xx, usually they
+      # have specific meaning and used for example for cache
+      obj.instance_variables.select{|n| n !~ SKIP_IV_REGEXP}
     end
 
     # converts object to document (also works with nested & arrays)
@@ -101,7 +103,7 @@ module Mongo::Object
         doc = {}
 
         # copying instance variables
-        each_object_instance_variable obj do |iv_name, v|
+        each_instance_variable obj do |iv_name, v|
           k = iv_name.to_s[1..-1]
           doc[k] = to_mongo v
         end
@@ -117,14 +119,30 @@ module Mongo::Object
       end
     end
 
-    def each_object obj, include_first = true, &block
+    def convert obj, method, options = {}
+      if obj.is_a? Hash
+        r = {}
+        obj.each do |k, v|
+          r[k] = convert v, method, options
+        end
+        r
+      elsif obj.is_a? Array
+        obj.collect{|v| convert v, method, options}
+      elsif obj.is_a? Mongo::Object
+        obj.send method, options
+      else # simple type
+        obj
+      end
+    end
+
+    def each_object obj, &block
       if obj.is_a? Hash
         obj.each{|k, v| each_object v, &block}
       elsif obj.is_a? Array
         obj.each{|v| each_object v, &block}
       elsif obj.is_a? ::Mongo::Object
-        block.call obj if include_first
-        each_object_instance_variable obj do |iv_name, v|
+        block.call obj
+        each_instance_variable obj do |iv_name, v|
           each_object v, &block
         end
       end
@@ -211,8 +229,8 @@ module Mongo::Object
       return unless ::Mongo.defaults[:callbacks]
 
       original_children.clear
-      ::Mongo::Object.each_object self, false do |obj|
-        original_children << obj
+      ::Mongo::Object.each_object self do |obj|
+        original_children << obj unless obj.equal?(self)
       end
     end
 
@@ -230,11 +248,13 @@ module Mongo::Object
         created_children, updated_children, destroyed_children = [], [], []
 
         original_children_ids = Set.new; original_children.each{|obj| original_children_ids << obj.object_id}
-        ::Mongo::Object.each_object self, false do |obj|
-          (original_children_ids.include?(obj.object_id) ? updated_children : created_children) << obj
+        ::Mongo::Object.each_object self do |obj|
+          (original_children_ids.include?(obj.object_id) ? updated_children : created_children) << obj unless obj.equal?(self)
         end
 
-        children_ids = Set.new; ::Mongo::Object.each_object(self, false){|obj| children_ids << obj.object_id}
+        children_ids = Set.new; ::Mongo::Object.each_object self do |obj|
+          children_ids << obj.object_id unless obj.equal?(self)
+        end
         destroyed_children = original_children.select{|obj| !children_ids.include?(obj.object_id)}
 
         @_child_objects = [created_children, updated_children, destroyed_children]

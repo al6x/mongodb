@@ -90,6 +90,7 @@ module Mongo::CollectionExt
   end
 
   def count_with_ext selector = {}, options = {}
+    selector = convert_underscore_to_dollar_in_selector selector if selector.is_a? Hash
     find(selector, options).count()
   end
 

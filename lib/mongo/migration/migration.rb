@@ -1,6 +1,6 @@
 class Mongo::Migration
-  def initialize db
-    @db, @definitions = db, {}
+  def initialize
+    @definitions = {}
   end
 
   def add version, &block
@@ -12,6 +12,7 @@ class Mongo::Migration
 
   def update version = nil
     version ||= definitions.keys.max
+    version = version.to_i
 
     if current_version == version
       info "database '#{db.name}' already is of #{version} version, no migration needed"
@@ -33,15 +34,18 @@ class Mongo::Migration
     end
   end
 
-  protected
-    attr_accessor :db, :definitions
+  attr_writer :db
+  def db; @db || raise("Database for Migration not defined!") end
 
+  def update_version new_version
+    db.db_metadata.update({name: 'migration'}, {name: 'migration', version: new_version}, {upsert: true, safe: true})
+  end
+
+  attr_accessor :definitions
+
+  protected
     def info msg
       db.connection.logger and db.connection.logger.info(msg)
-    end
-
-    def update_version new_version
-      db.db_metadata.update({name: 'migration'}, {name: 'migration', version: new_version}, {upsert: true, safe: true})
     end
 
     def increase_db_version

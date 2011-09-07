@@ -1,19 +1,14 @@
 require 'mongo/migration'
 
-# Connection & db.
-connection = Mongo::Connection.new
-db = connection.db 'default_test'
-db.units.drop
-
 # Initialize migration (usually all this should be done inside of :migrate
 # rake task).
-migration = Mongo::Migration.new db
+migration = Mongo::Migration.new
 
 # Define migrations.
 # Usually they are defined as files in some folder and You loading it by
 # using something like this:
 #   Dir['<runtime_dir>/db/migrations/*.rb'].each{|fname| load fname}
-migration.add 1 do |m|
+Mongo.migration 1 do |m|
   m.up{|db|   db.units.save   name: 'Zeratul'}
   m.down{|db| db.units.remove name: 'Zeratul'}
 end
@@ -23,6 +18,12 @@ migration.add 2 do |m|
   m.up{|db|   db.units.save   name: 'Tassadar'}
   m.down{|db| db.units.remove name: 'Tassadar'}
 end
+
+# Connection & db.
+connection = Mongo::Connection.new
+db = connection.db 'default_test'
+db.units.drop
+migration.db = db
 
 # Specify what version of database You need and apply migration.
 migration.update 2

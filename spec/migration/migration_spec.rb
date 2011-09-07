@@ -3,7 +3,10 @@ require 'mongo/migration'
 
 describe "Migration" do
   with_mongo
-  before{@migration = Mongo::Migration.new mongo.db}
+  before do
+    @migration = Mongo::Migration.new
+    @migration.db = mongo.db
+  end
 
   it "shouldn't update if versions are the same" do
     @migration.update(0).should be_false

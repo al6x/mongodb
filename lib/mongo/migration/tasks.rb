@@ -1,19 +1,27 @@
-# namespace :db do
-#   desc "Migrate Database"
-#   task migrate: :migration_evnironment do
-#     require 'mongo_migration'
-#
-#     database_name = (ENV['d'] || ENV['database'] || :default).to_sym
-#     version = ENV['v'] || ENV['version']
-#
-#     if version.blank?
-#       size = Mongo.migration.definitions[database_name].size
-#       highest_defined_version = size == 0 ? 0 : size - 1
-#       version = highest_defined_version
-#     else
-#       version = version.to_i
-#     end
-#
-#     Mongo.migration.update version, database_name
-#   end
-# end
+namespace :db do
+  desc "Clear migration version for Database"
+  task clear_version: :migration_evnironment do
+    require 'mongo/migration'
+
+    database_name = (ENV['d'] || ENV['database'] || :default).to_sym
+
+    db = Mongo.db database_name
+    migration = Mongo::Migration.new
+    migration.db = db
+    migration.update_version 0
+  end
+
+  desc "Migrate Database"
+  task migrate: :migration_evnironment do
+    require 'mongo/migration'
+
+    database_name = (ENV['d'] || ENV['database'] || :default).to_sym
+    version = ENV['v'] || ENV['version']
+
+    if migration = Mongo.migrations[database_name]
+      db = Mongo.db database_name
+      migration.db = db
+      migration.update version
+    end
+  end
+end

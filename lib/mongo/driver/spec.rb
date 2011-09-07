@@ -1,5 +1,13 @@
 MONGO_TEST_DATABASE_NAME = 'default_test'
 
+Mongo.class_eval do
+  class << self
+    def db name
+      ($mongo || raise('Mongo not defined (use :with_mongo helper)!')).db
+    end
+  end
+end
+
 rspec do
   def mongo
     $mongo || raise('Mongo not defined (use :with_mongo helper)!')

@@ -16,6 +16,15 @@ Mongo.class_eval do
   class << self
     def defaults; @defaults ||= {} end
     attr_writer :defaults
+
+    # Override this method to provide Your own custom database initialization.
+    def db name
+      @databases ||= {}
+      @databases[name] ||= begin
+        connection = Mongo::Connection.new
+        connection.db name
+      end
+    end
   end
 end
 Mongo.defaults[:convert_id_to_string] = true

@@ -1,4 +1,4 @@
-Ruby object persistence & driver enhancements for MongoDB.
+Persistence for any Ruby Object & Driver enhancements for MongoDB.
 
 1. Driver enchancements.
 2. Migrations.

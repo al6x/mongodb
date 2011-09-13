@@ -65,7 +65,7 @@ Mongo.defaults[:convert_underscore_to_dollar] = true
 p db.units.all(name: {_gt: 'Z'})                   # => [zeratul]
 ```
 
-Source: examples/driver.rb
+Source: docs/driver.rb
 
 More docs - there's no need for more docs, the whole point of this extension is to be small, intuitive, 100% compatible with the official driver, and require no extra knowledge.
 So, please use standard Ruby driver documentation.
@@ -118,7 +118,7 @@ p Mongo.migration.current_version                # => 2
 p db.units.all                                   # => [Zeratul, Tassadar]
 ```
 
-Source: examples/migration.rb
+Source: docs/migration.rb
 
 # Persistence for any Ruby object
 
@@ -192,7 +192,7 @@ Mongo.defaults[:convert_underscore_to_dollar] = true
 p db.units.all(name: {_gt: 'Z'})                   # => [zeratul]
 ```
 
-Source: examples/object.rb
+Source: docs/object.rb
 
 # Installation
 

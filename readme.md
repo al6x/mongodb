@@ -1,3 +1,5 @@
+**Documentation:** http://alexeypetrushin.github.com/mongodb
+
 Persistence for any Ruby Object & Driver enhancements for MongoDB.
 
 1. Driver enhancements.

@@ -7,7 +7,7 @@ project(
   summary: "Persistence for any Ruby Object & Driver enhancements for MongoDB.",
 
   author: "Alexey Petrushin",
-  homepage: "http://github.com/alexeypetrushin/mongodb"
+  homepage: "http://alexeypetrushin.github.com/mongodb"
 )
 
 desc "Generate documentation"

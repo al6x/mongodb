@@ -1,6 +1,6 @@
 Persistence for any Ruby Object & Driver enhancements for MongoDB.
 
-1. Driver enchancements.
+1. Driver enhancements.
 2. Migrations.
 3. Persistence for any Ruby object.
 4. Object Model [mongodb_model][mongodb_model]

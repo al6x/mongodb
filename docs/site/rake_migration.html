@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>rake_migration.rb</title>
+  <link rel="stylesheet" href="http://jashkenas.github.com/docco/resources/docco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div id="jump_to">
+    Jump To &hellip;
+    <div id="jump_wrapper">
+      <div id="jump_page">
+          <a class="source" href="driver.html">driver.rb</a>
+          <a class="source" href="migration.html">migration.rb</a>
+          <a class="source" href="persistence.html">persistence.rb</a>
+          <a class="source" href="rake_migration.html">rake_migration.rb</a>
+      </div>
+    </div>
+  </div>
+  <table cellspacing=0 cellpadding=0>
+  <thead>
+    <tr>
+      <th class=docs><h1>rake_migration.rb</h1></th>
+      <th class=code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr id='section-1'>
+      <td class=docs>
+        <div class="pilwrap">
+          <a class="pilcrow" href="#section-1">&#182;</a>
+        </div>
+        <p>Example of <a href="migration.html">Data Migration</a> with Rake Task.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre></pre></div>
+      </td>
+    </tr>
+    <tr id='section-2'>
+      <td class=docs>
+        <div class="pilwrap">
+          <a class="pilcrow" href="#section-2">&#182;</a>
+        </div>
+        <p>Including <code>db:migration</code> task.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><span class="nb">require</span> <span class="s1">&#39;mongo/migration/tasks&#39;</span></pre></div>
+      </td>
+    </tr>
+    <tr id='section-3'>
+      <td class=docs>
+        <div class="pilwrap">
+          <a class="pilcrow" href="#section-3">&#182;</a>
+        </div>
+        <p>The <code>db:migration</code> task depends on non-existing <code>db:migration_evnironment</code> task.
+You need to define this task and perform there all preparations needed 
+for migration.</p>
+
+<p>Let&rsquo;s suppose that You are using some framework (Rails for example) and it
+has task <code>:environment</code> for preparing framework environment.</p>
+
+<p>We make our <code>db:migration_evnironment</code> dependent on the framework&rsquo;s <code>:environment</code>.
+So, Your framework will be properly initialized and available in migration scripts.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><span class="n">desc</span> <span class="s2">&quot;Internal task to prepare migration environment&quot;</span>
+<span class="n">task</span> <span class="s1">&#39;db:migration_evnironment&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;environment&#39;</span> <span class="k">do</span>
+  <span class="nb">require</span> <span class="s1">&#39;mongo/migration&#39;</span></pre></div>
+      </td>
+    </tr>
+    <tr id='section-4'>
+      <td class=docs>
+        <div class="pilwrap">
+          <a class="pilcrow" href="#section-4">&#182;</a>
+        </div>
+        <p>Usually migrations are defined as files in some folder, loading it.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre>  <span class="no">Dir</span><span class="o">[</span><span class="s2">&quot;./db/**/*.rb&quot;</span><span class="o">].</span><span class="n">each</span><span class="p">{</span><span class="o">|</span><span class="n">f</span><span class="o">|</span> <span class="nb">require</span> <span class="n">f</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sr">/\.rb$/</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)}</span>
+<span class="k">end</span></pre></div>
+      </td>
+    </tr>
+    <tr id='section-5'>
+      <td class=docs>
+        <div class="pilwrap">
+          <a class="pilcrow" href="#section-5">&#182;</a>
+        </div>
+        <p>Now You can migrate Your database (if You omit version the highest 
+availiable will be choosen).</p>
+
+<pre><code>rake db:migrate d=my_database_name v=10
+</code></pre>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre></pre></div>
+      </td>
+    </tr>
+  </table>
+</div>
+</body>

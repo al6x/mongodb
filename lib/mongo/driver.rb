@@ -6,6 +6,7 @@ class Mongo::Error < StandardError; end
 class Mongo::NotFound < Mongo::Error; end
 
 %w(
+  connection
   database
   collection
   dynamic_finders
@@ -29,10 +30,10 @@ Mongo.class_eval do
 end
 Mongo.defaults[:convert_id_to_string] = true
 
-# database
+Mongo::Connection.send :include, Mongo::ConnectionExt
+
 Mongo::DB.send :include, Mongo::DBExt
 
-# collection
 Mongo::Collection.class_eval do
   include Mongo::CollectionExt, Mongo::DynamicFinders
 

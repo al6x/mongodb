@@ -124,59 +124,50 @@ Save any Ruby object to MongoDB, as if it's a document. Objects can be any type,
 Note: the :initialize method should allow to create object without arguments.
 
 ``` ruby
-# Connecting to MongoDB.
-require 'mongo/object'
+# Requiring driver enhancements.
+require 'mongo/driver'
+
+# Changing some defaults (optional, don't do it if You don't need it).
+#
+# By default they are set to false to provide maximum performance, but if You use MongoDB as
+# major application database (and not only for logging, andalytics and other minor tasks) it's
+# usually better to set it to true.
 Mongo.defaults.merge! multi: true, safe: true
+
+# Connecting to test database and cleaning it before starting the sample.
 connection = Mongo::Connection.new
-db = connection.db 'default_test'
-db.units.drop
+db = connection.default_test
+db.drop
 
-# Let's define the game unit.
-class Unit
-  include Mongo::Object
-  attr_reader :name, :stats
+# Collection shortcuts, access collection directly by typing it's name,
+# instead of `db.collection('some_collection')`.
+db.some_collection
 
-  # don't forget to allow creating object with no arguments
-  def initialize name = nil, stats = nil
-    @name, @stats = name, stats
-  end
+# Let's create two Heroes.
+db.units.save name: 'Zeratul'
+db.units.save name: 'Tassadar'
 
-  class Stats
-    include Mongo::Object
-    attr_accessor :attack, :life, :shield
-
-    def initialize attack = nil, life = nil, shield = nil
-      @attack, @life, @shield = attack, life, shield
-    end
-  end
-end
-
-# Create.
-zeratul  = Unit.new('Zeratul',  Unit::Stats.new(85, 300, 100))
-tassadar = Unit.new('Tassadar', Unit::Stats.new(0,  80,  300))
-
-db.units.save zeratul
-db.units.save tassadar
-
-# Udate (we made error - mistakenly set Tassadar's attack as zero, let's fix it).
-tassadar.stats.attack = 20
-db.units.save tassadar
-
-# Querying first & all, there's also :each, the same as :all.
-db.units.first name: 'Zeratul'                     # => zeratul
-db.units.all name: 'Zeratul'                       # => [zeratul]
+# Querying first and all documents matching criteria (there's
+# also `:each` method, the same as `:all`).
+p db.units.first(name: 'Zeratul')                  # => zeratul
+p db.units.all(name: 'Zeratul')                    # => [zeratul]
 db.units.all name: 'Zeratul' do |unit|
-  unit                                             # => zeratul
+  p unit                                           # => zeratul
 end
 
-# Simple finders (bang versions also availiable).
-db.units.by_name 'Zeratul'                         # => zeratul
-db.units.first_by_name 'Zeratul'                   # => zeratul
-db.units.all_by_name 'Zeratul'                     # => [zeratul]
+# Dynamic finders, handy way to do simple queries.
+p db.units.by_name('Zeratul')                      # => zeratul
+p db.units.first_by_name('Zeratul')                # => zeratul
+p db.units.all_by_name('Zeratul')                  # => [zeratul]
 
-# Query sugar, use {name: {_gt: 'Z'}} instead of {name: {:$gt => 'Z'}}.
-Mongo.defaults.merge! convert_underscore_to_dollar: true
-db.units.all name: {_gt: 'Z'}                      # => [zeratul]
+# Bang versions, will raise error if nothing found.
+p db.units.first!(name: 'Zeratul')                 # => zeratul
+p db.units.by_name!('Zeratul')                     # => zeratul
+
+# Query sugar, use `:_gt` instead of `:$gt`. It's more convinient to use new hash
+# syntax `{name: {_gt: 'Z'}}` instead of hashrockets `{name: {:$gt => 'Z'}}`.
+Mongo.defaults[:convert_underscore_to_dollar] = true
+p db.units.all(name: {_gt: 'Z'})                   # => [zeratul]
 ```
 
 Source: examples/object.rb

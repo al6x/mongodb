@@ -15,6 +15,7 @@
           <a class="source" href="driver.html">driver.rb</a>
           <a class="source" href="migration.html">migration.rb</a>
           <a class="source" href="persistence.html">persistence.rb</a>
+          <a class="source" href="rake_migration.html">rake_migration.rb</a>
       </div>
     </div>
   </div>
@@ -31,10 +32,16 @@
         <div class="pilwrap">
           <a class="pilcrow" href="#section-1">&#182;</a>
         </div>
+        <p>Example of Data Migration for <a href="index.html">MongoDB Enhanced Driver</a>.</p>
 
+<p>In this example we define two migrations, applying first one,
+rollback it, and then migrating database to the latest version.</p>
+
+<p>Usually all this is <a href="rake_migration.html">done via Rake Task</a>, but in this example we do
+it by hand.</p>
       </td>
       <td class=code>
-        <div class='highlight'><pre><span class="nb">require</span> <span class="s1">&#39;mongo/migration&#39;</span></pre></div>
+        <div class='highlight'><pre></pre></div>
       </td>
     </tr>
     <tr id='section-2'>
@@ -42,11 +49,10 @@
         <div class="pilwrap">
           <a class="pilcrow" href="#section-2">&#182;</a>
         </div>
-        <p>Initialize migration (usually all this should be done inside of :migrate
-rake task).</p>
+        <p>Requiring support for migration.</p>
       </td>
       <td class=code>
-        <div class='highlight'><pre><span class="n">migration</span> <span class="o">=</span> <span class="no">Mongo</span><span class="o">::</span><span class="no">Migration</span><span class="o">.</span><span class="n">new</span></pre></div>
+        <div class='highlight'><pre><span class="nb">require</span> <span class="s1">&#39;mongo/migration&#39;</span></pre></div>
       </td>
     </tr>
     <tr id='section-3'>
@@ -54,14 +60,11 @@ rake task).</p>
         <div class="pilwrap">
           <a class="pilcrow" href="#section-3">&#182;</a>
         </div>
-        <p>Define migrations.
-Usually they are defined as files in some folder and You loading it by
-using something like this:
-  Dir[&lsquo;<runtime_dir>/db/migrations/*.rb&rsquo;].each{|fname| load fname}</p>
+        <p>Defining first migration, creating Zeratul (and removing it in rollback).</p>
       </td>
       <td class=code>
         <div class='highlight'><pre><span class="no">Mongo</span><span class="o">.</span><span class="n">migration</span> <span class="mi">1</span> <span class="k">do</span> <span class="o">|</span><span class="n">m</span><span class="o">|</span>
-  <span class="n">m</span><span class="o">.</span><span class="n">up</span><span class="p">{</span><span class="o">|</span><span class="n">db</span><span class="o">|</span>   <span class="n">db</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">save</span>   <span class="nb">name</span><span class="p">:</span> <span class="s1">&#39;Zeratul&#39;</span><span class="p">}</span>
+  <span class="n">m</span><span class="o">.</span><span class="n">up</span>  <span class="p">{</span><span class="o">|</span><span class="n">db</span><span class="o">|</span> <span class="n">db</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">save</span>   <span class="nb">name</span><span class="p">:</span> <span class="s1">&#39;Zeratul&#39;</span><span class="p">}</span>
   <span class="n">m</span><span class="o">.</span><span class="n">down</span><span class="p">{</span><span class="o">|</span><span class="n">db</span><span class="o">|</span> <span class="n">db</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">remove</span> <span class="nb">name</span><span class="p">:</span> <span class="s1">&#39;Zeratul&#39;</span><span class="p">}</span>
 <span class="k">end</span></pre></div>
       </td>
@@ -71,11 +74,11 @@ using something like this:
         <div class="pilwrap">
           <a class="pilcrow" href="#section-4">&#182;</a>
         </div>
-        <p>Let&rsquo;s add another one.</p>
+        <p>Defining second migration, creating Tassadar (and removing it in rollback).</p>
       </td>
       <td class=code>
-        <div class='highlight'><pre><span class="n">migration</span><span class="o">.</span><span class="n">add</span> <span class="mi">2</span> <span class="k">do</span> <span class="o">|</span><span class="n">m</span><span class="o">|</span>
-  <span class="n">m</span><span class="o">.</span><span class="n">up</span><span class="p">{</span><span class="o">|</span><span class="n">db</span><span class="o">|</span>   <span class="n">db</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">save</span>   <span class="nb">name</span><span class="p">:</span> <span class="s1">&#39;Tassadar&#39;</span><span class="p">}</span>
+        <div class='highlight'><pre><span class="no">Mongo</span><span class="o">.</span><span class="n">migration</span> <span class="mi">2</span> <span class="k">do</span> <span class="o">|</span><span class="n">m</span><span class="o">|</span>
+  <span class="n">m</span><span class="o">.</span><span class="n">up</span>  <span class="p">{</span><span class="o">|</span><span class="n">db</span><span class="o">|</span> <span class="n">db</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">save</span>   <span class="nb">name</span><span class="p">:</span> <span class="s1">&#39;Tassadar&#39;</span><span class="p">}</span>
   <span class="n">m</span><span class="o">.</span><span class="n">down</span><span class="p">{</span><span class="o">|</span><span class="n">db</span><span class="o">|</span> <span class="n">db</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">remove</span> <span class="nb">name</span><span class="p">:</span> <span class="s1">&#39;Tassadar&#39;</span><span class="p">}</span>
 <span class="k">end</span></pre></div>
       </td>
@@ -85,13 +88,12 @@ using something like this:
         <div class="pilwrap">
           <a class="pilcrow" href="#section-5">&#182;</a>
         </div>
-        <p>Connection &amp; db.</p>
+        <p>Connecting to test database and cleaning it before starting the sample.</p>
       </td>
       <td class=code>
         <div class='highlight'><pre><span class="n">connection</span> <span class="o">=</span> <span class="no">Mongo</span><span class="o">::</span><span class="no">Connection</span><span class="o">.</span><span class="n">new</span>
-<span class="n">db</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">db</span> <span class="s1">&#39;default_test&#39;</span>
-<span class="n">db</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">drop</span>
-<span class="n">migration</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="n">db</span></pre></div>
+<span class="n">db</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">default_test</span>
+<span class="n">db</span><span class="o">.</span><span class="n">drop</span></pre></div>
       </td>
     </tr>
     <tr id='section-6'>
@@ -99,13 +101,10 @@ using something like this:
         <div class="pilwrap">
           <a class="pilcrow" href="#section-6">&#182;</a>
         </div>
-        <p>Specify what version of database You need and apply migration.</p>
+        <p>Assigning database to migration.</p>
       </td>
       <td class=code>
-        <div class='highlight'><pre><span class="n">migration</span><span class="o">.</span><span class="n">update</span> <span class="mi">2</span>
-
-<span class="n">migration</span><span class="o">.</span><span class="n">current_version</span>                        <span class="c1"># =&gt; 2</span>
-<span class="n">db</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">count</span>                                   <span class="c1"># =&gt; 2</span></pre></div>
+        <div class='highlight'><pre><span class="no">Mongo</span><span class="o">.</span><span class="n">migration</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="n">db</span></pre></div>
       </td>
     </tr>
     <tr id='section-7'>
@@ -113,13 +112,13 @@ using something like this:
         <div class="pilwrap">
           <a class="pilcrow" href="#section-7">&#182;</a>
         </div>
-        <p>You can rollback it the same way.</p>
+        <p>Let&rsquo;s migrate to the first version and create mighty Zeratul.</p>
       </td>
       <td class=code>
-        <div class='highlight'><pre><span class="n">migration</span><span class="o">.</span><span class="n">update</span> <span class="mi">0</span>
+        <div class='highlight'><pre><span class="no">Mongo</span><span class="o">.</span><span class="n">migration</span><span class="o">.</span><span class="n">update</span> <span class="mi">1</span>
 
-<span class="n">migration</span><span class="o">.</span><span class="n">current_version</span>                        <span class="c1"># =&gt; 0</span>
-<span class="n">db</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">count</span>                                   <span class="c1"># =&gt; 0</span></pre></div>
+<span class="nb">p</span> <span class="no">Mongo</span><span class="o">.</span><span class="n">migration</span><span class="o">.</span><span class="n">current_version</span>                <span class="c1"># =&gt; 1</span>
+<span class="nb">p</span> <span class="n">db</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">all</span>                                   <span class="c1"># =&gt; [Zeratul]</span></pre></div>
       </td>
     </tr>
     <tr id='section-8'>
@@ -127,14 +126,28 @@ using something like this:
         <div class="pilwrap">
           <a class="pilcrow" href="#section-8">&#182;</a>
         </div>
-        <p>To update to the highest version just call it without the version specified</p>
-
+        <p>Rolling it back.</p>
       </td>
       <td class=code>
-        <div class='highlight'><pre><span class="n">migration</span><span class="o">.</span><span class="n">update</span>
+        <div class='highlight'><pre><span class="no">Mongo</span><span class="o">.</span><span class="n">migration</span><span class="o">.</span><span class="n">update</span> <span class="mi">0</span>
 
-<span class="n">migration</span><span class="o">.</span><span class="n">current_version</span>                        <span class="c1"># =&gt; 2</span>
-<span class="n">db</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">count</span>                                   <span class="c1"># =&gt; 2</span></pre></div>
+<span class="nb">p</span> <span class="no">Mongo</span><span class="o">.</span><span class="n">migration</span><span class="o">.</span><span class="n">current_version</span>                <span class="c1"># =&gt; 0</span>
+<span class="nb">p</span> <span class="n">db</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">all</span>                                   <span class="c1"># =&gt; []</span></pre></div>
+      </td>
+    </tr>
+    <tr id='section-9'>
+      <td class=docs>
+        <div class="pilwrap">
+          <a class="pilcrow" href="#section-9">&#182;</a>
+        </div>
+        <p>Updating to the latest version (if there&rsquo;s no explicit version
+then the highest available version will be chosen).</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><span class="no">Mongo</span><span class="o">.</span><span class="n">migration</span><span class="o">.</span><span class="n">update</span>
+
+<span class="nb">p</span> <span class="no">Mongo</span><span class="o">.</span><span class="n">migration</span><span class="o">.</span><span class="n">current_version</span>                <span class="c1"># =&gt; 2</span>
+<span class="nb">p</span> <span class="n">db</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">all</span>                                   <span class="c1"># =&gt; [Zeratul, Tassadar]</span></pre></div>
       </td>
     </tr>
   </table>

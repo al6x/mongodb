@@ -34,11 +34,11 @@
         </div>
         <p>Example of Ruby Object Persistence for <a href="index.html">MongoDB Enhanced Driver</a>.</p>
 
-<p>It works by converting object graph to graph of hashes when saving to mongo, 
+<p>It works by converting object graph to graph of hashes when saving to mongo,
 and restoring it back when loading.</p>
 
 <p>Objects are converted to hashes by walking over instance variables and converting them
-to hash entries. Because it uses such simple approach any Ruby Object can 
+to hash entries. Because it uses such simple approach any Ruby Object can
 be easily saved to Mongo.</p>
       </td>
       <td class=code>
@@ -79,7 +79,7 @@ be easily saved to Mongo.</p>
       </td>
       <td class=code>
         <div class='highlight'><pre>  <span class="kp">include</span> <span class="no">Mongo</span><span class="o">::</span><span class="no">Object</span>
-  
+
   <span class="kp">attr_reader</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">:stats</span></pre></div>
       </td>
     </tr>
@@ -149,7 +149,7 @@ be easily saved to Mongo.</p>
         <div class="pilwrap">
           <a class="pilcrow" href="#section-9">&#182;</a>
         </div>
-        <p>Querying first and all documents matching criteria (there&rsquo;s also <code>:each</code> method, 
+        <p>Querying first and all documents matching criteria (there&rsquo;s also <code>:each</code> method,
 the same as <code>:all</code>).</p>
       </td>
       <td class=code>
@@ -190,7 +190,7 @@ the same as <code>:all</code>).</p>
         <div class="pilwrap">
           <a class="pilcrow" href="#section-12">&#182;</a>
         </div>
-        <p>Query sugar, use <code>:_gt</code> instead of <code>:$gt</code>. It&rsquo;s more convinient to use new hash 
+        <p>Query sugar, use <code>:_gt</code> instead of <code>:$gt</code>. It&rsquo;s more convinient to use new hash
 syntax <code>{name: {_gt: &lsquo;Z&rsquo;}}</code> instead of hashrockets <code>{name: {:$gt =&gt; &lsquo;Z&rsquo;}}</code>.</p>
       </td>
       <td class=code>
@@ -203,8 +203,8 @@ syntax <code>{name: {_gt: &lsquo;Z&rsquo;}}</code> instead of hashrockets <code>
         <div class="pilwrap">
           <a class="pilcrow" href="#section-13">&#182;</a>
         </div>
-        <p>In this example we covered Ruby Object Persistence, if You are interesting You can also take 
-a look at <a href="http://alexeypetrushin.github.com/mongodb_model">mongodb_model</a> &ndash; Object Model to define Business Logic of 
+        <p>In this example we covered Ruby Object Persistence, if You are interesting You can also take
+a look at <a href="http://alexeypetrushin.github.com/mongodb_model">mongodb_model</a> &ndash; Object Model to define Business Logic of
 Your Application (standalone gem).</p>
 
       </td>

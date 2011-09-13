@@ -115,7 +115,8 @@ p db.units.all                                   # => []
 Mongo.migration.update
 
 p Mongo.migration.current_version                # => 2
-p db.units.all                                   # => [Zeratul, Tassadar]```
+p db.units.all                                   # => [Zeratul, Tassadar]
+```
 
 Source: examples/migration.rb
 

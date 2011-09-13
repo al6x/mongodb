@@ -19,111 +19,6 @@ These enhancements alter the driver's API and made it more simple and intuitive.
 - 100% backward compatibility with original driver API (if not - it's a bug, report it please)
 
 ``` ruby
-require 'mongo/driver'
-
-# Changing some defaults.
-Mongo.defaults.merge! multi: true, safe: true
-
-# Connection & db.
-connection = Mongo::Connection.new
-db = connection.db 'default_test'
-db.units.drop
-
-# Collection shortcuts.
-db.some_collection
-
-# Create.
-zeratul =  {name: 'Zeratul',  stats: {attack: 85, life: 300, shield: 100}}
-tassadar = {name: 'Tassadar', stats: {attack: 0,  life: 80,  shield: 300}}
-
-db.units.save zeratul
-db.units.save tassadar
-
-# Udate (we made error - mistakenly set Tassadar's attack as zero, let's fix it).
-tassadar[:stats][:attack] = 20
-db.units.save tassadar
-
-# Querying first & all, there's also :each, the same as :all.
-db.units.first name: 'Zeratul'                     # => zeratul
-db.units.all name: 'Zeratul'                       # => [zeratul]
-db.units.all name: 'Zeratul' do |unit|
-  unit                                             # => zeratul
-end
-
-# Dynamic Finders (bang versions also availiable).
-db.units.by_name 'Zeratul'                         # => zeratul
-db.units.first_by_name 'Zeratul'                   # => zeratul
-db.units.all_by_name 'Zeratul'                     # => [zeratul]
-
-# Query sugar, use {name: {_gt: 'Z'}} instead of {name: {:$gt => 'Z'}}.
-Mongo.defaults.merge! convert_underscore_to_dollar: true
-db.units.all name: {_gt: 'Z'}                      # => [zeratul]
-```
-
-Source: examples/driver.rb
-
-More docs - there's no need for more docs, the whole point of this extension is to be small, intuitive, 100% compatible with the official driver, and require no extra knowledge.
-So, please use standard Ruby driver documentation.
-
-# Migrations
-
-Define migration steps, specify desired version and apply it (usually all this should be done via Rake task).
-
-``` ruby
-require 'mongo/migration'
-
-# Connection & db.
-connection = Mongo::Connection.new
-db = connection.db 'default_test'
-db.units.drop
-
-# Initialize migration (usually all this should be done inside of :migrate
-# rake task).
-migration = Mongo::Migration.new db
-
-# Define migrations.
-# Usually they are defined as files in some folder and You loading it by
-# using something like this:
-#   Dir['<runtime_dir>/db/migrations/*.rb'].each{|fname| load fname}
-migration.add 1 do |m|
-  m.up{|db|   db.units.save   name: 'Zeratul'}
-  m.down{|db| db.units.remove name: 'Zeratul'}
-end
-
-# Let's add another one.
-migration.add 2 do |m|
-  m.up{|db|   db.units.save   name: 'Tassadar'}
-  m.down{|db| db.units.remove name: 'Tassadar'}
-end
-
-# Specify what version of database You need and apply migration.
-migration.update 2
-
-migration.current_version                        # => 2
-db.units.count                                   # => 2
-
-# You can rollback it the same way.
-migration.update 0
-
-migration.current_version                        # => 0
-db.units.count                                   # => 0
-
-# To update to the highest version just call it without the version specified
-migration.update
-
-migration.current_version                        # => 2
-db.units.count                                   # => 2
-```
-
-Source: examples/migration.rb
-
-# Persistence for any Ruby object
-
-Save any Ruby object to MongoDB, as if it's a document. Objects can be any type, simple or composite with other objects / arrays / hashes inside.
-
-Note: the :initialize method should allow to create object without arguments.
-
-``` ruby
 # Requiring driver enhancements.
 require 'mongo/driver'
 
@@ -149,6 +44,132 @@ db.units.save name: 'Tassadar'
 
 # Querying first and all documents matching criteria (there's
 # also `:each` method, the same as `:all`).
+p db.units.first(name: 'Zeratul')                  # => zeratul
+p db.units.all(name: 'Zeratul')                    # => [zeratul]
+db.units.all name: 'Zeratul' do |unit|
+  p unit                                           # => zeratul
+end
+
+# Dynamic finders, handy way to do simple queries.
+p db.units.by_name('Zeratul')                      # => zeratul
+p db.units.first_by_name('Zeratul')                # => zeratul
+p db.units.all_by_name('Zeratul')                  # => [zeratul]
+
+# Bang versions, will raise error if nothing found.
+p db.units.first!(name: 'Zeratul')                 # => zeratul
+p db.units.by_name!('Zeratul')                     # => zeratul
+
+# Query sugar, use `:_gt` instead of `:$gt`. It's more convinient to use new hash
+# syntax `{name: {_gt: 'Z'}}` instead of hashrockets `{name: {:$gt => 'Z'}}`.
+Mongo.defaults[:convert_underscore_to_dollar] = true
+p db.units.all(name: {_gt: 'Z'})                   # => [zeratul]
+```
+
+Source: examples/driver.rb
+
+More docs - there's no need for more docs, the whole point of this extension is to be small, intuitive, 100% compatible with the official driver, and require no extra knowledge.
+So, please use standard Ruby driver documentation.
+
+# Migrations
+
+Define migration steps, specify desired version and apply it (usually all this should be done via Rake task).
+
+``` ruby
+# Requiring support for migration.
+require 'mongo/migration'
+
+# Defining first migration, creating Zeratul (and removing it in rollback).
+Mongo.migration 1 do |m|
+  m.up  {|db| db.units.save   name: 'Zeratul'}
+  m.down{|db| db.units.remove name: 'Zeratul'}
+end
+
+# Defining second migration, creating Tassadar (and removing it in rollback).
+Mongo.migration 2 do |m|
+  m.up  {|db| db.units.save   name: 'Tassadar'}
+  m.down{|db| db.units.remove name: 'Tassadar'}
+end
+
+# Connecting to test database and cleaning it before starting the sample.
+connection = Mongo::Connection.new
+db = connection.default_test
+db.drop
+
+# Assigning database to migration.
+Mongo.migration.db = db
+
+# Let's migrate to the first version and create mighty Zeratul.
+Mongo.migration.update 1
+
+p Mongo.migration.current_version                # => 1
+p db.units.all                                   # => [Zeratul]
+
+# Rolling it back.
+Mongo.migration.update 0
+
+p Mongo.migration.current_version                # => 0
+p db.units.all                                   # => []
+
+# Updating to the latest version (if there's no explicit version
+# then the highest available version will be chosen).
+Mongo.migration.update
+
+p Mongo.migration.current_version                # => 2
+p db.units.all                                   # => [Zeratul, Tassadar]```
+
+Source: examples/migration.rb
+
+# Persistence for any Ruby object
+
+Save any Ruby object to MongoDB, as if it's a document. Objects can be any type, simple or composite with other objects / arrays / hashes inside.
+
+Note: the :initialize method should allow to create object without arguments.
+
+``` ruby
+# Connecting to test database and cleaning it before starting the sample.
+require 'mongo/object'
+connection = Mongo::Connection.new
+db = connection.default_test
+db.drop
+
+# Let's define Game Unit.
+class Unit
+  # Including Mongo::Object.
+  include Mongo::Object
+
+  attr_reader :name, :stats
+
+  # We need to also the initializer to be used without arguments.
+  def initialize name = nil, stats = nil
+    @name, @stats = name, stats
+  end
+
+  # Creating internal object containing stats of the Unit.
+  class Stats
+    include Mongo::Object
+    attr_accessor :attack, :life, :shield
+
+    def initialize attack = nil, life = nil, shield = nil
+      @attack, @life, @shield = attack, life, shield
+    end
+  end
+end
+
+# Let's create two Heroes.
+#
+# It uses the same Driver API, everything works the same way as with hashes.
+zeratul  = Unit.new('Zeratul',  Unit::Stats.new(85, 300, 100))
+tassadar = Unit.new('Tassadar', Unit::Stats.new(0,  80,  300))
+
+db.units.save zeratul
+db.units.save tassadar
+
+# Udating, we made error - mistakenly set Tassadar's attack as zero, let's fix it.
+tassadar.stats.attack = 20
+db.units.save tassadar
+
+# Querying first and all documents matching criteria (there's also `:each` method,
+# the same as `:all`).
 p db.units.first(name: 'Zeratul')                  # => zeratul
 p db.units.all(name: 'Zeratul')                    # => [zeratul]
 db.units.all name: 'Zeratul' do |unit|

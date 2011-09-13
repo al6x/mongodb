@@ -1,5 +1,9 @@
 # Example of Ruby Object Persistence for [MongoDB Enhanced Driver][mongodb].
 #
+# Object Persistence allows You to save any Ruby Object to MongoDB as if it's
+# a Document. Objects can be any type, simple or composite with other
+# objects / arrays / hashes inside.
+#
 # It works by converting object graph to graph of hashes when saving to mongo,
 # and restoring it back when loading.
 #

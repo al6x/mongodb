@@ -24,7 +24,7 @@ class Unit
 
   attr_reader :name, :stats
 
-  # We need to also the initializer to be used without arguments.
+  # We need the initializer to be used also without arguments.
   def initialize name = nil, stats = nil
     @name, @stats = name, stats
   end

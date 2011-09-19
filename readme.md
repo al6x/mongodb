@@ -34,7 +34,7 @@ connection = Mongo::Connection.new
 db = connection.default_test
 db.drop
 
-# Collection shortcuts, access collection directly by typing it's name,
+# Collection shortcuts, access collection directly by typing its name,
 # instead of `db.collection('some_collection')`.
 db.some_collection
 
@@ -140,7 +140,7 @@ class Unit
 
   attr_reader :name, :stats
 
-  # We need to also the initializer to be used without arguments.
+  # We need the initializer to be used also without arguments.
   def initialize name = nil, stats = nil
     @name, @stats = name, stats
   end

@@ -44,7 +44,7 @@ connection = Mongo::Connection.new
 db = connection.default_test
 db.drop
 
-# Collection shortcuts, access collection directly by typing it's name,
+# Collection shortcuts, access collection directly by typing its name,
 # instead of `db.collection('some_collection')`.
 db.some_collection
 

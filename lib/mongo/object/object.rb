@@ -2,14 +2,19 @@ module Mongo::Object
   attr_accessor :_id, :_parent
 
   def valid? options = {}
+    errors.clear
+    run_validations options
+  end
+
+  def run_validations options = {}
     options = ::Mongo::Object.parse_options options
     begin
       return false if options[:callbacks] and !::Mongo::Object.run_before_callbacks(self, :validate)
 
       child_options = options.merge internal: true
       result = [
+        (respond_to?(:run_model_validations) ? run_model_validations : true),
         child_objects.all?{|group| group.all?{|obj| obj.valid?(child_options)}},
-        ::Mongo::Object.run_validations(self),
         errors.empty?
       ].all?
 
@@ -17,12 +22,12 @@ module Mongo::Object
 
       result
     ensure
-      clear_child_objects unless options[:internal]
+      clear_child_objects_cache unless options[:internal]
     end
   end
 
   def errors
-    @_errors ||= {}
+    @_errors ||= Hash.new([])
   end
 
   def create_object collection, options
@@ -68,7 +73,7 @@ module Mongo::Object
       return options
     end
 
-    def to_mongo_options options
+    def parse_mongo_options options
       options = options.clone
       options.delete :validate
       options.delete :callbacks
@@ -82,7 +87,7 @@ module Mongo::Object
     end
 
     def instance_variables obj
-      # skipping variables starting with _xx, usually they
+      # skipping variables starting with @_, usually they
       # have specific meaning and used for example for cache
       obj.instance_variables.select{|n| n !~ SKIP_IV_REGEXP}
     end
@@ -137,8 +142,10 @@ module Mongo::Object
 
     def each_object obj, &block
       if obj.is_a? Hash
+        block.call obj if obj.is_a? ::Mongo::Object
         obj.each{|k, v| each_object v, &block}
       elsif obj.is_a? Array
+        block.call obj if obj.is_a? ::Mongo::Object
         obj.each{|v| each_object v, &block}
       elsif obj.is_a? ::Mongo::Object
         block.call obj
@@ -166,16 +173,12 @@ module Mongo::Object
     end
 
     def run_after_callbacks obj, method
-      if obj.respond_to?(:run_before_callbacks)
+      if obj.respond_to?(:run_after_callbacks)
         obj.run_after_callbacks(method, method: method)
         obj.run_after_callbacks(:save, method: :save) if method == :update or method == :create
       else
         true
       end
-    end
-
-    def run_validations obj
-      obj.respond_to?(:run_validations) ? obj.run_validations : true
     end
 
     protected
@@ -198,6 +201,7 @@ module Mongo::Object
               obj
             end
             obj._parent = parent if parent
+            run_after_callbacks obj, :build
             obj
           else
             hash = {}
@@ -222,7 +226,6 @@ module Mongo::Object
   end
 
   protected
-    attr_writer :original_children
     def original_children; @_original_children ||= [] end
 
     def update_original_children!
@@ -234,17 +237,17 @@ module Mongo::Object
       end
     end
 
-    def clear_child_objects
-      if instance_variable_get(:@_child_objects)
+    def clear_child_objects_cache
+      if instance_variable_get(:@_child_objects_cache)
         child_objects.each do |group|
-          group.each{|obj| obj.clear_child_objects}
+          group.each{|obj| obj.clear_child_objects_cache}
         end
-        remove_instance_variable :@_child_objects
+        remove_instance_variable :@_child_objects_cache
       end
     end
 
     def child_objects
-      unless @_child_objects
+      unless @_child_objects_cache
         created_children, updated_children, destroyed_children = [], [], []
 
         original_children_ids = Set.new; original_children.each{|obj| original_children_ids << obj.object_id}
@@ -257,9 +260,9 @@ module Mongo::Object
         end
         destroyed_children = original_children.select{|obj| !children_ids.include?(obj.object_id)}
 
-        @_child_objects = [created_children, updated_children, destroyed_children]
+        @_child_objects_cache = [created_children, updated_children, destroyed_children]
       end
-      @_child_objects
+      @_child_objects_cache
     end
 
     def with_object_callbacks method, options, &block
@@ -272,7 +275,7 @@ module Mongo::Object
       return false if options[:callbacks] and !run_all_callbacks(:before, method)
 
       # saving
-      block.call ::Mongo::Object.to_mongo_options(options)
+      block.call ::Mongo::Object.parse_mongo_options(options)
       update_original_children!
 
       # after callbacks
@@ -280,10 +283,9 @@ module Mongo::Object
 
       true
     ensure
-      clear_child_objects
+      clear_child_objects_cache
     end
 
-    # TODO1 move to static method
     def run_all_callbacks type, method
       result = if type == :before
         ::Mongo::Object.run_before_callbacks self, method

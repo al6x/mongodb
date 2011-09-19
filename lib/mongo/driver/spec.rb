@@ -13,13 +13,6 @@ rspec do
     $mongo || raise('Mongo not defined (use :with_mongo helper)!')
   end
 
-  def clear_mongo name = MONGO_TEST_DATABASE_NAME
-    mongo.db.collection_names.each do |name|
-      next if name =~ /^system\./
-      mongo.db.collection(name).drop
-    end
-  end
-
   class << self
     def with_mongo
       before :all do
@@ -33,7 +26,7 @@ rspec do
       after(:all){$mongo = nil}
 
       before do
-        clear_mongo
+        mongo.db.clear
       end
     end
   end

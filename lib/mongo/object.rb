@@ -1,6 +1,7 @@
 require 'mongo/driver'
 
 %w(
+  support
   object
   object_helper
 ).each{|f| require "mongo/object/#{f}"}

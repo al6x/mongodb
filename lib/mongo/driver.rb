@@ -18,8 +18,9 @@ Mongo.class_eval do
     def defaults; @defaults ||= {} end
     attr_writer :defaults
 
-    # Override this method to provide Your own custom database initialization.
+    # Override this method to provide Your own custom database initialization logic.
     def db name
+      name = name.to_s
       @databases ||= {}
       @databases[name] ||= begin
         connection = Mongo::Connection.new

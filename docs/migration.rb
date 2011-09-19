@@ -1,6 +1,6 @@
 # Example of Data Migration for [MongoDB Enhanced Driver][mongodb].
 #
-# In this example we define two migrations, applying first one,
+# In this example we'll define two migrations, applying first one,
 # rollback it, and then migrating database to the latest version.
 #
 # Usually all this is [done via Rake Task][rake_migration], but in this example we do

@@ -1,4 +1,4 @@
-require 'mongo/gems'
+require 'mongodb/gems'
 
 require 'mongo'
 

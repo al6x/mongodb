@@ -1,9 +1,9 @@
 require 'mongo/driver'
 
-%w(
-  object
-  object_helper
-).each{|f| require "mongo/object/#{f}"}
+Mongo.class_eval do
+  autoload :Object, 'mongo/object/object'
+end
+require 'mongo/object/object_helper'
 
 Mongo.defaults[:callbacks] = true
 

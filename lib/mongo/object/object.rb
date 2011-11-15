@@ -1,5 +1,4 @@
 module Mongo::Object
-  warn 'remove :_id?'
   attr_accessor :_id, :_parent
 
   def create_object collection, options
@@ -27,25 +26,13 @@ module Mongo::Object
     end
   end
 
-  # Need this to allow to change it in specs,
-  # RSpec adds @mock_proxy, and we need to skip it.
-  SKIP_IV_REGEXP = /^@_/
+  # Skipping variables starting with @_, usually they
+  # have specific meaning and used for things like cache.
+  def persistent_instance_variables
+    instance_variables.select{|n| n !~ /^@_/}
+  end
 
   class << self
-
-    warn 'move to instance methods'
-    def each_instance_variable obj, &block
-      instance_variables(obj).each do |iv_name|
-        block.call iv_name, obj.instance_variable_get(iv_name)
-      end
-    end
-
-    # Skipping variables starting with @_, usually they
-    # have specific meaning and used for things like cache.
-    def instance_variables obj
-      obj.instance_variables.select{|n| n !~ SKIP_IV_REGEXP}
-    end
-
     # Convert object to document (with nested documents & arrays).
     def to_mongo obj
       return obj.to_mongo if obj.respond_to? :to_mongo
@@ -57,8 +44,9 @@ module Mongo::Object
       elsif obj.is_a? Mongo::Object
         {}.tap do |doc|
           # Copy instance variables.
-          each_instance_variable obj do |iv_name, v|
+          obj.persistent_instance_variables.each do |iv_name|
             k = iv_name.to_s[1..-1]
+            v = obj.instance_variable_get iv_name
             doc[k] = to_mongo v
           end
 

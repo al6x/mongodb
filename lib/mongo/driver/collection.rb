@@ -45,7 +45,6 @@ module Mongo::CollectionExt
   def delete *args
     remove *args
   end
-  alias_method :destroy, :delete
 
   def create *args
     insert *args

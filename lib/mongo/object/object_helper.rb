@@ -52,7 +52,6 @@ module Mongo::ObjectHelper
   def delete! *args
     delete(*args) || raise(Mongo::Error, "can't delete #{doc.inspect}!")
   end
-  alias_method :destroy!, :delete!
 
   # Querying.
 

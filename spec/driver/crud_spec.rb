@@ -29,8 +29,8 @@ describe "Hash CRUD" do
       db.units.count.should == 1
       db.units.first(name: 'Zeratul')['info'].should == 'Killer of Cerebrates'
 
-      # destroy
-      db.units.destroy @zeratul
+      # delete
+      db.units.delete @zeratul
       db.units.count.should == 0
     end
   end
@@ -62,8 +62,8 @@ describe "Hash CRUD" do
       db.players.first.should == @player
       db.players.first.object_id.should_not == @player.object_id
 
-      # destroy
-      db.players.destroy @player
+      # delete
+      db.players.delete @player
       db.players.count.should == 0
     end
   end

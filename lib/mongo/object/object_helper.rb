@@ -28,13 +28,13 @@ module Mongo::ObjectHelper
     end
   end
 
-  def destroy_with_object *args
+  def delete_with_object *args
     if args.first.is_a? ::Mongo::Object
       doc, options = args
       options ||= {}
-      doc.destroy_object self, options
+      doc.delete_object self, options
     else
-      destroy_without_object *args
+      delete_without_object *args
     end
   end
 
@@ -50,9 +50,10 @@ module Mongo::ObjectHelper
     save(*args) || raise(Mongo::Error, "can't save #{doc.inspect}!")
   end
 
-  def destroy! *args
-    destroy(*args) || raise(Mongo::Error, "can't destroy #{doc.inspect}!")
+  def delete! *args
+    delete(*args) || raise(Mongo::Error, "can't delete #{doc.inspect}!")
   end
+  alias_method :destroy!, :delete!
 
 
   #

@@ -43,14 +43,14 @@ describe 'Object callbacks' do
       db.objects.save(@object).should be_true
     end
 
-    it 'destroy' do
+    it 'delete' do
       db.objects.save(@object).should be_true
 
-      %w(before_validate after_validate before_destroy after_destroy).each do |name|
+      %w(before_validate after_validate before_delete after_delete).each do |name|
         @object.should_receive(name).once.ordered.and_return(true)
         @child.should_receive(name).once.ordered.and_return(true)
       end
-      db.objects.destroy(@object).should be_true
+      db.objects.delete(@object).should be_true
     end
 
     it 'should be able skip callbacks' do
@@ -61,7 +61,7 @@ describe 'Object callbacks' do
       db.objects.count.should == 1
       db.objects.save(@object, callbacks: false).should be_true
       db.objects.count.should == 1
-      db.objects.destroy(@object, callbacks: false).should be_true
+      db.objects.delete(@object, callbacks: false).should be_true
       db.objects.count.should == 0
     end
 
@@ -74,17 +74,17 @@ describe 'Object callbacks' do
     end
 
     describe "embedded" do
-      it 'should fire :destroy on detached objects' do
+      it 'should fire :delete on detached objects' do
         db.objects.save(@object).should be_true
         @object.children.clear
-        @child.should_receive(:before_destroy).once.and_return(true)
-        db.objects.destroy(@object).should be_true
+        @child.should_receive(:before_delete).once.and_return(true)
+        db.objects.delete(@object).should be_true
       end
 
-      it 'should fire :destroy on deleted objects in update' do
+      it 'should fire :delete on deleted objects in update' do
         db.objects.save(@object).should be_true
         @object.children.clear
-        @child.should_receive(:before_destroy).once.and_return(true)
+        @child.should_receive(:before_delete).once.and_return(true)
         db.objects.save(@object).should be_true
       end
 

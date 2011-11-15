@@ -46,10 +46,10 @@ module Mongo::Object
     end
   end
 
-  def delete_object collection, options
-    with_object_callbacks :delete, options do |options|
-      id = _id || "can't delete object without _id (#{self})!"
-      collection.delete({_id: id}, options)
+  def destroy_object collection, options
+    with_object_callbacks :destroy, options do |options|
+      id = _id || "can't destroy object without _id (#{self})!"
+      collection.destroy({_id: id}, options)
     end
   end
 
@@ -248,7 +248,7 @@ module Mongo::Object
 
     def child_objects
       unless @_child_objects_cache
-        created_children, updated_children, deleted_children = [], [], []
+        created_children, updated_children, destroyed_children = [], [], []
 
         original_children_ids = Set.new; original_children.each{|obj| original_children_ids << obj.object_id}
         ::Mongo::Object.each_object self do |obj|
@@ -258,9 +258,9 @@ module Mongo::Object
         children_ids = Set.new; ::Mongo::Object.each_object self do |obj|
           children_ids << obj.object_id unless obj.equal?(self)
         end
-        deleted_children = original_children.select{|obj| !children_ids.include?(obj.object_id)}
+        destroyed_children = original_children.select{|obj| !children_ids.include?(obj.object_id)}
 
-        @_child_objects_cache = [created_children, updated_children, deleted_children]
+        @_child_objects_cache = [created_children, updated_children, destroyed_children]
       end
       @_child_objects_cache
     end
@@ -300,11 +300,11 @@ module Mongo::Object
           end
         end
       elsif method == :update
-        created_children, updated_children, deleted_children = child_objects
+        created_children, updated_children, destroyed_children = child_objects
         created_children.all?{|obj| obj.run_all_callbacks type, :create} and
           updated_children.all?{|obj| obj.run_all_callbacks type, :update} and
-          deleted_children.all?{|obj| obj.run_all_callbacks type, :delete}
-      elsif method == :delete
+          destroyed_children.all?{|obj| obj.run_all_callbacks type, :destroy}
+      elsif method == :destroy
         child_objects.all? do |group|
           group.all? do |obj|
             obj.run_all_callbacks type, method

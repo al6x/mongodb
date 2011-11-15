@@ -22,7 +22,7 @@ describe 'Object validation' do
     @player.missions = [@mission]
   end
 
-  it 'should not save/update/destroy invalid objects' do
+  it 'should not save/update/delete invalid objects' do
     # create
     @player.stub!(:valid?).and_return(false)
     db.players.save(@player).should be_false
@@ -37,15 +37,15 @@ describe 'Object validation' do
     @player.stub!(:valid?).and_return(true)
     db.players.save(@player).should be_true
 
-    # destroy
+    # delete
     @player.stub!(:valid?).and_return(false)
-    db.players.destroy(@player).should be_false
+    db.players.delete(@player).should be_false
 
     @player.stub!(:valid?).and_return(true)
-    db.players.destroy(@player).should be_true
+    db.players.delete(@player).should be_true
   end
 
-  it 'should not save/update/destroy invalid embedded objects' do
+  it 'should not save/update/delete invalid embedded objects' do
     # create
     @mission.stub!(:valid?).and_return(false)
     db.players.save(@player).should be_false
@@ -60,12 +60,12 @@ describe 'Object validation' do
     @mission.stub!(:valid?).and_return(true)
     db.players.save(@player).should be_true
 
-    # destroy
+    # delete
     @mission.stub!(:valid?).and_return(false)
-    db.players.destroy(@player).should be_false
+    db.players.delete(@player).should be_false
 
     @mission.stub!(:valid?).and_return(true)
-    db.players.destroy(@player).should be_true
+    db.players.delete(@player).should be_true
   end
 
   it "should be able skip validation" do

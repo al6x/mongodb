@@ -43,9 +43,10 @@ module Mongo::CollectionExt
     remove_without_ext selector, reverse_merge_defaults(options, :safe, :multi)
   end
 
-  def destroy *args
+  def delete *args
     remove *args
   end
+  alias_method :destroy, :delete
 
   def create *args
     insert *args

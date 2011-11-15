@@ -11,8 +11,8 @@ describe "Collection" do
     db.units.update({race: 'Protoss'}, :$set => {status: 'dead'})
     db.units.all.collect{|u| u['status']}.should == %w(dead dead)
 
-    # destroy
-    db.units.destroy race: 'Protoss'
+    # delete
+    db.units.delete race: 'Protoss'
     db.units.count.should == 0
   end
 

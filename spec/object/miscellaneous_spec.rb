@@ -2,12 +2,17 @@ require 'object/spec_helper'
 
 describe "Miscellaneous" do
   with_mongo
-  before_all do
+  old = Mongo.defaults[:generate_id] = false
+  before do
+    Mongo.defaults[:generate_id] = true
     class Tmp
       include Mongo::Object
     end
   end
-  after{remove_constants :Tmp}
+  after do
+    Mongo.defaults[:generate_id] = old
+    remove_constants :Tmp
+  end
 
   it "should use random string id (instead of default BSON::ObjectId)" do
     o = Tmp.new

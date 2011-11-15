@@ -4,30 +4,23 @@ module Mongo::Object
   def create_object collection, options
     doc = to_mongo
 
-    # Autogenerating custom ids if specified.
-    if Mongo.defaults[:generate_id]
-      id = doc['_id'] = generate_random_string_id
-      collection.create doc, options
-      self._id = id
-    else
-      collection.all
-      self._id = doc['_id']
-    end
+    # Generating custom id if option enabled.
+    doc['_id'] = generate_id if Mongo.defaults[:generate_id]
 
-    self
+    id = collection.create doc, options
+    self._id = id
+    id
   end
 
   def update_object collection, options
     id = _id || "can't update object without _id (#{self})!"
     doc = to_mongo
     collection.update({_id: id}, doc, options)
-    self
   end
 
   def delete_object collection, options
     id = _id || "can't delete object without _id (#{self})!"
     collection.delete({_id: id}, options)
-    self
   end
 
   def save_object collection, options
@@ -55,7 +48,6 @@ module Mongo::Object
       end
 
       # Adding _id & _class.
-      # id = instance_variable_get('@_id')
       h['_id']    = _id if _id
       h['_class'] = self.class.name
     end

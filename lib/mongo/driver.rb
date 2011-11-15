@@ -28,7 +28,6 @@ Mongo.class_eval do
     end
   end
 end
-Mongo.defaults[:convert_id_to_string] = true
 
 Mongo::Connection.send :include, Mongo::ConnectionExt
 
@@ -42,3 +41,5 @@ Mongo::Collection.class_eval do
     alias_method method, "#{method}_with_ext"
   end
 end
+
+Mongo.defaults[:convert_id_to_string] = true

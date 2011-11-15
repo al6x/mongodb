@@ -1,14 +1,12 @@
 require 'mongo/driver'
 
 %w(
-  support
   object
   object_helper
 ).each{|f| require "mongo/object/#{f}"}
 
 Mongo.defaults[:callbacks] = true
 
-# collection
 Mongo::Collection.class_eval do
   include Mongo::ObjectHelper
 

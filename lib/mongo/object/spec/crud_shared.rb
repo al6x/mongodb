@@ -1,27 +1,27 @@
 shared_examples_for 'object CRUD' do
   it 'crud' do
-    # read
+    # Read.
     db.units.count.should == 0
     db.units.all.should == []
     db.units.first.should == nil
 
-    # create
+    # Create.
     db.units.save(@zeratul).should be_true
     @zeratul._id.should_not be_nil
 
-    # read
+    # Read.
     db.units.count.should == 1
     db.units.all.should == [@zeratul]
     db.units.first.should == @zeratul
     db.units.first.object_id.should_not == @zeratul.object_id
 
-    # update
+    # Update.
     @zeratul.info = 'Killer of Cerebrates'
     db.units.save(@zeratul).should be_true
     db.units.count.should == 1
     db.units.first(name: 'Zeratul').info.should == 'Killer of Cerebrates'
 
-    # delete
+    # Delete.
     db.units.delete(@zeratul).should be_true
     db.units.count.should == 0
   end
@@ -29,16 +29,16 @@ end
 
 shared_examples_for 'embedded object CRUD' do
   it 'crud' do
-    # create
+    # Create.
     db.players.save(@player)
     @player._id.should_not be_nil
 
-    # read
+    # Read.
     db.players.count.should == 1
     db.players.first.should == @player
     db.players.first.object_id.should_not == @players.object_id
 
-    # update
+    # Update.
     @player.missions.first.stats['units'] = 9
     mission = @mission_class.new.tap do |m|
       m.name = 'Desperate Alliance'
@@ -50,7 +50,7 @@ shared_examples_for 'embedded object CRUD' do
     db.players.first.should == @player
     db.players.first.object_id.should_not == @player.object_id
 
-    # delete
+    # Delete.
     db.players.delete @player
     db.players.count.should == 0
   end

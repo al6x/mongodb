@@ -2,9 +2,8 @@ require 'set'
 require 'date'
 
 module Mongo::CollectionExt
-  #
-  # CRUD
-  #
+  # CRUD.
+
   def save_with_ext doc, options = {}
     save_without_ext doc, reverse_merge_defaults(options, :safe)
   end
@@ -12,7 +11,7 @@ module Mongo::CollectionExt
   def insert_with_ext args, options = {}
     result = insert_without_ext args, reverse_merge_defaults(options, :safe)
 
-    # for some strange reason MongoDB Ruby driver
+    # For some strange reason MongoDB Ruby driver
     # uses Strings for all keys but _id.
     # It's inconvinient, fixing it.
     if Mongo.defaults[:convert_id_to_string]
@@ -20,7 +19,7 @@ module Mongo::CollectionExt
       list.each{|h| h['_id'] = h.delete :_id}
     end
 
-    # fix for mongodriver, it will return single result if we supply [doc] as args
+    # Fix for mongodriver, it will return single result if we supply [doc] as args.
     (args.is_a?(Array) and !result.is_a?(Array)) ? [result] : result
   end
 
@@ -52,9 +51,8 @@ module Mongo::CollectionExt
     insert *args
   end
 
-  #
-  # Querying
-  #
+  # Querying.
+
   def first selector = {}, options = {}
     selector = convert_underscore_to_dollar_in_selector selector if selector.is_a? Hash
     find_one selector, options
@@ -115,17 +113,7 @@ module Mongo::CollectionExt
       h
     end
 
-    # # symbolizing hashes
-    # def symbolize_doc doc
-    #   return doc unless Mongo.defaults[:symbolize]
-    #
-    #   Mongo::CollectionExt.convert_doc doc do |k, v, result|
-    #     k = k.to_sym if k.is_a? String
-    #     result[k] = v
-    #   end
-    # end
-
-    # replaces :_lt to :$lt in query
+    # Replaces :_lt to :$lt in query.
     def convert_underscore_to_dollar_in_selector selector
       return selector unless Mongo.defaults[:convert_underscore_to_dollar]
 
@@ -135,7 +123,7 @@ module Mongo::CollectionExt
       end
     end
 
-    # replaces :_set to :$set in query
+    # Replaces :_set to :$set in query.
     def convert_underscore_to_dollar_in_update update
       return update unless Mongo.defaults[:convert_underscore_to_dollar]
 
@@ -145,7 +133,7 @@ module Mongo::CollectionExt
       end
     end
 
-    # walks on hash and creates another (also works with nested & arrays)
+    # Walks on hash and creates another (also works with nested & arrays).
     def self.convert_doc doc, &block
       if doc.is_a? Hash
         result = {}

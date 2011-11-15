@@ -1,7 +1,6 @@
 module Mongo::ObjectHelper
-  #
-  # CRUD
-  #
+  # CRUD.
+
   def create_with_object doc, options = {}
     if doc.is_a? ::Mongo::Object
       doc.create_object self, options
@@ -55,10 +54,8 @@ module Mongo::ObjectHelper
   end
   alias_method :destroy!, :delete!
 
+  # Querying.
 
-  #
-  # Querying
-  #
   def first selector = {}, options = {}, &block
     options = options.clone
     if options.delete(:object) == false

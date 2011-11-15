@@ -12,7 +12,6 @@ class Mongo::NotFound < Mongo::Error; end
   dynamic_finders
 ).each{|f| require "mongo/driver/#{f}"}
 
-# defaults
 Mongo.class_eval do
   class << self
     def defaults; @defaults ||= {} end

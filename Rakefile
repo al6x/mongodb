@@ -1,6 +1,6 @@
 require 'rake_ext'
 
-project(
+project \
   name: "mongodb",
   # version: '0.1.0',
   gem: true,
@@ -8,4 +8,3 @@ project(
 
   author: "Alexey Petrushin",
   homepage: "http://alexeypetrushin.github.com/mongodb"
-)

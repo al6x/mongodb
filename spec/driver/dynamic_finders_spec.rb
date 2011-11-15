@@ -3,13 +3,13 @@ require 'driver/spec_helper'
 describe "Dynamic Finders" do
   with_mongo
 
-  before :all do
+  before_all do
     class FindersStub
       include Mongo::DynamicFinders
     end
   end
 
-  after(:all){remove_constants :FindersStub}
+  after_all{remove_constants :FindersStub}
 
   it "parse_finder" do
     [

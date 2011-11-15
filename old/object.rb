@@ -1,3 +1,7 @@
+Mongo.defaults[:callbacks] = true
+
+
+
 module Mongo::Object
   attr_accessor :_id, :_parent
 

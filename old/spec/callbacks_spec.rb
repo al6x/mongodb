@@ -5,7 +5,7 @@ describe 'Object callbacks' do
 
   [Object, Array, Hash].each do |embedded_object_superclass|
     embedded_object_class = nil
-    before :all do
+    before_all do
       class MainObject
         include Mongo::Object, RSpec::CallbackHelper
 
@@ -16,7 +16,7 @@ describe 'Object callbacks' do
         include Mongo::Object, RSpec::CallbackHelper
       end
     end
-    after(:all){remove_constants :MainObject}
+    after_all{remove_constants :MainObject}
 
     before do
       @child = embedded_object_class.new

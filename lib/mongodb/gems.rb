@@ -1,1 +1,1 @@
-gem 'mongo',    '~> 1.3'
+gem 'mongo',    '~> 1.4'

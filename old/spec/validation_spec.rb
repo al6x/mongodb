@@ -3,7 +3,7 @@ require 'object/spec_helper'
 describe 'Object validation' do
   with_mongo
 
-  before :all do
+  before_all do
     class Player
       include Mongo::Object
 
@@ -14,7 +14,7 @@ describe 'Object validation' do
       end
     end
   end
-  after(:all){remove_constants :Player}
+  after_all{remove_constants :Player}
 
   before do
     @mission = Player::Mission.new

@@ -2,20 +2,32 @@ module Mongo::Object
   attr_accessor :_id, :_parent
 
   def create_object collection, options
-    doc = ::Mongo::Object.to_mongo self
-    collection.create doc, options
-    self._id = doc['_id']
+    doc = to_mongo
+
+    # Autogenerating custom ids if specified.
+    if Mongo.defaults[:generate_id]
+      id = doc['_id'] = generate_random_string_id
+      collection.create doc, options
+      self._id = id
+    else
+      collection.all
+      self._id = doc['_id']
+    end
+
+    self
   end
 
   def update_object collection, options
     id = _id || "can't update object without _id (#{self})!"
-    doc = ::Mongo::Object.to_mongo self
+    doc = to_mongo
     collection.update({_id: id}, doc, options)
+    self
   end
 
   def delete_object collection, options
     id = _id || "can't delete object without _id (#{self})!"
     collection.delete({_id: id}, options)
+    self
   end
 
   def save_object collection, options
@@ -32,35 +44,37 @@ module Mongo::Object
     instance_variables.select{|n| n !~ /^@_/}
   end
 
-  class << self
-    # Convert object to document (with nested documents & arrays).
-    def to_mongo obj
-      return obj.to_mongo if obj.respond_to? :to_mongo
-
-      if obj.is_a? Hash
-        {}.tap{|h| obj.each{|k, v| h[k] = to_mongo v}}
-      elsif obj.is_a? Array
-        obj.collect{|v| to_mongo v}
-      elsif obj.is_a? Mongo::Object
-        {}.tap do |doc|
-          # Copy instance variables.
-          obj.persistent_instance_variables.each do |iv_name|
-            k = iv_name.to_s[1..-1]
-            v = obj.instance_variable_get iv_name
-            doc[k] = to_mongo v
-          end
-
-          # Adding _id & _class.
-          id = instance_variable_get('@_id')
-          doc['_id']    = id if id
-          doc['_class'] = obj.class.name
-        end
-      else
-        # Simpe type.
-        obj
+  # Convert object to document (with nested documents & arrays).
+  def to_mongo
+    {}.tap do |h|
+      # Copy instance variables.
+      persistent_instance_variables.each do |iv_name|
+        k = iv_name.to_s[1..-1]
+        v = instance_variable_get iv_name
+        h[k] = v.to_mongo
       end
+
+      # Adding _id & _class.
+      # id = instance_variable_get('@_id')
+      h['_id']    = _id if _id
+      h['_class'] = self.class.name
+    end
+  end
+
+  # Override it to generate Your custom ids.
+  def generate_id
+    generate_random_string_id
+  end
+
+  protected
+    ID_SYMBOLS = ('a'..'z').to_a + ('A'..'Z').to_a + ('0'..'9').to_a
+    def generate_random_string_id
+      id, size = "", Mongo.defaults[:random_string_id_size]
+      size.times{id << ID_SYMBOLS[rand(ID_SYMBOLS.size)]}
+      id
     end
 
+  class << self
     def build doc
       doc && _build(doc, nil)
     end

@@ -5,7 +5,7 @@ describe "Object CRUD" do
   with_mongo
 
   describe 'simple' do
-    before :all do
+    before_all do
       class Unit2
         include Mongo::Object
 
@@ -14,7 +14,7 @@ describe "Object CRUD" do
         def == o; [self.class, name, info] == [o.class, o.respond_to(:name), o.respond_to(:info)] end
       end
     end
-    after(:all){remove_constants :Unit2}
+    after_all{remove_constants :Unit2}
 
     before do
       @zeratul = Unit2.new 'Zeratul', 'Dark Templar'
@@ -29,7 +29,7 @@ describe "Object CRUD" do
   end
 
   describe 'embedded' do
-    before :all do
+    before_all do
       class Player2
         include Mongo::Object
 
@@ -45,7 +45,7 @@ describe "Object CRUD" do
         end
       end
     end
-    after(:all){remove_constants :Player2}
+    after_all{remove_constants :Player2}
 
     before do
       @mission_class = Player2::Mission

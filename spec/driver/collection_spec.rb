@@ -3,57 +3,27 @@ require 'driver/spec_helper'
 describe "Collection" do
   with_mongo
 
-  it 'by default save must update all matched by criteria (not first as defautl in mongo)' do
+  it "should by default update all matched by criteria (not first as default in mongo)" do
     db.units.save name: 'Probe', race: 'Protoss', status: 'alive'
     db.units.save name: 'Zealot', race: 'Protoss', status: 'alive'
 
-    # update
+    # Update.
     db.units.update({race: 'Protoss'}, :$set => {status: 'dead'})
     db.units.all.collect{|u| u['status']}.should == %w(dead dead)
 
-    # delete
+    # Delete.
     db.units.delete race: 'Protoss'
     db.units.count.should == 0
   end
 
-  # Discarded
-  # describe "symbolize" do
-  #   it 'should always return symbolized hashes' do
-  #     zeratul = {name: 'Zeratul'}
-  #     db.units.save(zeratul).should be_mongo_id
-  #     r = db.units.first(name: 'Zeratul')
-  #     r[:_id].should be_mongo_id
-  #     r['_id'].should be_nil
-  #     r[:name].should == 'Zeratul'
-  #     r['name'].should be_nil
-  #   end
-  #
-  #   it "should be able to disable symbolization" do
-  #     old = Mongo.defaults[:symbolize]
-  #     begin
-  #       Mongo.defaults[:symbolize] = false
-  #
-  #       zeratul = {name: 'Zeratul'}
-  #       db.units.save(zeratul).should be_mongo_id
-  #       r = db.units.first(name: 'Zeratul')
-  #       r[:_id].should be_nil
-  #       r['_id'].should be_mongo_id
-  #       r[:name].should be_nil
-  #       r['name'].should == 'Zeratul'
-  #     ensure
-  #       Mongo.defaults[:symbolize] = old
-  #     end
-  #   end
-  # end
-
-  it "first" do
+  it "should return first element of collection" do
     db.units.first.should be_nil
     zeratul = {name: 'Zeratul'}
     db.units.save(zeratul).should be_mongo_id
     db.units.first(name: 'Zeratul')['name'].should == 'Zeratul'
   end
 
-  it 'all' do
+  it 'should return all elements of collection' do
     db.units.all.should == []
 
     zeratul = {name: 'Zeratul'}
@@ -63,20 +33,20 @@ describe "Collection" do
     list.size.should == 1
     list.first['name'].should == 'Zeratul'
 
-    # with block
+    # With block.
     list = []; db.units.all{|o| list << o}
     list.size.should == 1
     list.first['name'].should == 'Zeratul'
   end
 
-  it 'count' do
+  it 'should return count of elements in collection' do
     db.units.count(name: 'Zeratul').should == 0
     db.units.save name: 'Zeratul'
     db.units.save name: 'Tassadar'
     db.units.count(name: 'Zeratul').should == 1
   end
 
-  it "underscore to dollar" do
+  it "should rewrite underscore symbol to dollar in query" do
     db.units.save name: 'Jim',     age: 34
     db.units.save name: 'Zeratul', age: 600
     db.units.all(age: {_lt: 100}).count.should == 1

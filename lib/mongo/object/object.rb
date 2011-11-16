@@ -1,5 +1,9 @@
 module Mongo::Object
-  attr_accessor :_id, :_parent
+  attr_accessor :_id, :_class, :_parent
+
+  def _id?; !!_id end
+  def new?; !_id end
+  alias_method :new_record?, :new?
 
   def create_object collection, options
     doc = to_mongo
@@ -58,6 +62,9 @@ module Mongo::Object
     generate_random_string_id
   end
 
+  def inspect; to_mongo.inspect end
+  alias_method :to_s, :inspect
+
   protected
     ID_SYMBOLS = ('a'..'z').to_a + ('A'..'Z').to_a + ('0'..'9').to_a
     def generate_random_string_id
@@ -77,22 +84,23 @@ module Mongo::Object
           if class_name = doc[:_class] || doc['_class']
             klass = constantize class_name
 
+            # Unmarshalling object.
             if klass.respond_to? :from_mongo
               obj = klass.from_mongo doc
             else
               obj = klass.new
               parent ||= obj
               doc.each do |k, v|
-                next if k.to_sym == :_class
-
                 v = _build v, parent
                 obj.instance_variable_set "@#{k}", v
               end
               obj
             end
             obj._parent = parent if parent
-            # TODO update it.
-            # run_after_callbacks obj, :build
+
+            # Firing special after build callback if defined.
+            obj.run_after_callbacks :build, :build if obj.respond_to? :run_after_callbacks
+
             obj
           else
             {}.tap{|h| doc.each{|k, v| h[k] = _build v, parent}}

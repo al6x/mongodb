@@ -4,10 +4,10 @@ Mongo.class_eval do
   autoload :Object, 'mongo/object/object'
 end
 require 'mongo/object/types'
-require 'mongo/object/object_helper'
+require 'mongo/object/collection_helper'
 
 Mongo::Collection.class_eval do
-  include Mongo::ObjectHelper
+  include Mongo::CollectionHelper
 
   %w(create update save delete).each do |method|
     alias_method "#{method}_without_object", method

@@ -1,6 +1,6 @@
 require 'driver/spec_helper'
 
-describe "Driver fixes" do
+describe "Fixes" do
   with_mongo
 
   it "should always return array if input is array" do

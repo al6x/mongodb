@@ -1,4 +1,4 @@
-module Mongo::ObjectHelper
+module Mongo::CollectionHelper
   # CRUD.
 
   def create_with_object doc, options = {}
@@ -38,19 +38,19 @@ module Mongo::ObjectHelper
   end
 
   def create! *args
-    create(*args) || raise(Mongo::Error, "can't create #{doc.inspect}!")
+    create(*args) || raise(Mongo::Error, "can't create #{args.inspect}!")
   end
 
   def update! *args
-    update(*args) || raise(Mongo::Error, "can't update #{doc.inspect}!")
+    update(*args) || raise(Mongo::Error, "can't update #{args.inspect}!")
   end
 
   def save! *args
-    save(*args) || raise(Mongo::Error, "can't save #{doc.inspect}!")
+    save(*args) || raise(Mongo::Error, "can't save #{args.inspect}!")
   end
 
   def delete! *args
-    delete(*args) || raise(Mongo::Error, "can't delete #{doc.inspect}!")
+    delete(*args) || raise(Mongo::Error, "can't delete #{args.inspect}!")
   end
 
   # Querying.

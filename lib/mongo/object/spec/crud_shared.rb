@@ -1,5 +1,5 @@
-shared_examples_for 'object CRUD' do
-  it 'crud' do
+shared_examples_for 'single' do
+  it 'should perform CRUD' do
     # Read.
     db.units.count.should == 0
     db.units.all.should == []
@@ -11,9 +11,10 @@ shared_examples_for 'object CRUD' do
 
     # Read.
     db.units.count.should == 1
-    db.units.all.should == [@zeratul]
-    db.units.first.should == @zeratul
-    db.units.first.object_id.should_not == @zeratul.object_id
+    obj = db.units.first
+    obj.should == @zeratul
+    obj.class.should == @zeratul.class
+    obj.object_id.should_not == @zeratul.object_id
 
     # Update.
     @zeratul.info = 'Killer of Cerebrates'
@@ -27,37 +28,60 @@ shared_examples_for 'object CRUD' do
   end
 end
 
-shared_examples_for 'embedded object CRUD' do
-  it 'crud' do
+shared_examples_for 'embedded' do
+  it 'should perform CRUD' do
     # Create.
-    db.players.save(@player)
-    @player._id.should_not be_nil
+    db.units.save @zeratul
+    @zeratul._id.should_not be_nil
 
     # Read.
-    db.players.count.should == 1
-    db.players.first.should == @player
-    db.players.first.object_id.should_not == @players.object_id
+    db.units.count.should == 1
+    db.units.first.should == @zeratul
+    db.units.first.object_id.should_not == @unit.object_id
 
     # Update.
-    @player.missions.first.stats['units'] = 9
-    mission = @mission_class.new.tap do |m|
-      m.name = 'Desperate Alliance'
-      m.stats = {'buildings' => 11, 'units' => 40}
-    end
-    @player.missions << mission
-    db.players.save @player
-    db.players.count.should == 1
-    db.players.first.should == @player
-    db.players.first.object_id.should_not == @player.object_id
+    @zeratul.items.first.name = 'Plasma shield level 3'
+    item = @item_class.new.tap{|o| o.name = 'Power suit'}
+    @zeratul.items << item
+    db.units.save @zeratul
+    db.units.count.should == 1
+    db.units.first.should == @zeratul
+    db.units.first.object_id.should_not == @zeratul.object_id
 
     # Delete.
-    db.players.delete @player
-    db.players.count.should == 0
+    db.units.delete @zeratul
+    db.units.count.should == 0
   end
 
   it "embedded object should have :_parent reference to the main object" do
-    db.players.save @player
-    player = db.players.first
-    player.missions.first._parent.should == player
+    db.units.save @zeratul
+    zeratul = db.units.first
+    zeratul.items.first._parent.should == zeratul
   end
+
+  # describe "id for embedded objects" do
+  #   old = nil
+  #   before{old = Mongo.defaults[:generate_id]}
+  #   after{Mongo.defaults[:generate_id] = old}
+  #
+  #   it "should not be generated if not specified" do
+  #     Mongo.defaults[:generate_id] = false
+  #
+  #     db.units.save @zeratul
+  #     zeratul = db.units.first
+  #
+  #     @zeratul.items.first._id.should be_nil
+  #     zeratul.items.first._id.should be_nil
+  #   end
+  #
+  #   it "should be generated if specified" do
+  #     Mongo.defaults[:generate_id] = true
+  #
+  #     db.units.save @zeratul
+  #     zeratul = db.units.first
+  #
+  #     @zeratul.items.first._id.should be_present
+  #     zeratul.items.first._id.should be_present
+  #   end
+  # end
 end

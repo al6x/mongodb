@@ -33,11 +33,21 @@ shared_examples_for 'embedded object CRUD' do
     # Create.
     db.units.save @zeratul
     @zeratul._id.should_not be_nil
+    @zeratul._class.should_not be_nil
+    
+    item = @zeratul.items.first
+    item._id.should_not be_nil
+    item._class.should_not be_nil
 
     # Read.
     db.units.count.should == 1
-    db.units.first.should == @zeratul
-    db.units.first.object_id.should_not == @unit.object_id
+    zeratul = db.units.first
+    zeratul.should == @zeratul
+    zeratul.object_id.should_not == @unit.object_id
+    
+    item = zeratul.items.first
+    item._id.should_not be_nil
+    item._class.should_not be_nil
 
     # Update.
     @zeratul.items.first.name = 'Plasma shield level 3'
@@ -45,8 +55,9 @@ shared_examples_for 'embedded object CRUD' do
     @zeratul.items << item
     db.units.save @zeratul
     db.units.count.should == 1
-    db.units.first.should == @zeratul
-    db.units.first.object_id.should_not == @zeratul.object_id
+    zeratul = db.units.first
+    zeratul.should == @zeratul
+    zeratul.object_id.should_not == @zeratul.object_id
 
     # Delete.
     db.units.delete @zeratul

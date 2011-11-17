@@ -19,7 +19,7 @@ describe "Object CRUD" do
     end
     after{remove_constants :Unit}
 
-    it_should_behave_like "object CRUD"
+    it_should_behave_like "single object CRUD"
 
     it "should allow to read object as hash, without unmarshalling" do
       db.units.save! @zeratul

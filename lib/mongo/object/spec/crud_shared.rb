@@ -1,4 +1,4 @@
-shared_examples_for 'single' do
+shared_examples_for 'single object CRUD' do
   it 'should perform CRUD' do
     # Read.
     db.units.count.should == 0
@@ -28,7 +28,7 @@ shared_examples_for 'single' do
   end
 end
 
-shared_examples_for 'embedded' do
+shared_examples_for 'embedded object CRUD' do
   it 'should perform CRUD' do
     # Create.
     db.units.save @zeratul

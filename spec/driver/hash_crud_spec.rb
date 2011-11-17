@@ -37,34 +37,33 @@ describe "Hash CRUD" do
 
   describe 'embedded' do
     before do
-      @player = {
-        'name' => 'Alex',
-        'missions' => [
-          {'name' => 'Wasteland',         'stats' => {'buildings' => 5, 'units' => 10}},
-          {'name' => 'Backwater Station', 'stats' => {'buildings' => 8, 'units' => 25}}
+      @zeratul = {
+        'items' => [
+          {'name' => 'Psionic blade'},
+          {'name' => 'Plasma shield'}
         ]
       }
     end
 
     it 'should perform CRUD' do
       # Create.
-      db.players.save(@player).should be_mongo_id
+      db.units.save(@zeratul).should be_mongo_id
 
       # Read.
-      db.players.count.should == 1
-      db.players.first.should == @player
+      db.units.count.should == 1
+      db.units.first.should == @zeratul
 
       # Update.
-      @player['missions'].first['stats']['units'] = 9
-      @player['missions'].push 'name' => 'Desperate Alliance', 'stats' => {'buildings' => 11, 'units' => 40}
-      db.players.save(@player).should_not be_nil
-      db.players.count.should == 1
-      db.players.first.should == @player
-      db.players.first.object_id.should_not == @player.object_id
+      @zeratul['items'].first['name'] = 'Plasma shield level 3'
+      @zeratul['items'].push 'name' => 'Power suit'
+      db.units.save(@zeratul).should_not be_nil
+      db.units.count.should == 1
+      db.units.first.should == @zeratul
+      db.units.first.object_id.should_not == @zeratul.object_id
 
       # Delete.
-      db.players.delete @player
-      db.players.count.should == 0
+      db.units.delete @zeratul
+      db.units.count.should == 0
     end
   end
 end

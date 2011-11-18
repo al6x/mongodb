@@ -1,10 +1,12 @@
 require 'object/spec_helper'
-require 'mongo/object/spec/crud_shared'
+require 'mongo/object/spec/shared_object_crud'
 
 describe "Object CRUD" do
   with_mongo
 
   describe 'single' do
+    it_should_behave_like "single object CRUD"
+
     before do
       class Unit
         include Mongo::Object
@@ -13,23 +15,23 @@ describe "Object CRUD" do
         def == o; [self.class, name, info] == [o.class, o.name, o.info] end
       end
 
-      @zeratul = Unit.new.tap do |o|
+      @unit = Unit.new.tap do |o|
         o.name, o.info = 'Zeratul', 'Dark Templar'
       end
     end
     after{remove_constants :Unit}
 
-    it_should_behave_like "single object CRUD"
-
     it "should allow to read object as hash, without unmarshalling" do
-      db.units.save! @zeratul
+      db.units.save! @unit
       db.units.first({}, object: false).is_a?(Hash).should be_true
     end
   end
 
   describe 'embedded' do
+    it_should_behave_like 'embedded object CRUD'
+
     before do
-      class Unit2
+      class Unit
         include Mongo::Object
 
         attr_accessor :items
@@ -43,15 +45,13 @@ describe "Object CRUD" do
         end
       end
 
-      @item_class = Unit2::Item
-      @zeratul = Unit2.new
-      @zeratul.items = [
-        Unit2::Item.new.tap{|o| o.name = 'Psionic blade'},
-        Unit2::Item.new.tap{|o| o.name = 'Plasma shield'},
+      @item_class = Unit::Item
+      @unit = Unit.new
+      @unit.items = [
+        Unit::Item.new.tap{|o| o.name = 'Psionic blade'},
+        Unit::Item.new.tap{|o| o.name = 'Plasma shield'},
       ]
     end
-    after{remove_constants :Unit2}
-
-    it_should_behave_like 'embedded object CRUD'
+    after{remove_constants :Unit}
   end
 end

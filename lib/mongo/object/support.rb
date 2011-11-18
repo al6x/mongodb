@@ -1,7 +1,5 @@
 Object.class_eval do
-  def to_mongo
-    self
-  end
+  def to_mongo; self end
 end
 
 Array.class_eval do

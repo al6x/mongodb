@@ -5,7 +5,7 @@ describe "Hash CRUD" do
 
   describe 'single' do
     before do
-      @zeratul = {'name' => 'Zeratul', 'info' => 'Dark Templar'}
+      @unit = {'name' => 'Zeratul', 'info' => 'Dark Templar'}
     end
 
     it 'should perform CRUD' do
@@ -15,29 +15,29 @@ describe "Hash CRUD" do
       db.units.first.should == nil
 
       # Create.
-      db.units.save(@zeratul).should be_mongo_id
-      @zeratul['_id'].should be_mongo_id
+      db.units.save(@unit).should be_mongo_id
+      @unit['_id'].should be_mongo_id
 
       # Read.
-      db.units.all.should == [@zeratul]
+      db.units.all.should == [@unit]
       db.units.count.should == 1
-      db.units.first.should == @zeratul
+      db.units.first.should == @unit
 
       # Update.
-      @zeratul['info'] = 'Killer of Cerebrates'
-      db.units.save @zeratul
+      @unit['info'] = 'Killer of Cerebrates'
+      db.units.save @unit
       db.units.count.should == 1
       db.units.first(name: 'Zeratul')['info'].should == 'Killer of Cerebrates'
 
       # Delete.
-      db.units.delete @zeratul
+      db.units.delete @unit
       db.units.count.should == 0
     end
   end
 
   describe 'embedded' do
     before do
-      @zeratul = {
+      @unit = {
         'items' => [
           {'name' => 'Psionic blade'},
           {'name' => 'Plasma shield'}
@@ -47,22 +47,22 @@ describe "Hash CRUD" do
 
     it 'should perform CRUD' do
       # Create.
-      db.units.save(@zeratul).should be_mongo_id
+      db.units.save(@unit).should be_mongo_id
 
       # Read.
       db.units.count.should == 1
-      db.units.first.should == @zeratul
+      db.units.first.should == @unit
 
       # Update.
-      @zeratul['items'].first['name'] = 'Plasma shield level 3'
-      @zeratul['items'].push 'name' => 'Power suit'
-      db.units.save(@zeratul).should_not be_nil
+      @unit['items'].first['name'] = 'Psionic blade level 3'
+      @unit['items'].push 'name' => 'Power suit'
+      db.units.save(@unit).should_not be_nil
       db.units.count.should == 1
-      db.units.first.should == @zeratul
-      db.units.first.object_id.should_not == @zeratul.object_id
+      db.units.first.should == @unit
+      db.units.first.object_id.should_not == @unit.object_id
 
       # Delete.
-      db.units.delete @zeratul
+      db.units.delete @unit
       db.units.count.should == 0
     end
   end

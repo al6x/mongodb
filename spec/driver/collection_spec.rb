@@ -18,16 +18,16 @@ describe "Collection" do
 
   it "should return first element of collection" do
     db.units.first.should be_nil
-    zeratul = {name: 'Zeratul'}
-    db.units.save(zeratul).should be_mongo_id
+    unit = {name: 'Zeratul'}
+    db.units.save(unit).should be_mongo_id
     db.units.first(name: 'Zeratul')['name'].should == 'Zeratul'
   end
 
   it 'should return all elements of collection' do
     db.units.all.should == []
 
-    zeratul = {name: 'Zeratul'}
-    db.units.save(zeratul).should be_mongo_id
+    unit = {name: 'Zeratul'}
+    db.units.save(unit).should be_mongo_id
 
     list = db.units.all(name: 'Zeratul')
     list.size.should == 1

@@ -1,5 +1,5 @@
 module Mongo::Object
-  attr_accessor :_id, :_class, :_parent
+  attr_accessor :_id, :_parent
 
   def _id?; !!_id end
   def new?; !_id end
@@ -37,15 +37,15 @@ module Mongo::Object
 
   # Skipping variables starting with @_, usually they
   # have specific meaning and used for things like cache.
-  def persistent_instance_variables
-    instance_variables.select{|n| n !~ /^@_/}
+  def persistent_instance_variable_names *args
+    instance_variables(*args).select{|n| n !~ /^@_/}
   end
 
   # Convert object to document (with nested documents & arrays).
   def to_mongo
     {}.tap do |h|
       # Copy instance variables.
-      persistent_instance_variables.each do |iv_name|
+      persistent_instance_variable_names.each do |iv_name|
         k = iv_name.to_s[1..-1]
         v = instance_variable_get iv_name
         h[k] = v.to_mongo
@@ -53,16 +53,22 @@ module Mongo::Object
 
       # Adding _id & _class.
       h['_id']    = _id if _id
-      h['_class'] = self.class.name
+      h['_class'] = self.class.name || \
+        raise("unknow class name for model #{h.inspect}!")
     end
   end
+  alias_method :to_hash, :to_mongo
 
   # Override it to generate Your custom ids.
   def generate_id
     generate_random_string_id
   end
 
-  def inspect; to_mongo.inspect end
+  def inspect
+    h = to_hash
+    h.delete '_class'
+    "#<#{self.class}:#{h.inspect}>"
+  end
   alias_method :to_s, :inspect
 
   protected
@@ -114,7 +120,6 @@ module Mongo::Object
       end
 
       def constantize class_name
-        @constantize_cache ||= {}
         unless klass = @constantize_cache[class_name]
           klass = eval class_name, TOPLEVEL_BINDING, __FILE__, __LINE__
           @constantize_cache[class_name] = klass

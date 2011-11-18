@@ -42,7 +42,7 @@ shared_examples_for 'single object CRUD' do
 end
 
 shared_examples_for 'embedded object CRUD' do
-  it 'should convert object to mongo hash format (from error)' do
+  it 'should convert object to mongo hash format' do
     expected = {
       "_class" => "Unit",
       "items"  => [

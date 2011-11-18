@@ -4,7 +4,7 @@ require 'mongo/object/spec/shared_object_crud'
 describe "Object CRUD" do
   with_mongo
 
-  describe 'single' do
+  describe 'single object' do
     it_should_behave_like "single object CRUD"
 
     before do
@@ -27,7 +27,7 @@ describe "Object CRUD" do
     end
   end
 
-  describe 'embedded' do
+  describe 'embedded object' do
     it_should_behave_like 'embedded object CRUD'
 
     before do

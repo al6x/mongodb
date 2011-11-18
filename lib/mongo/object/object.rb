@@ -120,6 +120,7 @@ module Mongo::Object
       end
 
       def constantize class_name
+        @constantize_cache ||= {}
         unless klass = @constantize_cache[class_name]
           klass = eval class_name, TOPLEVEL_BINDING, __FILE__, __LINE__
           @constantize_cache[class_name] = klass

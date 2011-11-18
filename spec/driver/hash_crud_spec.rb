@@ -3,7 +3,7 @@ require 'driver/spec_helper'
 describe "Hash CRUD" do
   with_mongo
 
-  describe 'single' do
+  describe 'single hash' do
     before do
       @unit = {'name' => 'Zeratul', 'info' => 'Dark Templar'}
     end
@@ -35,7 +35,7 @@ describe "Hash CRUD" do
     end
   end
 
-  describe 'embedded' do
+  describe 'embedded hash' do
     before do
       @unit = {
         'items' => [

@@ -1,7 +1,6 @@
-module Mongo::ObjectHelper
-  #
-  # CRUD
-  #
+module Mongo::CollectionHelper
+  # CRUD.
+
   def create_with_object doc, options = {}
     if doc.is_a? ::Mongo::Object
       doc.create_object self, options
@@ -28,36 +27,34 @@ module Mongo::ObjectHelper
     end
   end
 
-  def destroy_with_object *args
+  def delete_with_object *args
     if args.first.is_a? ::Mongo::Object
       doc, options = args
       options ||= {}
-      doc.destroy_object self, options
+      doc.delete_object self, options
     else
-      destroy_without_object *args
+      delete_without_object *args
     end
   end
 
   def create! *args
-    create(*args) || raise(Mongo::Error, "can't create #{doc.inspect}!")
+    create(*args) || raise(Mongo::Error, "can't create #{args.inspect}!")
   end
 
   def update! *args
-    update(*args) || raise(Mongo::Error, "can't update #{doc.inspect}!")
+    update(*args) || raise(Mongo::Error, "can't update #{args.inspect}!")
   end
 
   def save! *args
-    save(*args) || raise(Mongo::Error, "can't save #{doc.inspect}!")
+    save(*args) || raise(Mongo::Error, "can't save #{args.inspect}!")
   end
 
-  def destroy! *args
-    destroy(*args) || raise(Mongo::Error, "can't destroy #{doc.inspect}!")
+  def delete! *args
+    delete(*args) || raise(Mongo::Error, "can't delete #{args.inspect}!")
   end
 
+  # Querying.
 
-  #
-  # Querying
-  #
   def first selector = {}, options = {}, &block
     options = options.clone
     if options.delete(:object) == false

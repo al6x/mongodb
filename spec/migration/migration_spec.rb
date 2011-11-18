@@ -12,7 +12,7 @@ describe "Migration" do
     @migration.update(0).should be_false
   end
 
-  it "migration should provide access to database" do
+  it "should provide access to database" do
     @migration.add 1 do |m|
       m.up do |db|
         db.users.save name: 'Bob'
@@ -22,7 +22,7 @@ describe "Migration" do
     db.users.count.should == 1
   end
 
-  it "increase_db_version" do
+  it "should increase db version" do
     @migration.current_version.should == 0
 
     check = mock
@@ -35,7 +35,7 @@ describe "Migration" do
     @migration.current_version.should == 1
   end
 
-  it "decrease_db_version" do
+  it "should decrease db version" do
     check = mock
     @migration.add 1 do |m|
       m.up{check.up}
@@ -50,7 +50,7 @@ describe "Migration" do
     @migration.current_version.should == 0
   end
 
-  it "should automigrate to highest version" do
+  it "should migrate to the highest version if version not explicitly specified" do
     @migration.add 1 do |m|
       m.up{}
     end

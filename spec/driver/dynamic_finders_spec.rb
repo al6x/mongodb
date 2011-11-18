@@ -3,15 +3,15 @@ require 'driver/spec_helper'
 describe "Dynamic Finders" do
   with_mongo
 
-  before :all do
+  before_all do
     class FindersStub
       include Mongo::DynamicFinders
     end
   end
 
-  after(:all){remove_constants :FindersStub}
+  after_all{remove_constants :FindersStub}
 
-  it "parse_finder" do
+  it "should parse finders" do
     [
       [:first_by_name,  'Jim'],         [:first,  {name: 'Jim'}],
       [:first_by_name!, 'Jim'],         [:first!, {name: 'Jim'}],
@@ -42,7 +42,7 @@ describe "Dynamic Finders" do
     -> {stub.all_by_name!('Jim')}.should raise_error(/can't use bang/)
   end
 
-  it 'integration with collection' do
+  it 'should work with collection' do
     db.units.first_by_name('Jim').should be_nil
     db.units.save name: 'Jim'
     db.units.first_by_name('Jim')['name'].should == 'Jim'

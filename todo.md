@@ -1,13 +1,4 @@
-- add validates_uniquiness_of
-- file_model
-
-- identity map
-- reload ?
-- MongoMapper::Modifiers ?
-- timestamps!
-- MongoMapper::Validations ?
-- replace initialize with set
-- allow to specify type-conversion block in assignment
+- identity map ?
 
 # Low
 
@@ -22,6 +13,12 @@ Model designed after the excellent "Domain-Driven Design" book by Eric Evans.
 
 # Done
 
+- add validates_uniquiness_of
+- file_model
+- reload
+- timestamps
+- replace initialize with set
+- allow to specify type-conversion block in assignment
 
 # Rejected
 

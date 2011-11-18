@@ -1,8 +1,6 @@
 module Mongo::DynamicFinders
   protected
-    #
-    # first_by_field, all_by_field, each_by_field, first_by_field
-    #
+    # Dynamic finders, like `first_by_field`, `all_by_field`, `each_by_field`, `first_by_field`.
     def method_missing clause, *args, &block
       if clause =~ /^([a-z]_by_[a-z_])|(by_[a-z_])/
         clause = clause.to_s

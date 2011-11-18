@@ -12,7 +12,6 @@ class Mongo::NotFound < Mongo::Error; end
   dynamic_finders
 ).each{|f| require "mongo/driver/#{f}"}
 
-# defaults
 Mongo.class_eval do
   class << self
     def defaults; @defaults ||= {} end
@@ -29,7 +28,6 @@ Mongo.class_eval do
     end
   end
 end
-Mongo.defaults[:convert_id_to_string] = true
 
 Mongo::Connection.send :include, Mongo::ConnectionExt
 
@@ -43,3 +41,5 @@ Mongo::Collection.class_eval do
     alias_method method, "#{method}_with_ext"
   end
 end
+
+Mongo.defaults[:convert_id_to_string] = true

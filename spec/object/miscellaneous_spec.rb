@@ -20,4 +20,13 @@ describe "Miscellaneous" do
     o._id.should be_a(String)
     o._id.size.should == Mongo.defaults[:random_string_id_size]
   end
+
+  it "shoud convert to hash" do
+    class Tmp
+      attr_accessor :name
+    end
+    o = Tmp.new
+    o.name = 'some name'
+    o.to_hash.should == {name: 'some name', _class: 'Tmp'}
+  end
 end

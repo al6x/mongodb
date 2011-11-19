@@ -57,7 +57,10 @@ module Mongo::Object
         raise("unknow class name for model #{h.inspect}!")
     end
   end
-  alias_method :to_hash, :to_mongo
+
+  def to_hash
+    {}.tap{|h| to_mongo.each{|k, v| h[k.to_sym] = v}}
+  end
 
   # Override it to generate Your custom ids.
   def generate_id

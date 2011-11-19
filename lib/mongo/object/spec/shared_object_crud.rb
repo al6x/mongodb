@@ -92,6 +92,7 @@ shared_examples_for 'embedded object CRUD' do
   it "embedded object should have :_parent reference to the main object" do
     db.units.save @unit
     unit = db.units.first
+    unit._parent.should be_nil
     unit.items.first._parent.should == unit
   end
 

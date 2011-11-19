@@ -1,15 +1,10 @@
-Object.class_eval do
-  def to_mongo; self end
-end
-
 Array.class_eval do
-  def to_mongo
-    collect{|v| v.to_mongo}
-  end
+  alias_method :each_value, :each
+  alias_method :collect_with_value, :collect
 end
 
 Hash.class_eval do
-  def to_mongo
-    {}.tap{|h| each{|k, v| h[k] = v.to_mongo}}
+  def collect_with_value &block
+    {}.tap{|h| self.each{|k, v| h[k] = block.call v}}
   end
 end

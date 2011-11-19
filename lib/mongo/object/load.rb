@@ -3,7 +3,7 @@ require 'mongo/object/object'
 require 'mongo/object/collection_helper'
 
 Mongo::Collection.class_eval do
-  include Mongo::CollectionHelper
+  include Mongo::Object::CollectionHelper
 
   %w(create update save delete).each do |method|
     alias_method "#{method}_without_object", method

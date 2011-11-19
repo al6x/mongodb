@@ -43,23 +43,27 @@ module Mongo::Object
 
   # Convert object to document (with nested documents & arrays).
   def to_mongo
-    {}.tap do |h|
-      # Copy instance variables.
-      persistent_instance_variable_names.each do |iv_name|
-        k = iv_name.to_s[1..-1]
-        v = instance_variable_get iv_name
-        h[k] = v.to_mongo
-      end
+    convert_object self, :_to_mongo
+  end
 
-      # Adding _id & _class.
-      h['_id']    = _id if _id
-      h['_class'] = self.class.name || \
-        raise("unknow class name for model #{h.inspect}!")
+  def _to_mongo options = {}
+    h = {}
+    # Copy instance variables.
+    persistent_instance_variable_names.each do |iv_name|
+      k = iv_name.to_s[1..-1]
+      v = instance_variable_get iv_name
+      h[k] = convert_object v, :_to_mongo
     end
+
+    # Adding _id & _class.
+    h['_id']    = _id if _id
+    h['_class'] = self.class.name || \
+      raise("unknow class name for model #{h.inspect}!")
+    h
   end
 
   def to_hash
-    {}.tap{|h| to_mongo.each{|k, v| h[k.to_sym] = v}}
+    Hash.respond_to?(:symbolize) ? Hash.symbolize(to_mongo) : to_mongo
   end
 
   # Override it to generate Your custom ids.
@@ -75,6 +79,19 @@ module Mongo::Object
   alias_method :to_s, :inspect
 
   protected
+    def convert_object obj, method, options = {}
+      if obj.respond_to? :collect_with_value
+        # Array or Hash.
+        obj.collect_with_value{|v| convert_object v, method, options}
+      elsif obj.respond_to method
+        # Object.
+        obj.public_send method, options
+      else
+        # Simple object.
+        obj
+      end
+    end
+
     ID_SYMBOLS = ('a'..'z').to_a + ('A'..'Z').to_a + ('0'..'9').to_a
     def generate_random_string_id
       id, size = "", Mongo.defaults[:random_string_id_size]
@@ -83,52 +100,43 @@ module Mongo::Object
     end
 
   class << self
-    def build doc
-      doc && _build(doc, nil)
+    def from_mongo doc
+      _from_mongo doc, nil
+    end
+
+    def constantize class_name
+      @constantize_cache ||= {}
+      unless klass = @constantize_cache[class_name]
+        klass = eval class_name, TOPLEVEL_BINDING, __FILE__, __LINE__
+        @constantize_cache[class_name] = klass
+      end
+      klass
     end
 
     protected
-      def _build doc, parent = nil
+      def _from_mongo doc, parent = nil
         if doc.is_a? Hash
-          if class_name = doc[:_class] || doc['_class']
+          if class_name = doc['_class']
             klass = constantize class_name
+            obj = klass.new
 
-            # Unmarshalling object.
-            if klass.respond_to? :from_mongo
-              obj = klass.from_mongo doc
-            else
-              obj = klass.new
-              parent ||= obj
-              doc.each do |k, v|
-                v = _build v, parent
-                obj.instance_variable_set "@#{k}", v
-              end
-              obj
-            end
             obj._parent = parent if parent
 
-            # Firing special after build callback if defined.
-            obj.run_after_callbacks :build, :build if obj.respond_to? :run_after_callbacks
+            doc.each do |k, v|
+              v = _from_mongo v, obj
+              obj.instance_variable_set "@#{k}", v
+            end
 
             obj
           else
-            {}.tap{|h| doc.each{|k, v| h[k] = _build v, parent}}
+            {}.tap{|h| doc.each{|k, v| h[k] = _from_mongo v, parent}}
           end
         elsif doc.is_a? Array
-          doc.collect{|v| _build v, parent}
+          doc.collect{|v| _from_mongo v, parent}
         else
           # Simple type.
           doc
         end
-      end
-
-      def constantize class_name
-        @constantize_cache ||= {}
-        unless klass = @constantize_cache[class_name]
-          klass = eval class_name, TOPLEVEL_BINDING, __FILE__, __LINE__
-          @constantize_cache[class_name] = klass
-        end
-        klass
       end
   end
 end

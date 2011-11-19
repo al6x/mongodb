@@ -41,7 +41,7 @@ describe "Object CRUD" do
           include Mongo::Object
 
           attr_accessor :name
-          def == o; [self.class, self.name] == [o.class, o.name] end
+          def == o; (self.class == o.class) and (self.name == o.name) end
         end
       end
 

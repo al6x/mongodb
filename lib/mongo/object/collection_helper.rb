@@ -1,4 +1,4 @@
-module Mongo::CollectionHelper
+module Mongo::Object::CollectionHelper
   # CRUD.
 
   def create_with_object doc, options = {}
@@ -55,12 +55,13 @@ module Mongo::CollectionHelper
 
   # Querying.
 
-  def first selector = {}, options = {}, &block
+  def first selector = {}, options = {}
     options = options.clone
     if options.delete(:object) == false
-      super selector, options, &block
+      super selector, options
     else
-      ::Mongo::Object.build super(selector, options, &block)
+      doc = super(selector, options)
+      build doc
     end
   end
 
@@ -70,8 +71,22 @@ module Mongo::CollectionHelper
       super selector, options, &block
     else
       super selector, options do |doc|
-        block.call ::Mongo::Object.build(doc)
+        block.call build(doc)
       end
     end
   end
+
+  protected
+    def build doc
+      if doc and (class_name = doc['_class'])
+        klass = Mongo::Object.constantize class_name
+        if klass.respond_to? :from_mongo
+          klass.from_mongo doc
+        else
+          Mongo::Object.from_mongo doc
+        end
+      else
+        doc
+      end
+    end
 end

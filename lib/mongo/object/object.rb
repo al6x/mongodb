@@ -132,7 +132,10 @@ module Mongo::Object
             {}.tap{|h| doc.each{|k, v| h[k] = _from_mongo v, parent}}
           end
         elsif doc.is_a? Array
-          doc.collect{|v| _from_mongo v, parent}
+          a = doc.collect{|v| _from_mongo v, parent}
+          # Array also can be a model at the same time.
+          a._parent = parent if parent and a.respond_to?(:_parent=)
+          a
         else
           # Simple type.
           doc

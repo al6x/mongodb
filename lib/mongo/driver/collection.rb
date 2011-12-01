@@ -8,7 +8,7 @@ module Mongo::CollectionExt
     save_without_ext doc, reverse_merge_defaults(options, :safe)
   end
 
-  def insert_with_ext args, options = {}
+  def insert_with_ext args, options = {}    
     result = insert_without_ext args, reverse_merge_defaults(options, :safe)
 
     # For some strange reason MongoDB Ruby driver

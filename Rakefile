@@ -2,7 +2,7 @@ require 'rake_ext'
 
 project \
   name: "mongodb",
-  # version: '2.0.0',
+  version: '2.1.0',
   gem: true,
   summary: "Persistence for any Ruby Object & Driver enhancements for MongoDB.",
 

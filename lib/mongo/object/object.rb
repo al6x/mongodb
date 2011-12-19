@@ -1,18 +1,21 @@
 module Mongo::Object
-  attr_accessor :_id, :_parent
+  attr_accessor :_id, :_parent, :_not_new
 
   def _id?; !!_id end
-  def new?; !_id end
-  alias_method :new_record?, :new?
+
+  def new?; !_not_new end
 
   def create_object collection, options
     doc = to_mongo
 
     # Generating custom id if option enabled.
-    doc['_id'] = generate_id if Mongo.defaults[:generate_id]
+    doc['_id'] ||= generate_id if Mongo.defaults[:generate_id]
 
     id = collection.create doc, options
-    self._id = id
+
+    self._id ||= id
+    self._not_new = true
+
     id
   end
 
@@ -28,7 +31,7 @@ module Mongo::Object
   end
 
   def save_object collection, options
-    if _id
+    if _not_new
       update_object collection, options
     else
       create_object collection, options
@@ -120,6 +123,7 @@ module Mongo::Object
             klass = constantize class_name
             obj = klass.new
 
+            obj._not_new = true
             obj._parent = parent if parent
 
             doc.each do |k, v|

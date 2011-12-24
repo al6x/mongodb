@@ -1,9 +1,8 @@
 module Mongo::Object
-  attr_accessor :_id, :_parent, :_not_new
-
+  attr_accessor :_id, :_parent, :_saved
   def _id?; !!_id end
-
-  def new?; !_not_new end
+  def saved?; _saved end
+  def new?; !saved? end
 
   def create_object collection, options
     doc = to_mongo
@@ -14,7 +13,7 @@ module Mongo::Object
     id = collection.create doc, options
 
     self._id ||= id
-    self._not_new = true
+    self._saved = true
 
     id
   end
@@ -31,10 +30,10 @@ module Mongo::Object
   end
 
   def save_object collection, options
-    if _not_new
-      update_object collection, options
-    else
+    if new?
       create_object collection, options
+    else
+      update_object collection, options
     end
   end
 
@@ -123,7 +122,7 @@ module Mongo::Object
             klass = constantize class_name
             obj = klass.new
 
-            obj._not_new = true
+            obj._saved = true
             obj._parent = parent if parent
 
             doc.each do |k, v|

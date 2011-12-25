@@ -24,7 +24,7 @@ module Mongo::CollectionExt
   end
 
   def update_with_ext selector, doc, options = {}
-    selector = convert_underscore_to_dollar_in_selector selector
+    selector = convert_selector selector
     doc      = convert_underscore_to_dollar_in_update doc
 
     # because :multi works only with $ operators, we need to check if it's applicable
@@ -38,7 +38,7 @@ module Mongo::CollectionExt
   end
 
   def remove_with_ext selector = {}, options = {}
-    selector = convert_underscore_to_dollar_in_selector selector
+    selector = convert_selector selector
     remove_without_ext selector, reverse_merge_defaults(options, :safe, :multi)
   end
 
@@ -53,7 +53,7 @@ module Mongo::CollectionExt
   # Querying.
 
   def first selector = {}, options = {}
-    selector = convert_underscore_to_dollar_in_selector selector if selector.is_a? Hash
+    selector = convert_selector selector if selector.is_a? Hash
     find_one selector, options
   end
 
@@ -72,7 +72,7 @@ module Mongo::CollectionExt
   end
 
   def each selector = {}, options = {}, &block
-    selector = convert_underscore_to_dollar_in_selector selector
+    selector = convert_selector selector
 
     cursor = nil
     begin
@@ -88,7 +88,7 @@ module Mongo::CollectionExt
   end
 
   def count_with_ext selector = {}, options = {}
-    selector = convert_underscore_to_dollar_in_selector selector if selector.is_a? Hash
+    selector = convert_selector selector if selector.is_a? Hash
     find(selector, options).count()
   end
 
@@ -110,6 +110,19 @@ module Mongo::CollectionExt
         h[k] = Mongo.defaults[k] if Mongo.defaults.include?(k) and !h.include?(k)
       end
       h
+    end
+    
+    def convert_selector selector
+      convert_underscore_to_dollar_in_selector(convert_id_to_underscored_id(selector))
+    end
+    
+    # Replaces :id with :_id.
+    def convert_id_to_underscored_id selector
+      if selector.include? :id
+        selector = selector.clone
+        selector[:_id] = selector.delete :id
+      end
+      selector
     end
 
     # Replaces :_lt to :$lt in query.

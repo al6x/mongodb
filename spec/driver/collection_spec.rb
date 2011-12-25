@@ -51,4 +51,10 @@ describe "Collection" do
     db.units.save name: 'Zeratul', age: 600
     db.units.all(age: {_lt: 100}).count.should == 1
   end
+  
+  it "should rewrite :id to :_id in query" do
+    id = db.units.save name: 'Jim',     age: 34
+    db.units.save name: 'Zeratul', age: 600
+    db.units.all(id: id).count.should == 1
+  end
 end

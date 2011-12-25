@@ -7,7 +7,7 @@ shared_examples_for 'single object CRUD' do
     }
     @unit.to_mongo.should == expected
 
-    @unit._id    = 'some id'
+    @unit.id    = 'some id'
     expected['_id'] = 'some id'
     @unit.to_mongo.should == expected
   end
@@ -20,7 +20,7 @@ shared_examples_for 'single object CRUD' do
 
     # Create.
     db.units.save(@unit).should be_true
-    @unit._id.should_not be_nil
+    @unit.id.should_not be_nil
 
     # Read.
     db.units.count.should == 1
@@ -52,7 +52,7 @@ shared_examples_for 'embedded object CRUD' do
     }
     @unit.to_mongo.should == expected
 
-    @unit._id    = 'some id'
+    @unit.id    = 'some id'
     expected['_id'] = 'some id'
     @unit.to_mongo.should == expected
   end
@@ -60,10 +60,10 @@ shared_examples_for 'embedded object CRUD' do
   it 'should perform CRUD' do
     # Create.
     db.units.save @unit
-    @unit._id.should_not be_nil
+    @unit.id.should_not be_nil
 
     item = @unit.items.first
-    item._id.should be_nil
+    item.id.should be_nil
 
     # Read.
     db.units.count.should == 1
@@ -72,7 +72,7 @@ shared_examples_for 'embedded object CRUD' do
     unit.object_id.should_not == @unit.object_id
 
     item = unit.items.first
-    item._id.should be_nil
+    item.id.should be_nil
 
     # Update.
     @unit.items.first.name = 'Psionic blade level 3'

@@ -1,8 +1,12 @@
 module Mongo::Object
   attr_accessor :_id, :_parent, :_saved
-  def _id?; !!_id end
+  def _id?; !!_id end    
   def saved?; _saved end
   def new?; !saved? end
+  
+  def id; _id end
+  def id= id; self._id = id end
+  def id?; _id? end  
 
   def create_object collection, options
     doc = to_mongo
@@ -12,20 +16,20 @@ module Mongo::Object
 
     id = collection.create doc, options
 
-    self._id ||= id
+    self.id ||= id
     self._saved = true
 
     id
   end
 
   def update_object collection, options
-    id = _id || "can't update object without _id (#{self})!"
+    id = self.id || "can't update object without id (#{self})!"
     doc = to_mongo
     collection.update({_id: id}, doc, options)
   end
 
   def delete_object collection, options
-    id = _id || "can't delete object without _id (#{self})!"
+    id = self.id || "can't delete object without id (#{self})!"
     collection.delete({_id: id}, options)
   end
 
@@ -58,7 +62,7 @@ module Mongo::Object
     end
 
     # Adding _id & _class.
-    h['_id']    = _id if _id
+    h['_id']    = id if id
     h['_class'] = self.class.name || \
       raise("unknow class name for model #{h.inspect}!")
     h
@@ -121,8 +125,10 @@ module Mongo::Object
           if class_name = doc['_class']
             klass = constantize class_name
             obj = klass.new
-
-            obj._saved = true
+            
+            # Only top-level object has _saved attribute.
+            obj._saved = true unless parent
+            
             obj._parent = parent if parent
 
             doc.each do |k, v|

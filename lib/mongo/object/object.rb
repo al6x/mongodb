@@ -1,12 +1,12 @@
 module Mongo::Object
   attr_accessor :_id, :_parent, :_saved
-  def _id?; !!_id end    
+  def _id?; !!_id end
   def saved?; _saved end
   def new?; !saved? end
-  
+
   def id; _id end
   def id= id; self._id = id end
-  def id?; _id? end  
+  def id?; _id? end
 
   def create_object collection, options
     doc = to_mongo
@@ -125,10 +125,10 @@ module Mongo::Object
           if class_name = doc['_class']
             klass = constantize class_name
             obj = klass.new
-            
+
             # Only top-level object has _saved attribute.
             obj._saved = true unless parent
-            
+
             obj._parent = parent if parent
 
             doc.each do |k, v|

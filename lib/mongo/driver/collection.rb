@@ -111,11 +111,11 @@ module Mongo::CollectionExt
       end
       h
     end
-    
+
     def convert_selector selector
       convert_underscore_to_dollar_in_selector(convert_id_to_underscored_id(selector))
     end
-    
+
     # Replaces :id with :_id.
     def convert_id_to_underscored_id selector
       if selector.include? :id

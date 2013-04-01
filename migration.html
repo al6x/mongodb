@@ -1,156 +1,217 @@
 <!DOCTYPE html>
+
 <html>
 <head>
-  <meta http-equiv="content-type" content="text/html;charset=utf-8">
   <title>migration.rb</title>
-  <link rel="stylesheet" href="http://jashkenas.github.com/docco/resources/docco.css">
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
 </head>
 <body>
-<div id='container'>
-  <div id="background"></div>
-  <div id="jump_to">
-    Jump To &hellip;
-    <div id="jump_wrapper">
-      <div id="jump_page">
-          <a class="source" href="driver.html">driver.rb</a>
-          <a class="source" href="migration.html">migration.rb</a>
-          <a class="source" href="persistence.html">persistence.rb</a>
-          <a class="source" href="rake_migration.html">rake_migration.rb</a>
-          <a class="source" href="spec.html">spec.rb</a>
-      </div>
-    </div>
-  </div>
-  <table cellspacing=0 cellpadding=0>
-  <thead>
-    <tr>
-      <th class=docs><h1>migration.rb</h1></th>
-      <th class=code></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr id='section-1'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-1">&#182;</a>
-        </div>
-        <p>Example of Data Migration for <a href="index.html">MongoDB Enhanced Driver</a>.</p>
+  <div id="container">
+    <div id="background"></div>
 
-<p>In this example we&rsquo;ll define two migrations, applying first one,
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+
+
+              <a class="source" href="driver.html">
+                driver.rb
+              </a>
+
+
+              <a class="source" href="migration.html">
+                migration.rb
+              </a>
+
+
+              <a class="source" href="persistence.html">
+                persistence.rb
+              </a>
+
+
+              <a class="source" href="rake_migration.html">
+                rake_migration.rb
+              </a>
+
+
+              <a class="source" href="spec.html">
+                spec.rb
+              </a>
+
+          </div>
+        </li>
+      </ul>
+
+    <ul class="sections">
+
+          <li id="title">
+              <div class="annotation">
+                  <h1>migration.rb</h1>
+              </div>
+          </li>
+
+
+
+        <li id="section-1">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p>Example of Data Migration for [MongoDB Enhanced Driver][mongodb].</p>
+<p>In this example we&#39;ll define two migrations, applying first one,
 rollback it, and then migrating database to the latest version.</p>
-
-<p>Usually all this is <a href="rake_migration.html">done via Rake Task</a>, but in this example we do
+<p>Usually all this is [done via Rake Task][rake_migration], but in this example we do
 it by hand.</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre></pre></div>
-      </td>
-    </tr>
-    <tr id='section-2'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-2">&#182;</a>
-        </div>
-        <p>Requiring support for migration.</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre><span class="nb">require</span> <span class="s1">&#39;mongo/migration&#39;</span></pre></div>
-      </td>
-    </tr>
-    <tr id='section-3'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-3">&#182;</a>
-        </div>
-        <p>Defining first migration, creating Zeratul (and removing it in rollback).</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre><span class="no">Mongo</span><span class="o">.</span><span class="n">migration</span> <span class="mi">1</span> <span class="k">do</span> <span class="o">|</span><span class="n">m</span><span class="o">|</span>
-  <span class="n">m</span><span class="o">.</span><span class="n">up</span>  <span class="p">{</span><span class="o">|</span><span class="n">db</span><span class="o">|</span> <span class="n">db</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">save</span>   <span class="nb">name</span><span class="p">:</span> <span class="s1">&#39;Zeratul&#39;</span><span class="p">}</span>
-  <span class="n">m</span><span class="o">.</span><span class="n">down</span><span class="p">{</span><span class="o">|</span><span class="n">db</span><span class="o">|</span> <span class="n">db</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">remove</span> <span class="nb">name</span><span class="p">:</span> <span class="s1">&#39;Zeratul&#39;</span><span class="p">}</span>
-<span class="k">end</span></pre></div>
-      </td>
-    </tr>
-    <tr id='section-4'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-4">&#182;</a>
-        </div>
-        <p>Defining second migration, creating Tassadar (and removing it in rollback).</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre><span class="no">Mongo</span><span class="o">.</span><span class="n">migration</span> <span class="mi">2</span> <span class="k">do</span> <span class="o">|</span><span class="n">m</span><span class="o">|</span>
-  <span class="n">m</span><span class="o">.</span><span class="n">up</span>  <span class="p">{</span><span class="o">|</span><span class="n">db</span><span class="o">|</span> <span class="n">db</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">save</span>   <span class="nb">name</span><span class="p">:</span> <span class="s1">&#39;Tassadar&#39;</span><span class="p">}</span>
-  <span class="n">m</span><span class="o">.</span><span class="n">down</span><span class="p">{</span><span class="o">|</span><span class="n">db</span><span class="o">|</span> <span class="n">db</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">remove</span> <span class="nb">name</span><span class="p">:</span> <span class="s1">&#39;Tassadar&#39;</span><span class="p">}</span>
-<span class="k">end</span></pre></div>
-      </td>
-    </tr>
-    <tr id='section-5'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-5">&#182;</a>
-        </div>
-        <p>Connecting to test database and cleaning it before starting the sample.</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre><span class="n">connection</span> <span class="o">=</span> <span class="no">Mongo</span><span class="o">::</span><span class="no">Connection</span><span class="o">.</span><span class="n">new</span>
-<span class="n">db</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">default_test</span>
-<span class="n">db</span><span class="o">.</span><span class="n">drop</span></pre></div>
-      </td>
-    </tr>
-    <tr id='section-6'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-6">&#182;</a>
-        </div>
-        <p>Assigning database to migration.</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre><span class="no">Mongo</span><span class="o">.</span><span class="n">migration</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="n">db</span></pre></div>
-      </td>
-    </tr>
-    <tr id='section-7'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-7">&#182;</a>
-        </div>
-        <p>Let&rsquo;s migrate to the first version and create mighty Zeratul.</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre><span class="no">Mongo</span><span class="o">.</span><span class="n">migration</span><span class="o">.</span><span class="n">update</span> <span class="mi">1</span>
+<p>Requiring support for migration.</p>
 
-<span class="nb">p</span> <span class="no">Mongo</span><span class="o">.</span><span class="n">migration</span><span class="o">.</span><span class="n">current_version</span>                <span class="c1"># =&gt; 1</span>
-<span class="nb">p</span> <span class="n">db</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">all</span>                                   <span class="c1"># =&gt; [Zeratul]</span></pre></div>
-      </td>
-    </tr>
-    <tr id='section-8'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-8">&#182;</a>
-        </div>
-        <p>Rolling it back.</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre><span class="no">Mongo</span><span class="o">.</span><span class="n">migration</span><span class="o">.</span><span class="n">update</span> <span class="mi">0</span>
+            </div>
 
-<span class="nb">p</span> <span class="no">Mongo</span><span class="o">.</span><span class="n">migration</span><span class="o">.</span><span class="n">current_version</span>                <span class="c1"># =&gt; 0</span>
-<span class="nb">p</span> <span class="n">db</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">all</span>                                   <span class="c1"># =&gt; []</span></pre></div>
-      </td>
-    </tr>
-    <tr id='section-9'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-9">&#182;</a>
-        </div>
-        <p>Updating to the latest version (if there&rsquo;s no explicit version
+            <div class="content"><div class='highlight'><pre><span class="keyword">require</span> <span class="string">'mongo/migration'</span></pre></div></div>
+
+        </li>
+
+
+        <li id="section-2">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Defining first migration, creating Zeratul (and removing it in rollback).</p>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre><span class="constant">Mongo</span>.migration <span class="number">1</span> <span class="keyword">do</span> |m|
+  m.up  {|db| db.units.save   <span class="symbol">name:</span> <span class="string">'Zeratul'</span>}
+  m.down{|db| db.units.remove <span class="symbol">name:</span> <span class="string">'Zeratul'</span>}
+<span class="keyword">end</span></pre></div></div>
+
+        </li>
+
+
+        <li id="section-3">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Defining second migration, creating Tassadar (and removing it in rollback).</p>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre><span class="constant">Mongo</span>.migration <span class="number">2</span> <span class="keyword">do</span> |m|
+  m.up  {|db| db.units.save   <span class="symbol">name:</span> <span class="string">'Tassadar'</span>}
+  m.down{|db| db.units.remove <span class="symbol">name:</span> <span class="string">'Tassadar'</span>}
+<span class="keyword">end</span></pre></div></div>
+
+        </li>
+
+
+        <li id="section-4">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Connecting to test database and cleaning it before starting the sample.</p>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre>connection = <span class="constant">Mongo::Connection</span>.new
+db = connection.default_test
+db.drop</pre></div></div>
+
+        </li>
+
+
+        <li id="section-5">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Assigning database to migration.</p>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre><span class="constant">Mongo</span>.migration.db = db</pre></div></div>
+
+        </li>
+
+
+        <li id="section-6">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Let&#39;s migrate to the first version and create mighty Zeratul.</p>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre><span class="constant">Mongo</span>.migration.update <span class="number">1</span>
+
+p <span class="constant">Mongo</span>.migration.current_version                <span class="comment"># =&gt; 1</span>
+p db.units.all                                   <span class="comment"># =&gt; [Zeratul]</span></pre></div></div>
+
+        </li>
+
+
+        <li id="section-7">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Rolling it back.</p>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre><span class="constant">Mongo</span>.migration.update <span class="number">0</span>
+
+p <span class="constant">Mongo</span>.migration.current_version                <span class="comment"># =&gt; 0</span>
+p db.units.all                                   <span class="comment"># =&gt; []</span></pre></div></div>
+
+        </li>
+
+
+        <li id="section-8">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Updating to the latest version (if there&#39;s no explicit version
 then the highest available version will be chosen).</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre><span class="no">Mongo</span><span class="o">.</span><span class="n">migration</span><span class="o">.</span><span class="n">update</span>
 
-<span class="nb">p</span> <span class="no">Mongo</span><span class="o">.</span><span class="n">migration</span><span class="o">.</span><span class="n">current_version</span>                <span class="c1"># =&gt; 2</span>
-<span class="nb">p</span> <span class="n">db</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">all</span>                                   <span class="c1"># =&gt; [Zeratul, Tassadar]</span></pre></div>
-      </td>
-    </tr>
-  </table>
-</div>
+            </div>
+
+            <div class="content"><div class='highlight'><pre><span class="constant">Mongo</span>.migration.update
+
+p <span class="constant">Mongo</span>.migration.current_version                <span class="comment"># =&gt; 2</span>
+p db.units.all                                   <span class="comment"># =&gt; [Zeratul, Tassadar]</span></pre></div></div>
+
+        </li>
+
+
+        <li id="section-9">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+
+            </div>
+
+        </li>
+
+    </ul>
+  </div>
 </body>
+</html>

@@ -1,218 +1,253 @@
 <!DOCTYPE html>
+
 <html>
 <head>
-  <meta http-equiv="content-type" content="text/html;charset=utf-8">
   <title>driver.rb</title>
-  <link rel="stylesheet" href="http://jashkenas.github.com/docco/resources/docco.css">
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
 </head>
 <body>
-<div id='container'>
-  <div id="background"></div>
-  <div id="jump_to">
-    Jump To &hellip;
-    <div id="jump_wrapper">
-      <div id="jump_page">
-          <a class="source" href="driver.html">driver.rb</a>
-          <a class="source" href="migration.html">migration.rb</a>
-          <a class="source" href="persistence.html">persistence.rb</a>
-          <a class="source" href="rake_migration.html">rake_migration.rb</a>
-          <a class="source" href="spec.html">spec.rb</a>
-      </div>
-    </div>
-  </div>
-  <table cellspacing=0 cellpadding=0>
-  <thead>
-    <tr>
-      <th class=docs><h1>driver.rb</h1></th>
-      <th class=code></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr id='section-1'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-1">&#182;</a>
-        </div>
-        <p>Enhancements for MongoDB Ruby Driver.</p>
+  <div id="container">
+    <div id="background"></div>
 
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+
+
+              <a class="source" href="driver.html">
+                driver.rb
+              </a>
+
+
+              <a class="source" href="migration.html">
+                migration.rb
+              </a>
+
+
+              <a class="source" href="persistence.html">
+                persistence.rb
+              </a>
+
+
+              <a class="source" href="rake_migration.html">
+                rake_migration.rb
+              </a>
+
+
+              <a class="source" href="spec.html">
+                spec.rb
+              </a>
+
+          </div>
+        </li>
+      </ul>
+
+    <ul class="sections">
+
+          <li id="title">
+              <div class="annotation">
+                  <h1>driver.rb</h1>
+              </div>
+          </li>
+
+
+
+        <li id="section-1">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p>Enhancements for MongoDB Ruby Driver.</p>
 <ol>
 <li>Driver enhancements (see example below).</li>
-<li><a href="migration.html">Data Migration</a>.</li>
-<li><a href="persistence.html">Persistence for Ruby Objects</a>.</li>
-<li><a href="http://alexeypetrushin.github.com/mongodb_model">mongodb_model</a> &ndash; Object Model to define Business Logic of
+<li>[Data Migration][migration].</li>
+<li>[Persistence for Ruby Objects][persistence].</li>
+<li>[mongodb_model][mongodb_model] - Object Model to define Business Logic of
 Your Application (standalone gem).</li>
 </ol>
-
 <p>Lower layers are independent from upper, use only what You need.</p>
-
 <p>Install mongodb with Rubygems:</p>
-
-<pre><code>gem install mongodb
-</code></pre>
-
+<pre><code>gem install mongodb</code></pre>
 <p>Once installed, You can proceed with the examples.</p>
-
-<p>The project is <a href="https://github.com/alexeypetrushin/mongodb">hosted on GitHub</a>. You can report bugs and discuss features
-on the <a href="https://github.com/alexeypetrushin/mongodb">issues page</a>.</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre></pre></div>
-      </td>
-    </tr>
-    <tr id='section-Driver_example'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-Driver_example">&#182;</a>
-        </div>
-        <h3>Driver example</h3>
-
+<p>The project is [hosted on GitHub][project]. You can report bugs and discuss features
+on the [issues page][issues].</p>
+<h3>Driver example</h3>
 <p>MongoDB itself is very powerful, flexible and simple tool, but the API of the Ruby Driver
 is a little complicated.</p>
-
-<p>These enhancements carefully alter Driver&rsquo;s API and made it more simple and intuitive
+<p>These enhancements carefully alter Driver&#39;s API and made it more simple and intuitive
 (but still 100% backward compatible).</p>
-
 <ul>
 <li>Makes API of MongoDB Ruby Driver friendly &amp; handy.</li>
 <li>No extra abstraction or complexities introduced, all things are exactly the same as in MongoDB.</li>
-<li>100% backward compatibility with original Driver API (if not &ndash; it&rsquo;s a bug, report it please).</li>
+<li>100% backward compatibility with original Driver API (if not - it&#39;s a bug, report it please).</li>
 </ul>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre></pre></div>
-      </td>
-    </tr>
-    <tr id='section-3'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-3">&#182;</a>
-        </div>
-        <p>Requiring driver enhancements.</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre><span class="nb">require</span> <span class="s1">&#39;mongo/driver&#39;</span></pre></div>
-      </td>
-    </tr>
-    <tr id='section-4'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-4">&#182;</a>
-        </div>
-        <p>Changing some defaults (optional, don&rsquo;t do it if You don&rsquo;t need it).</p>
+<p>Requiring driver enhancements.</p>
 
+            </div>
+
+            <div class="content"><div class='highlight'><pre><span class="keyword">require</span> <span class="string">'mongo/driver'</span></pre></div></div>
+
+        </li>
+
+
+        <li id="section-2">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Changing some defaults (optional, don&#39;t do it if You don&#39;t need it).</p>
 <p>By default they are set to false to provide maximum performance, but if You use MongoDB as
-major application database (and not only for logging, andalytics and other minor tasks) it&rsquo;s
+major application database (and not only for logging, andalytics and other minor tasks) it&#39;s
 usually better to set it to true.</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre><span class="no">Mongo</span><span class="o">.</span><span class="n">defaults</span><span class="o">.</span><span class="n">merge!</span> <span class="n">multi</span><span class="p">:</span> <span class="kp">true</span><span class="p">,</span> <span class="n">safe</span><span class="p">:</span> <span class="kp">true</span></pre></div>
-      </td>
-    </tr>
-    <tr id='section-5'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-5">&#182;</a>
-        </div>
-        <p>Connecting to test database and cleaning it before starting the sample.</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre><span class="n">connection</span> <span class="o">=</span> <span class="no">Mongo</span><span class="o">::</span><span class="no">Connection</span><span class="o">.</span><span class="n">new</span>
-<span class="n">db</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">default_test</span>
-<span class="n">db</span><span class="o">.</span><span class="n">drop</span></pre></div>
-      </td>
-    </tr>
-    <tr id='section-6'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-6">&#182;</a>
-        </div>
-        <p>Collection shortcuts, access collection directly by typing its name,
-instead of <code>db.collection(&lsquo;some_collection&rsquo;)</code>.</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre><span class="n">db</span><span class="o">.</span><span class="n">some_collection</span></pre></div>
-      </td>
-    </tr>
-    <tr id='section-7'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-7">&#182;</a>
-        </div>
-        <p>Let&rsquo;s create two Heroes.</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre><span class="n">db</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">save</span> <span class="nb">name</span><span class="p">:</span> <span class="s1">&#39;Zeratul&#39;</span>
-<span class="n">db</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">save</span> <span class="nb">name</span><span class="p">:</span> <span class="s1">&#39;Tassadar&#39;</span></pre></div>
-      </td>
-    </tr>
-    <tr id='section-8'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-8">&#182;</a>
-        </div>
-        <p>Querying first and all documents matching criteria (there&rsquo;s
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre><span class="constant">Mongo</span>.defaults.merge! <span class="symbol">multi:</span> <span class="keyword">true</span>, <span class="symbol">safe:</span> <span class="keyword">true</span></pre></div></div>
+
+        </li>
+
+
+        <li id="section-3">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Connecting to test database and cleaning it before starting the sample.</p>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre>connection = <span class="constant">Mongo::Connection</span>.new
+db = connection.default_test
+db.drop</pre></div></div>
+
+        </li>
+
+
+        <li id="section-4">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Collection shortcuts, access collection directly by typing its name,
+instead of <code>db.collection(&#39;some_collection&#39;)</code>.</p>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre>db.some_collection</pre></div></div>
+
+        </li>
+
+
+        <li id="section-5">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Let&#39;s create two Heroes.</p>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre>db.units.save <span class="symbol">name:</span> <span class="string">'Zeratul'</span>
+db.units.save <span class="symbol">name:</span> <span class="string">'Tassadar'</span></pre></div></div>
+
+        </li>
+
+
+        <li id="section-6">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Querying first and all documents matching criteria (there&#39;s
 also <code>:each</code> method, the same as <code>:all</code>).</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre><span class="nb">p</span> <span class="n">db</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">first</span><span class="p">(</span><span class="nb">name</span><span class="p">:</span> <span class="s1">&#39;Zeratul&#39;</span><span class="p">)</span>                  <span class="c1"># =&gt; zeratul</span>
-<span class="nb">p</span> <span class="n">db</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="nb">name</span><span class="p">:</span> <span class="s1">&#39;Zeratul&#39;</span><span class="p">)</span>                    <span class="c1"># =&gt; [zeratul]</span>
-<span class="n">db</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">all</span> <span class="nb">name</span><span class="p">:</span> <span class="s1">&#39;Zeratul&#39;</span> <span class="k">do</span> <span class="o">|</span><span class="n">unit</span><span class="o">|</span>
-  <span class="nb">p</span> <span class="n">unit</span>                                           <span class="c1"># =&gt; zeratul</span>
-<span class="k">end</span></pre></div>
-      </td>
-    </tr>
-    <tr id='section-9'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-9">&#182;</a>
-        </div>
-        <p>Dynamic finders, handy way to do simple queries.</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre><span class="nb">p</span> <span class="n">db</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">by_name</span><span class="p">(</span><span class="s1">&#39;Zeratul&#39;</span><span class="p">)</span>                      <span class="c1"># =&gt; zeratul</span>
-<span class="nb">p</span> <span class="n">db</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">first_by_name</span><span class="p">(</span><span class="s1">&#39;Zeratul&#39;</span><span class="p">)</span>                <span class="c1"># =&gt; zeratul</span>
-<span class="nb">p</span> <span class="n">db</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">all_by_name</span><span class="p">(</span><span class="s1">&#39;Zeratul&#39;</span><span class="p">)</span>                  <span class="c1"># =&gt; [zeratul]</span></pre></div>
-      </td>
-    </tr>
-    <tr id='section-10'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-10">&#182;</a>
-        </div>
-        <p>Bang versions, will raise error if nothing found.</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre><span class="nb">p</span> <span class="n">db</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">first!</span><span class="p">(</span><span class="nb">name</span><span class="p">:</span> <span class="s1">&#39;Zeratul&#39;</span><span class="p">)</span>                 <span class="c1"># =&gt; zeratul</span>
-<span class="nb">p</span> <span class="n">db</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">by_name!</span><span class="p">(</span><span class="s1">&#39;Zeratul&#39;</span><span class="p">)</span>                     <span class="c1"># =&gt; zeratul</span></pre></div>
-      </td>
-    </tr>
-    <tr id='section-11'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-11">&#182;</a>
-        </div>
-        <p>Query sugar, use <code>:_gt</code> instead of <code>:$gt</code>. It&rsquo;s more convinient to use new hash
-syntax <code>{name: {_gt: &lsquo;Z&rsquo;}}</code> instead of hashrockets <code>{name: {:$gt =&gt; &lsquo;Z&rsquo;}}</code>.</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre><span class="no">Mongo</span><span class="o">.</span><span class="n">defaults</span><span class="o">[</span><span class="ss">:convert_underscore_to_dollar</span><span class="o">]</span> <span class="o">=</span> <span class="kp">true</span>
-<span class="nb">p</span> <span class="n">db</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="nb">name</span><span class="p">:</span> <span class="p">{</span><span class="n">_gt</span><span class="p">:</span> <span class="s1">&#39;Z&#39;</span><span class="p">})</span>                   <span class="c1"># =&gt; [zeratul]</span></pre></div>
-      </td>
-    </tr>
-    <tr id='section-12'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-12">&#182;</a>
-        </div>
-        <p>In this example we covered enhancements of MongoDB Ruby Driver, if You are interesting
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre>p db.units.first(<span class="symbol">name:</span> <span class="string">'Zeratul'</span>)                  <span class="comment"># =&gt; zeratul</span>
+p db.units.all(<span class="symbol">name:</span> <span class="string">'Zeratul'</span>)                    <span class="comment"># =&gt; [zeratul]</span>
+db.units.all <span class="symbol">name:</span> <span class="string">'Zeratul'</span> <span class="keyword">do</span> |unit|
+  p unit                                           <span class="comment"># =&gt; zeratul</span>
+<span class="keyword">end</span></pre></div></div>
+
+        </li>
+
+
+        <li id="section-7">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Dynamic finders, handy way to do simple queries.</p>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre>p db.units.by_name(<span class="string">'Zeratul'</span>)                      <span class="comment"># =&gt; zeratul</span>
+p db.units.first_by_name(<span class="string">'Zeratul'</span>)                <span class="comment"># =&gt; zeratul</span>
+p db.units.all_by_name(<span class="string">'Zeratul'</span>)                  <span class="comment"># =&gt; [zeratul]</span></pre></div></div>
+
+        </li>
+
+
+        <li id="section-8">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Bang versions, will raise error if nothing found.</p>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre>p db.units.first!(<span class="symbol">name:</span> <span class="string">'Zeratul'</span>)                 <span class="comment"># =&gt; zeratul</span>
+p db.units.by_name!(<span class="string">'Zeratul'</span>)                     <span class="comment"># =&gt; zeratul</span></pre></div></div>
+
+        </li>
+
+
+        <li id="section-9">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>Query sugar, use <code>:_gt</code> instead of <code>:$gt</code>. It&#39;s more convinient to use new hash
+syntax <code>{name: {_gt: &#39;Z&#39;}}</code> instead of hashrockets <code>{name: {:$gt =&gt; &#39;Z&#39;}}</code>.</p>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre><span class="constant">Mongo</span>.defaults[<span class="symbol">:convert_underscore_to_dollar</span>] = <span class="keyword">true</span>
+p db.units.all(<span class="symbol">name:</span> {<span class="symbol">_gt:</span> <span class="string">'Z'</span>})                   <span class="comment"># =&gt; [zeratul]</span></pre></div></div>
+
+        </li>
+
+
+        <li id="section-10">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>In this example we covered enhancements of MongoDB Ruby Driver, if You are interesting
 You can also take a look at <a href="migration.html">Data Migration</a>
 and <a href="persistence.html">Persistence for Ruby Objects</a> examples.</p>
 
-      </td>
-      <td class=code>
-        <div class='highlight'><pre></pre></div>
-      </td>
-    </tr>
-  </table>
-</div>
+            </div>
+
+        </li>
+
+    </ul>
+  </div>
 </body>
+</html>

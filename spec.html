@@ -1,33 +1,91 @@
 <!DOCTYPE html>
+
 <html>
 <head>
-  <meta http-equiv="content-type" content="text/html;charset=utf-8">
   <title>spec.rb</title>
-  <link rel="stylesheet" href="http://jashkenas.github.com/docco/resources/docco.css">
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
 </head>
 <body>
-<div id='container'>
-  <div id="background"></div>
-  <div id="jump_to">
-    Jump To &hellip;
-    <div id="jump_wrapper">
-      <div id="jump_page">
-          <a class="source" href="driver.html">driver.rb</a>
-          <a class="source" href="migration.html">migration.rb</a>
-          <a class="source" href="persistence.html">persistence.rb</a>
-          <a class="source" href="rake_migration.html">rake_migration.rb</a>
-          <a class="source" href="spec.html">spec.rb</a>
-      </div>
-    </div>
+  <div id="container">
+    <div id="background"></div>
+
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+
+
+              <a class="source" href="driver.html">
+                driver.rb
+              </a>
+
+
+              <a class="source" href="migration.html">
+                migration.rb
+              </a>
+
+
+              <a class="source" href="persistence.html">
+                persistence.rb
+              </a>
+
+
+              <a class="source" href="rake_migration.html">
+                rake_migration.rb
+              </a>
+
+
+              <a class="source" href="spec.html">
+                spec.rb
+              </a>
+
+          </div>
+        </li>
+      </ul>
+
+    <ul class="sections">
+
+          <li id="title">
+              <div class="annotation">
+                  <h1>spec.rb</h1>
+              </div>
+          </li>
+
+
+
+        <li id="section-1">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre><span class="keyword">require</span> <span class="string">'open3'</span>
+
+dir = <span class="constant">File</span>.expand_path <span class="string">"<span class="subst">#{__FILE_<span class="number">_</span>}</span>/../.."</span>
+
+describe <span class="string">"Documentation"</span> <span class="keyword">do</span>
+  <span class="string">%w(
+    driver
+    migration
+    persistence
+  )</span>.each <span class="keyword">do</span> |name|
+    it <span class="string">"should execute '<span class="subst">#{name}</span>.rb' without errors"</span> <span class="keyword">do</span>
+      stdin, stdout, stderr = <span class="constant">Open3</span>.popen3 <span class="string">"ruby <span class="subst">#{dir}</span>/docs/<span class="subst">#{name}</span>.rb"</span>
+      stderr.read.should be_empty
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+<span class="keyword">end</span></pre></div></div>
+
+        </li>
+
+    </ul>
   </div>
-  <table cellspacing=0 cellpadding=0>
-  <thead>
-    <tr>
-      <th class=docs><h1>spec.rb</h1></th>
-      <th class=code></th>
-    </tr>
-  </thead>
-  <tbody>
-  </table>
-</div>
 </body>
+</html>
